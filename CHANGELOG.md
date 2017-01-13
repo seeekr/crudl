@@ -1,8 +1,8 @@
 # CHANGELOG
 
-## 0.3 (not yet released)
+## 0.2.1 (not yet released)
 
-## 0.2 (2017-01-13)
+## 0.2.0 (January 20, 2017)
 * NEW: Published npm package (crudl).
 * ADDED: Add/edit relations.
 * ADDED: Custom messages and enabled translations.
@@ -20,5 +20,5 @@
 * CHANGED: Admin stucture (see README.md) and some definitions.
 * REMOVED: FieldMap in favor of direct component specification in the field descriptor (see README.md).
 
-## 0.1 (2016-09-12)
+## 0.1.0 (September 12, 2016)
 initial version
