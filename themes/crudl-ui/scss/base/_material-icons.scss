@@ -1,0 +1,59 @@
+@font-face {
+    font-family: 'Material Icons';
+    font-style: normal;
+    font-weight: 400;
+    src: local('Material Icons'),
+    local('MaterialIcons-Regular'),
+    url('../fonts/material-icons/MaterialIcons-Regular.woff') format('woff');
+}
+
+.material-icons {
+    position: relative;
+    top: 0.25em;
+    font-family: 'Material Icons';
+    font-weight: normal;
+    font-style: normal;
+    // font-size: 24px;  /* Preferred icon size */
+    font-size: 1.5em;
+    display: inline-block;
+    line-height: 1rem;
+    text-transform: none;
+    letter-spacing: normal;
+    word-wrap: normal;
+    white-space: nowrap;
+    direction: ltr;
+
+    /* Support for all WebKit browsers. */
+    -webkit-font-smoothing: antialiased;
+    /* Support for Safari and Chrome. */
+    text-rendering: optimizeLegibility;
+
+    /* Support for Firefox. */
+    -moz-osx-font-smoothing: grayscale;
+
+    /* Support for IE. */
+    font-feature-settings: 'liga';
+}
+
+@mixin icon($icon){
+    @extend .material-icons;
+    content: $icon;
+}
+@mixin icon-before($icon, $float: "true"){
+    &:before {
+        @extend .material-icons;
+        content: $icon;
+        @if ($float == "true") {
+            float: left;
+        }
+    }
+}
+@mixin icon-after($icon, $float: "true"){
+    &:after {
+        @extend .material-icons;
+        content: $icon;
+        @if ($float == "true") {
+            float: right;
+        }
+    }
+}

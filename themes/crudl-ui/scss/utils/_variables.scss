@@ -1,0 +1,552 @@
+// ****************************************************************************
+// crudl.io
+// VARIABLES
+//
+// Global variables
+// ****************************************************************************
+
+
+
+// Breakpoints
+// ----------------------------------------------------------------------------
+
+$l-min: 1250px;
+$tp-max: 980px;
+$tp-min: 768px;
+$hl-max: $tp-min - 1;
+$hl-min: 480px;
+$hp-max: $hl-min - 1;
+
+
+
+// Font Sizes
+// ----------------------------------------------------------------------------
+
+$base-font-size: 16px;
+$base-ratio: 1.25;
+$base-line-height: $base-font-size * $base-ratio;
+
+$font-size-xxl: 3rem;
+$font-size-xl: 1.75rem;
+$font-size-l: 1.5rem;
+$font-size-m: 1.25rem;
+$font-size-r: 1rem;
+$font-size-s: 0.85rem;
+$font-size-xs: 0.75rem;
+
+$line-height-xxl: 3rem * $base-ratio;
+$line-height-xl: 2.25rem * $base-ratio;
+$line-height-l: 1.75rem * $base-ratio;
+$line-height-m: 1.25rem * $base-ratio;
+$line-height-r: 1rem * $base-ratio;
+$line-height-s: 0.85rem * $base-ratio;
+$line-height-xs: 0.75rem * $base-ratio;
+
+$rte-font-size: 16px;
+$rte-line-height: 24px;
+
+
+
+
+// Fonts: Weights & Styles
+// ----------------------------------------------------------------------------
+
+$font-family: 'Roboto-Regular', Arial, sans-serif;
+$font-family-thin: 'Roboto-Thin', Arial, sans-serif;
+$font-family-light: 'Roboto-Light', Arial, sans-serif;
+$font-family-regular: 'Roboto-Regular', Arial, sans-serif;
+$font-family-medium: 'Roboto-Medium', Arial, sans-serif;
+$font-family-bold: 'Roboto-Bold', Arial, sans-serif;
+
+$font-family-italic: 'Roboto-Italic', Arial, sans-serif;
+$font-family-thin-italic: 'Roboto-ThinItalic', Arial, sans-serif;
+$font-family-light-italic: 'Roboto-LightItalic', Arial, sans-serif;
+$font-family-regular-italic: 'Roboto-RegularItalic', Arial, sans-serif;
+$font-family-medium-italic: 'Roboto-MediumItalic', Arial, sans-serif;
+$font-family-bold-italic: 'Roboto-BoldItalic', Arial, sans-serif;
+
+$font-family-slab: 'RobotoSlab-Regular', Arial, sans-serif;
+$font-family-slab-regular: 'RobotoSlab-Regular', Arial, sans-serif;
+$font-family-slab-thin: 'RobotoSlab-Thin', Arial, sans-serif;
+$font-family-slab-light: 'RobotoSlab-Light', Arial, sans-serif;
+$font-family-slab-bold: 'RobotoSlab-Bold', Arial, sans-serif;
+
+$font-family-mono: 'RobotoMono-Regular', Arial, sans-serif;
+$font-family-mono-thin: 'RobotoMono-Thin', Arial, sans-serif;
+$font-family-mono-light: 'RobotoMono-Light', Arial, sans-serif;
+$font-family-mono-regular: 'RobotoMono-Regular', Arial, sans-serif;
+$font-family-mono-medium: 'RobotoMono-Medium', Arial, sans-serif;
+$font-family-mono-bold: 'RobotoMono-Bold', Arial, sans-serif;
+
+$font-family-mono-italic: 'RobotoMono-Italic', Arial, sans-serif;
+$font-family-mono-thin-italic: 'RobotoMono-ThinItalic', Arial, sans-serif;
+$font-family-mono-light-italic: 'RobotoMono-LightItalic', Arial, sans-serif;
+$font-family-mono-regular-italic: 'RobotoMono-Italic', Arial, sans-serif;
+$font-family-mono-medium-italic: 'RobotoMono-MediumItalic', Arial, sans-serif;
+$font-family-mono-bold-italic: 'RobotoMono-BoldItalic', Arial, sans-serif;
+
+
+
+// Colors
+// ----------------------------------------------------------------------------
+
+// Color Mix Values
+$color-val-10: 5%;
+$color-val-25: 7%;
+$color-val-50: 10%;
+$color-val-100: 20%;
+$color-val-200: 40%;
+$color-val-300: 60%;
+$color-val-400: 80%;
+$color-val-500: 100%;
+$color-val-600: 88%;
+$color-val-700: 76%;
+$color-val-800: 64%;
+$color-val-900: 52%;
+$color-val-1000: 40%;
+$color-val-1100: 28%;
+
+// Color 1
+$color-1: #7D7F80;
+$color-1-10: mix($color-1, #fff, $color-val-10);
+$color-1-25: mix($color-1, #fff, $color-val-25);
+$color-1-50: mix($color-1, #fff, $color-val-50);
+$color-1-100: mix($color-1, #fff, $color-val-100);
+$color-1-200: mix($color-1, #fff, $color-val-200);
+$color-1-300: mix($color-1, #fff, $color-val-300);
+$color-1-400: mix($color-1, #fff, $color-val-400);
+$color-1-500: $color-1;
+$color-1-600: mix($color-1, #000, $color-val-600);
+$color-1-700: mix($color-1, #000, $color-val-700);
+$color-1-800: mix($color-1, #000, $color-val-800);
+$color-1-900: mix($color-1, #000, $color-val-900);
+$color-1-1000: mix($color-1, #000, $color-val-1000);
+$color-1-1100: mix($color-1, #000, $color-val-1100);
+
+// Color 2
+$color-2: #00A4B3;
+$color-2-10: mix($color-2, #fff, $color-val-10);
+$color-2-25: mix($color-2, #fff, $color-val-25);
+$color-2-50: mix($color-2, #fff, $color-val-50);
+$color-2-100: mix($color-2, #fff, $color-val-100);
+$color-2-200: mix($color-2, #fff, $color-val-200);
+$color-2-300: mix($color-2, #fff, $color-val-300);
+$color-2-400: mix($color-2, #fff, $color-val-400);
+$color-2-500: $color-2;
+$color-2-600: mix($color-2, #000, $color-val-600);
+$color-2-700: mix($color-2, #000, $color-val-700);
+$color-2-800: mix($color-2, #000, $color-val-800);
+$color-2-900: mix($color-2, #000, $color-val-900);
+$color-2-1000: mix($color-2, #000, $color-val-1000);
+$color-2-1100: mix($color-2, #000, $color-val-1100);
+
+// Color 3
+$color-3: #CC293C;
+$color-3-50: mix($color-3, #fff, $color-val-50);
+$color-3-100: mix($color-3, #fff, $color-val-100);
+$color-3-200: mix($color-3, #fff, $color-val-200);
+$color-3-300: mix($color-3, #fff, $color-val-300);
+$color-3-400: mix($color-3, #fff, $color-val-400);
+$color-3-500: $color-3;
+$color-3-600: mix($color-3, #000, $color-val-600);
+$color-3-700: mix($color-3, #000, $color-val-700);
+$color-3-800: mix($color-3, #000, $color-val-800);
+$color-3-900: mix($color-3, #000, $color-val-900);
+$color-3-1000: mix($color-3, #000, $color-val-1000);
+$color-3-1100: mix($color-3, #000, $color-val-1100);
+
+// Color 4
+$color-4: #F2E961;
+$color-4-50: mix($color-4, #fff, $color-val-50);
+$color-4-100: mix($color-4, #fff, $color-val-100);
+$color-4-200: mix($color-4, #fff, $color-val-200);
+$color-4-300: mix($color-4, #fff, $color-val-300);
+$color-4-400: mix($color-4, #fff, $color-val-400);
+$color-4-500: $color-4;
+$color-4-600: mix($color-4, #000, $color-val-600);
+$color-4-700: mix($color-4, #000, $color-val-700);
+$color-4-800: mix($color-4, #000, $color-val-800);
+$color-4-900: mix($color-4, #000, $color-val-900);
+$color-4-1000: mix($color-4, #000, $color-val-1000);
+$color-4-1100: mix($color-4, #000, $color-val-1100);
+
+// Color 5
+$color-5: #1DBF60;
+$color-5-50: mix($color-5, #fff, $color-val-50);
+$color-5-100: mix($color-5, #fff, $color-val-100);
+$color-5-200: mix($color-5, #fff, $color-val-200);
+$color-5-300: mix($color-5, #fff, $color-val-300);
+$color-5-400: mix($color-5, #fff, $color-val-400);
+$color-5-500: $color-5;
+$color-5-600: mix($color-5, #000, $color-val-600);
+$color-5-700: mix($color-5, #000, $color-val-700);
+$color-5-800: mix($color-5, #000, $color-val-800);
+$color-5-900: mix($color-5, #000, $color-val-900);
+$color-5-1000: mix($color-5, #000, $color-val-1000);
+$color-5-1100: mix($color-5, #000, $color-val-1100);
+
+
+
+// Color Assignments
+// ----------------------------------------------------------------------------
+
+$color-error: $color-3;
+$color-delete: $color-3;
+
+$text-color: $color-1-1100;
+$text-color-shy: $color-1-800;
+$text-color-quiet: $color-1-500;
+$text-color-silent: $color-1-200;
+
+$link-color: $color-2-400;
+$link-color-shy: $color-2-200;
+$link-color-quiet: $color-2-100;
+$link-color-silent: $color-2-50;
+$link-hover-color: $text-color;
+
+$text-selection-color: $text-color;
+$text-selection-background: $color-4-300;
+
+$boolean-true-color: $color-2-300;
+$boolean-false-color: $color-3-300;
+
+
+
+// APP
+// ----------------------------------------------------------------------------
+
+$viewport-offset: 48px;
+$navigation-width: 320px;
+
+$app-max-width: 1440px;
+$app-background: #fff;
+$navigation-background: $color-2-1000;
+
+$viewport-background: #fff;
+$viewport-border-color: #ddf0f0;
+
+$app-aside-container-background: #fafafa;
+
+$viewport-aside-width: 320px;
+
+$viewport-padding-top: 0;
+$viewport-padding-right: 48px;
+$viewport-padding-bottom: 192px;
+$viewport-padding-left: 48px;
+$viewport-padding: $viewport-padding-top $viewport-padding-right $viewport-padding-bottom $viewport-padding-left;
+
+$viewport-inner-padding-right: 24px;
+$viewport-inner-padding-left: 24px;
+
+$viewport-header-border-width: 4px;
+$viewport-header-border-style: solid;
+$viewport-header-border-color: $app-background;
+$viewport-header-border: $viewport-header-border-width $viewport-header-border-style $viewport-header-border-color;
+
+$viewport-header-background: transparent;
+
+$viewport-footer-background: $app-background;
+
+
+
+// Filters
+// ----------------------------------------------------------------------------
+
+$filter-active-color: $color-4-400;
+
+
+
+// Spaces
+// ----------------------------------------------------------------------------
+
+$space-xl: 6rem;
+$space-l: 4rem;
+$space-m: 3rem;
+$space-r: 1.5rem;
+$space-s: 1rem;
+$space-xs: 0.5rem;
+$space-xxs: 0.15rem;
+
+
+
+// Borders
+// ----------------------------------------------------------------------------
+
+$border-color: darken(#f2f1ed, 0);
+$border-radius: 3px;
+
+
+
+
+// Transition Basics
+// ----------------------------------------------------------------------------
+
+$transition-speed: 0.15s;
+$transition-cubic-bezier: cubic-bezier(.2, .3, .25, .9);
+
+
+
+// Body
+// ----------------------------------------------------------------------------
+
+$body-background: #fff;
+
+
+
+// Buttons
+// ----------------------------------------------------------------------------
+
+$button-padding-top: 8px;
+$button-padding-right: 24px;
+$button-padding-bottom: 8px;
+$button-padding-left: 24px;
+$button-padding: $button-padding-top $button-padding-right $button-padding-bottom $button-padding-left;
+$button-height: 40px;
+
+$button-border-width: 2px;
+$button-border-style: solid;
+$button-border-color: transparent;
+$button-border: $button-border-width $button-border-style $button-border-color;
+$button-border-radius: $border-radius;
+
+
+
+// Forms
+// ----------------------------------------------------------------------------
+
+
+// STRUCTURE
+// - fieldset-container-group
+// -- fieldset-container
+// -- fieldset-container
+// --- fieldset
+// --- fieldset
+// ---- field-container
+// ---- field-container
+// ----- basefield
+
+
+$fieldset-padding-top: 12px;
+$fieldset-padding-right: 24px;
+$fieldset-padding-bottom: 12px;
+$fieldset-padding-left: 24px;
+$fieldset-padding: $fieldset-padding-top $fieldset-padding-right $fieldset-padding-bottom $fieldset-padding-left;
+$fieldset-border: 2px solid #fff;
+$fieldset-background: $color-1-50;
+
+$field-container-padding-top: 12px;
+$field-container-padding-right: 24px;
+$field-container-padding-bottom: 12px;
+$field-container-padding-left: 24px;
+$field-container-padding: $field-container-padding-top $field-container-padding-right $field-container-padding-bottom $field-container-padding-left;
+
+$fieldset-container-border: 2px solid #fff;
+
+$fieldset-container-header-padding-top: 10px;
+$fieldset-container-header-padding-right: 24px;
+$fieldset-container-header-padding-bottom: 11px;
+$fieldset-container-header-padding-left: 24px;
+$fieldset-container-header-padding: $fieldset-container-header-padding-top $fieldset-container-header-padding-right $fieldset-container-header-padding-bottom $fieldset-container-header-padding-left;
+
+$fieldset-container-header-color: $color-1-700;
+$fieldset-container-header-icon-color: $color-1-700;
+$fieldset-container-header-icon-border: 2px solid $color-2-50;
+$fieldset-container-header-icon-background: $color-2-100;
+$fieldset-container-header-background: $color-2-100;
+
+$fieldset-container-hover-header-color: $color-1-700;
+$fieldset-container-hover-header-icon-color: $color-1-700;
+$fieldset-container-hover-header-icon-border: 2px solid $color-1-50;
+$fieldset-container-hover-header-icon-background: darken($color-1-100, 2);
+$fieldset-container-hover-header-background: darken($color-1-100, 2);
+
+$fieldset-container-expanded-header-color: $color-1-800;
+$fieldset-container-expanded-header-icon-color: $color-1-800;
+$fieldset-container-expanded-header-icon-border: 2px solid $color-1-50;
+$fieldset-container-expanded-header-icon-background: darken($color-1-100, 5);
+$fieldset-container-expanded-header-background: darken($color-1-100, 5);
+
+$fieldset-container-group-header-padding-top: 10px;
+$fieldset-container-group-header-padding-right: 24px;
+$fieldset-container-group-header-padding-bottom: 11px;
+$fieldset-container-group-header-padding-left: 24px;
+$fieldset-container-group-header-padding: $fieldset-container-group-header-padding-top $fieldset-container-group-header-padding-right $fieldset-container-group-header-padding-bottom $fieldset-container-group-header-padding-left;
+
+$fieldset-container-group-header-color: $fieldset-container-header-color;
+$fieldset-container-group-header-icon-color: $fieldset-container-header-icon-color;
+$fieldset-container-group-header-icon-border: $fieldset-container-header-icon-border;
+$fieldset-container-group-header-icon-background: $fieldset-container-header-icon-background;
+$fieldset-container-group-header-background: $fieldset-container-header-background;
+
+$fieldset-container-group-hover-header-color: $fieldset-container-hover-header-color;
+$fieldset-container-group-hover-header-icon-color: $fieldset-container-hover-header-icon-color;
+$fieldset-container-group-hover-header-icon-border: $fieldset-container-hover-header-icon-border;
+$fieldset-container-group-hover-header-icon-background: $fieldset-container-hover-header-icon-background;
+$fieldset-container-group-hover-header-background: $fieldset-container-hover-header-background;
+
+$fieldset-container-group-expanded-header-color: $fieldset-container-expanded-header-color;
+$fieldset-container-group-expanded-header-icon-color: $fieldset-container-expanded-header-icon-color;
+$fieldset-container-group-expanded-header-icon-border: $fieldset-container-expanded-header-icon-border;
+$fieldset-container-group-expanded-header-icon-background: $fieldset-container-expanded-header-icon-background;
+$fieldset-container-group-expanded-header-background: $fieldset-container-expanded-header-background;
+
+$field-padding-top: 8px;
+$field-padding-right: 10px;
+$field-padding-bottom: 8px;
+$field-padding-left: 10px;
+$field-padding: $field-padding-top $field-padding-right $field-padding-bottom $field-padding-left;
+
+$field-color: $text-color;
+$field-background: #e8eaee;
+$field-background: #fff;
+$field-focus-background: #fff;
+$field-error-background: #fff;
+
+$field-border-radius: $border-radius;
+$field-border-width: 2px;
+$field-border-style: solid;
+$field-border-color: desaturate(darken($fieldset-background, 5), 10);
+$field-focus-border-color: $color-2-400;
+$field-error-border-color: $color-error;
+
+$field-border: $field-border-width $field-border-style $field-border-color;
+$field-focus-border: $field-border-width $field-border-style $field-focus-border-color;
+$field-error-border: $field-border-width $field-border-style $field-error-border-color;
+
+$field-readonly-color: $field-color;
+$field-readonly-border-color: darken($fieldset-background, 4);
+$field-readonly-background: darken($fieldset-background, 4);
+
+$field-disabled-color: $text-color-quiet;
+$field-disabled-border-color: darken($fieldset-background, 4);
+$field-disabled-background: darken($fieldset-background, 4);
+$field-disabled-background: repeating-linear-gradient(
+    45deg,
+    $fieldset-background,
+    $fieldset-background 4px,
+    darken($fieldset-background, 3) 4px,
+    darken($fieldset-background, 3) 8px
+);
+
+$field-checkbox-width: 24px;
+$field-checkbox-height: 24px;
+$field-checkbox-checked-color: #fff;
+$field-checkbox-checked-border-color: $text-color;
+$field-checkbox-checked-background: $text-color;
+$field-checkbox-focus-border-color: $link-color;
+$field-checkbox-focus-background: $link-color;
+$field-checkbox-focus-color: #fff;
+
+$field-radio-width: 24px;
+$field-radio-height: 24px;
+$field-radio-checked-color: #fff;
+$field-radio-checked-border-color: $text-color;
+$field-radio-checked-background: $text-color;
+$field-radio-focus-border-color: $link-color;
+$field-radio-focus-background: $link-color;
+
+
+
+// Autocomplete
+// ----------------------------------------------------------------------------
+
+$autocomplete-results-padding-top: $field-padding-top;
+$autocomplete-results-padding-right: $field-padding-right;
+$autocomplete-results-padding-bottom: $field-padding-bottom;
+$autocomplete-results-padding-left: $field-padding-left;
+$autocomplete-results-padding: $autocomplete-results-padding-top $autocomplete-results-padding-right $autocomplete-results-padding-bottom $autocomplete-results-padding-left;
+
+$autocomplete-results-border-radius: $field-border-radius;
+$autocomplete-results-border-width: $field-border-width;
+$autocomplete-results-border-style: $field-border-style;
+$autocomplete-results-border-color: $field-focus-border-color;
+$autocomplete-results-border: $autocomplete-results-border-width $autocomplete-results-border-style $autocomplete-results-border-color;
+
+$autocomplete-results-background: #fff;
+$autocomplete-results-box-shadow: 0 20px 40px transparentize($text-color, .75);
+
+$autocomplete-selected-item-color: $field-color;
+$autocomplete-selected-item-border: 2px solid transparent;
+$autocomplete-selected-item-background: darken($fieldset-background, 4);
+
+$autocomplete-selected-item-hover-color: #fff;
+$autocomplete-selected-item-hover-border: 2px solid transparent;
+$autocomplete-selected-item-hover-background: $color-3-500;
+
+$autocomplete-readonly-selected-item-color: $field-readonly-color;
+$autocomplete-readonly-selected-item-border: 2px solid transparent;
+$autocomplete-readonly-selected-item-background: $field-readonly-background;
+
+$autocomplete-disabled-selected-item-color: $field-disabled-color;
+$autocomplete-disabled-selected-item-border: 2px solid $field-disabled-border-color;
+$autocomplete-disabled-selected-item-background: $field-disabled-background;
+
+
+
+// Table
+// ----------------------------------------------------------------------------
+
+// TR — Even & odd rows, hovers
+$table-row-odd-background: #fff;
+$table-row-even-background: darken($color-1-25, 0);
+$table-row-hover-background: $color-4-100;
+
+// TH, TD — Basic cell spacing
+$table-cell-spacing-top: 10px;
+$table-cell-spacing-right: 20px;
+$table-cell-spacing-bottom: 10px;
+$table-cell-spacing-left: 20px;
+$table-cell-spacing: $table-cell-spacing-top $table-cell-spacing-right $table-cell-spacing-bottom $table-cell-spacing-left;
+
+// THEAD — Table head
+$table-head-font-size: $font-size-s;
+$table-head-color: $text-color-shy;
+$table-head-border-width: 4px;
+$table-head-border-style: solid;
+$table-head-border-color: #fff;
+$table-head-border-color: $viewport-background;
+$table-head-border: $table-head-border-width $table-head-border-style $table-head-border-color;
+$table-head-background: transparent;
+
+// THEAD > TH — Table head cells
+$table-head-cell-border-width: 2px;
+$table-head-cell-border-style: solid;
+$table-head-cell-border-color: darken($table-row-even-background, 10);
+$table-head-cell-border-color: darken($color-1-50, 0);
+$table-head-cell-border: $table-head-cell-border-width $table-head-cell-border-style $table-head-cell-border-color;
+
+// THEAD > TH > DIV — Table head inner cells helper
+$table-head-cell-inner-border-width: 4px;
+$table-head-cell-inner-border-style: solid;
+$table-head-cell-inner-border-color: darken($color-1-50, 0);
+$table-head-cell-inner-border: $table-head-cell-inner-border-width $table-head-cell-inner-border-style $table-head-cell-inner-border-color;
+// sortable, sorted
+$table-head-sortable-cell-inner-border-color: transparentize($link-color, .5);
+$table-head-sortable-cell-inner-hover-border-color: $text-color;
+$table-head-sorted-cell-inner-border-color: $link-color;
+
+// THEAD Sortable, sorted
+$table-head-sortable-color: transparentize($link-color, .5);
+$table-head-sortable-background: #fff;
+$table-head-sortable-hover-color: #fff;
+$table-head-sortable-hover-background: $link-color;
+$table-head-sortable-background: transparent;
+$table-head-sortable-hover-color: $text-color;
+$table-head-sortable-hover-background: transparent;
+$table-head-sorted-color: $link-color;
+$table-head-sorted-background: lighten($link-color, 48);
+
+// TBODY > TD — Table body cells
+$table-body-cell-border-width: 2px;
+$table-body-cell-border-style: solid;
+$table-body-cell-border-color: darken($color-1-50, 2);
+$table-body-cell-odd-border-color: darken($color-1-50, 0);
+$table-body-cell-border: $table-body-cell-border-width $table-body-cell-border-style $table-body-cell-border-color;
+
+
+
+// Table
+// ----------------------------------------------------------------------------
+
+$tab-selected-color: $link-color;
+$tab-selected-color: #f8f8f8;

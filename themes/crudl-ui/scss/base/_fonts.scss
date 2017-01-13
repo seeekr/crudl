@@ -1,0 +1,185 @@
+// ****************************************************************************
+// crudl.io
+// FONTS
+//
+// Global available fonts (iconfonts not included)
+//
+// Using "ROBOTO" families (links to source files below)
+// Designed by Christian Robertson
+// Apache License, Version 2.0: https://www.apache.org/licenses/LICENSE-2.0.html
+// ****************************************************************************
+
+@charset "UTF-8";
+
+
+
+// Roboto
+// https://github.com/google/fonts/tree/master/apache/roboto
+// ----------------------------------------------------------------------------
+
+@font-face {
+    font-family: 'Roboto-Regular';
+    src: url('../fonts/roboto/Roboto-Regular.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'Roboto-Italic';
+    src: url('../fonts/roboto/Roboto-Italic.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Roboto-Thin';
+    src: url('../fonts/roboto/Roboto-Thin.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'Roboto-ThinItalic';
+    src: url('../fonts/roboto/Roboto-ThinItalic.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Roboto-Light';
+    src: url('../fonts/roboto/Roboto-Light.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'Roboto-LightItalic';
+    src: url('../fonts/roboto/Roboto-LightItalic.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Roboto-Medium';
+    src: url('../fonts/roboto/Roboto-Medium.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'Roboto-MediumItalic';
+    src: url('../fonts/roboto/Roboto-MediumItalic.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Roboto-Bold';
+    src: url('../fonts/roboto/Roboto-Bold.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'Roboto-BoldItalic';
+    src: url('../fonts/roboto/Roboto-BoldItalic.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+
+
+// Roboto Slab
+// https://github.com/google/fonts/tree/master/apache/robotoslab
+// ----------------------------------------------------------------------------
+
+@font-face {
+    font-family: 'RobotoSlab-Regular';
+    src: url('../fonts/roboto-slab/RobotoSlab-Regular.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'RobotoSlab-Thin';
+    src: url('../fonts/roboto-slab/RobotoSlab-Thin.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'RobotoSlab-Light';
+    src: url('../fonts/roboto-slab/RobotoSlab-Light.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'RobotoSlab-Bold';
+    src: url('../fonts/roboto-slab/RobotoSlab-Bold.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+
+
+// Roboto Mono
+// http://fontain.org/roboto-mono/
+// ----------------------------------------------------------------------------
+
+@font-face {
+    font-family: 'RobotoMono-Regular';
+    src: url('../fonts/roboto-mono/RobotoMono-Regular.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'RobotoMono-Italic';
+    src: url('../fonts/roboto-mono/RobotoMono-Italic.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'RobotoMono-Thin';
+    src: url('../fonts/roboto-mono/RobotoMono-Thin.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'RobotoMono-ThinItalic';
+    src: url('../fonts/roboto-mono/RobotoMono-ThinItalic.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'RobotoMono-Light';
+    src: url('../fonts/roboto-mono/RobotoMono-Light.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'RobotoMono-LightItalic';
+    src: url('../fonts/roboto-mono/RobotoMono-LightItalic.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'RobotoMono-Medium';
+    src: url('../fonts/roboto-mono/RobotoMono-Medium.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'RobotoMono-MediumItalic';
+    src: url('../fonts/roboto-mono/RobotoMono-MediumItalic.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'RobotoMono-Bold';
+    src: url('../fonts/roboto-mono/RobotoMono-Bold.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'RobotoMono-BoldItalic';
+    src: url('../fonts/roboto-mono/RobotoMono-BoldItalic.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}

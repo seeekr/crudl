@@ -1,0 +1,168 @@
+// ****************************************************************************
+// crudl.io
+// FILTERS
+//
+//
+// ****************************************************************************
+
+
+
+// Sidebar
+// ----------------------------------------------------------------------------
+
+#sidebar {
+    position: fixed;
+    z-index: 910;
+    transition: right 2*$transition-speed $transition-cubic-bezier;
+    top: 0;
+    right: -300px;
+    width: 300px;
+    height: 100%;
+    background: $color-4-500;
+
+}
+
+#sidebar {
+    .field-container {
+        & + .field-container {
+            border-top-color: $color-4-500;
+        }
+    }
+}
+
+#sidebar {
+    > header {
+        position: fixed;
+        z-index: 800;
+        padding: 12px 20px;
+        width: 100%;
+        height: 48px;
+        color: $text-color;
+        @extend .font-family-medium;
+        background: $color-4-500;
+        button {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 48px;
+            height: 48px;
+            @include button-style($text-color, transparent, transparent);
+            &:hover {
+                @include button-style(#fff, transparent, transparent);
+            }
+        }
+    }
+}
+
+
+
+// Filters within sidebar
+// ----------------------------------------------------------------------------
+
+#filters {
+    position: relative;
+    top: 48px;
+    background: $color-4-300;
+    .listbox {
+        max-width: 252px;
+    }
+    .field-container {
+        padding-top: 16px;
+        padding-bottom: 17px;
+    }
+    .footer {
+        padding: 5px 20px;
+        width: inherit;
+        background: $color-4-500;
+        button.boundless {
+            @extend .button-style-text-transparent;
+            &:hover,
+            &:focus {
+                color: #fff;
+            }
+        }
+        button.action-apply {
+            float: right;
+        }
+    }
+}
+
+.scroll-overflow > #filters {
+    @extend .overflow-y-scroll;
+    position: absolute;
+    bottom: 48px;
+    z-index: 700;
+    .footer {
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+    }
+}
+
+
+
+// Toggle filters button
+// ----------------------------------------------------------------------------
+
+%filter-active-icon {
+    content: " ";
+    position: absolute;
+    z-index: 2;
+    top: 8px;
+    right: 8px;
+    display: block;
+    width: 8px;
+    height: 8px;
+    border-radius: 8px;
+    background: $color-4-500;
+}
+
+button#toggle-filters {
+    transition: all $transition-speed $transition-cubic-bezier !important;
+    opacity: 1;
+    border-radius: 0;
+    @include button-style(#fff, transparent, transparent);
+    &:hover {
+        @include button-style(#fff, $color-2-600, $color-2-600);
+    }
+    &.active-filters-true {
+        transition: all $transition-speed $transition-cubic-bezier !important;
+        @include button-style(#fff !important, transparent !important, transparent !important);
+        &:after {
+            @extend %filter-active-icon;
+        }
+    }
+    &.active-search-true {
+        transition: all $transition-speed $transition-cubic-bezier !important;
+        @include button-style(#fff !important, $color-4-500 !important, $color-4-500 !important);
+        &:after {
+            @extend %filter-active-icon;
+        }
+    }
+    &[disabled] {
+        cursor: default;
+    }
+}
+
+
+
+// Sidebar open modifications
+// ----------------------------------------------------------------------------
+
+.app-aside-open {
+    #sidebar {
+        display: block;
+        right: 0;
+        transform: translate(0, 0);
+    }
+    #viewport-header {
+        padding-right: 352px !important;
+    }
+    #viewport-header .toolbar {
+        padding-right: 252px !important;
+    }
+    button#toggle-filters {
+        transition: all $transition-speed $transition-cubic-bezier !important;
+        opacity: 0;
+    }
+}

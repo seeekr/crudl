@@ -1,0 +1,38 @@
+[
+  {
+    "id": "addView.button.save",
+    "defaultMessage": "Save"
+  },
+  {
+    "id": "addView.button.saveAndContinue",
+    "defaultMessage": "Save and continue editing"
+  },
+  {
+    "id": "addView.button.saveAndAddAnother",
+    "defaultMessage": "Save and add another"
+  },
+  {
+    "id": "addView.button.saveAndBack",
+    "defaultMessage": "Save and back"
+  },
+  {
+    "id": "addView.button.cancel",
+    "defaultMessage": "Cancel"
+  },
+  {
+    "id": "addView.add.success",
+    "defaultMessage": "Succesfully created {title}."
+  },
+  {
+    "id": "addView.add.failed",
+    "defaultMessage": "The form is not valid. Correct the errors and try again."
+  },
+  {
+    "id": "addView.modal.unsavedChanges.message",
+    "defaultMessage": "You have unsaved changes. Are you sure you want to leave?"
+  },
+  {
+    "id": "addView.modal.unsavedChanges.labelConfirm",
+    "defaultMessage": "Yes, leave"
+  }
+]

@@ -1,0 +1,40 @@
+// ****************************************************************************
+// crudl.io
+// BUTTON GROUPS
+//
+//
+// ****************************************************************************
+
+
+
+// Basics
+// ----------------------------------------------------------------------------
+
+[role=group].buttons {
+    position: relative;
+    li {
+        display: inline-block;
+        & + li {
+            margin-left: 2px;
+        }
+    }
+    .field-button-group & {
+        li + li {
+            margin: 0;
+        }
+    }
+    &.block {
+        li {
+            display: block;
+            & + li {
+                margin-left: 0;
+                margin-top: 10px;
+            }
+        }
+    }
+    li {
+        &.opposite {
+            float: right;
+        }
+    }
+}

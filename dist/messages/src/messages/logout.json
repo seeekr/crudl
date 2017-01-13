@@ -1,0 +1,14 @@
+[
+  {
+    "id": "logout.button",
+    "defaultMessage": "Logout"
+  },
+  {
+    "id": "logout.affirmation",
+    "defaultMessage": "You have been logged out."
+  },
+  {
+    "id": "logout.loginLink",
+    "defaultMessage": "Log in again?"
+  }
+]

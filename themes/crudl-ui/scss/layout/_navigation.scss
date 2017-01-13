@@ -1,0 +1,258 @@
+// ****************************************************************************
+// crudl.io
+// NAVIGATION
+//
+//
+// ****************************************************************************
+
+
+
+// Navigation content
+// ----------------------------------------------------------------------------
+
+#navigation .navigation-content {
+    position: fixed;
+    z-index: 980;
+    transition: left 2*$transition-speed $transition-cubic-bezier;
+    left: -$navigation-width;
+    top: 0;
+    bottom: 0;
+    padding-top: 48px;
+    padding-bottom: 100px;
+    width: $navigation-width;
+    height: 100%;
+    font-family: $font-family-bold;
+    color: #fff;
+    overflow-x: hidden;
+    background: $navigation-background;
+}
+
+
+
+// Navigation scroll container
+// ----------------------------------------------------------------------------
+
+#navigation .navigation-scroll-container {
+    position: absolute;
+    top: 48px;
+    bottom: 100px;
+    overflow-x: hidden;
+    @extend .overflow-y-scroll;
+    &::-webkit-scrollbar {
+        position: absolute;
+        -webkit-appearance: none;
+        width: 8px
+    }
+    &::-webkit-scrollbar-thumb,
+    &::-webkit-scrollbar-track {
+        background-clip: padding-box !important;
+        border-radius: 3px;
+        color: darken($navigation-background, 3);
+    }
+    &::-webkit-scrollbar-track {
+        background: darken($navigation-background, 3);
+        box-shadow: inset 0 -4px 0 0, inset 0 4px 0 0;
+    }
+    &::-webkit-scrollbar-thumb {
+        background: transparentize(#fff, .54);
+        box-shadow: inset 0 -2px, inset 0 -3px, inset 0 2px, inset 0 3px;
+        min-height: 36px;
+    }
+    &::-webkit-scrollbar-corner {
+        background: darken($navigation-background, 3);
+    }
+}
+
+
+
+// Navigation heading
+// ----------------------------------------------------------------------------
+
+#navigation h2 {
+    position: fixed;
+    z-index: 890;
+    top: 0;
+    left: 0;
+    transition: width 2*$transition-speed $transition-cubic-bezier;
+    width: 0;
+    button#toggle-navigation {
+        position: relative;
+        top: 0;
+        left: 2px;
+        padding-top: 4px;
+        min-width: 48px;
+        height: 48px;
+        @include button-style($color-2-100, transparent, transparent);
+        &:hover {
+            @include button-style(#fff, transparent, transparent);
+        }
+        &:before {
+            @include icon("menu");
+        }
+    }
+}
+
+
+
+// Navigation lists
+// ----------------------------------------------------------------------------
+
+#navigation ul {
+    position: relative;
+    z-index: 100;
+    transition: width 2*$transition-speed $transition-cubic-bezier, opacity 2*$transition-speed $transition-cubic-bezier;
+    opacity: 0;
+    margin-top: 24px;
+    padding: 0;
+    width: $navigation-width;
+    overflow: hidden;
+    & + ul {
+        margin-top: 12px;
+    }
+    li {
+        position: relative;
+        & + li {
+            border-top: 2px solid darken($navigation-background, 3);
+        }
+    }
+    li {
+        span {
+            color: transparentize($color-2-50, .54);
+        }
+        a {
+            transition: color $transition-speed $transition-cubic-bezier, background $transition-speed $transition-cubic-bezier;
+            color: $color-2-300;
+            cursor: pointer;
+            &:before {
+                @include icon("arrow_forward");
+                @include icon("keyboard_arrow_right");
+                transition: color $transition-speed $transition-cubic-bezier;
+                color: transparent;
+            }
+            &:hover {
+                color: $color-2-100;
+                &:before {
+                    color: $color-2-100;
+                }
+            }
+            &.active {
+                color: #fff;
+                &:before {
+                    color: #fff;
+                }
+            }
+        }
+        a,
+        span {
+            position: relative;
+            display: block;
+            padding: 12px 0 12px 18px;
+            &:before {
+                display: none;
+                position: relative;
+                left: 0;
+                margin-top: -18px;
+                margin-bottom: -40px;
+                padding-top: 14px;
+                padding-left: 12px;
+                width: 48px;
+                height: 48px;
+                box-sizing: border-box;
+            }
+        }
+        button {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            @include button-style($color-2-700, transparent, transparent);
+            &:hover {
+                @include button-style(#fff, transparent, transparent);
+            }
+        }
+    }
+    &.account {
+        position: fixed;
+        bottom: 0;
+        padding: 0;
+        width: 0;
+        border-top: 2px solid darken($navigation-background, 3);
+        background: darken($navigation-background, 3);
+        a,
+        span {
+            padding-left: 2px;
+        }
+        a {
+            &:before {
+                color: $color-2-300;
+            }
+        }
+        .user {
+            &:before {
+                @include icon("face");
+            }
+        }
+        .logout {
+            cursor: pointer;
+            color: $color-2-300;
+            &:hover {
+                color: $color-2-100;
+            }
+            &:before {
+                @include icon("power_settings_new");
+            }
+        }
+        li + li {
+            border-top: 2px solid $navigation-background;
+        }
+    }
+
+}
+
+
+
+// Navigation open styles
+// ----------------------------------------------------------------------------
+
+.navigation-open {
+    #messages {
+        left: $navigation-width !important;
+    }
+    #breadcrumbs {
+        left: $navigation-width + $viewport-padding-left + 24px;
+    }
+    #navigation {
+        h2 {
+            z-index: 990;
+            width: $navigation-width;
+            background: darken($navigation-background, 3);
+        }
+        button#toggle-navigation {
+            color: desaturate($color-2-600, 30);
+            &:hover {
+                color: #fff;
+            }
+        }
+        .navigation-content {
+            left: 0;
+            width: $navigation-width;
+            height: 100%;
+            background: $navigation-background;
+        }
+        ul {
+            opacity: 1;
+            width: $navigation-width;
+        }
+    }
+    #main {
+        padding-left: $navigation-width;
+        overflow: hidden;
+    }
+    // #viewport-header .toolbar {
+    //     margin-left: -($navigation-width + $viewport-padding-left) !important;
+    //     padding-left: $navigation-width + $viewport-padding-left !important;
+    // }
+    #viewport-footer {
+        // margin-left: -($navigation-width + $viewport-padding-left) !important;
+        padding-left: $navigation-width + $viewport-padding-left !important;
+    }
+}

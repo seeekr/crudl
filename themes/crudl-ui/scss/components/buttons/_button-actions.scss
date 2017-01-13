@@ -1,0 +1,108 @@
+// ****************************************************************************
+// crudl.io
+// BUTTON ACTIONS
+//
+//
+// ****************************************************************************
+
+
+
+// Basics
+// ----------------------------------------------------------------------------
+
+button,
+[role=button] {
+    .material-icons {
+        display: inline;
+        margin-left: -10px;
+        margin-right: 5px;
+        line-height: 0.5rem;
+    }
+
+    &[class*="action-"] {
+        &:before {
+            display: inline;
+            line-height: 0.5rem;
+        }
+    }
+}
+
+
+
+// Actions
+// ----------------------------------------------------------------------------
+
+button,
+[role=button] {
+    &.action-add {
+        @include icon-before("add", "false");
+    }
+    &.action-apply {
+        @include icon-before("check", "false");
+    }
+    &.action-check {
+        @include icon-before("check", "false");
+    }
+    &.action-clear {
+        @include icon-before("clear", "false");
+    }
+    &.action-date-range {
+        @include icon-before("date_range", "false");
+    }
+    &.action-date-today {
+        @include icon-before("today", "false");
+    }
+    &.action-access-time {
+        @include icon-before("access_time", "false");
+    }
+    &.action-delete {
+        @include icon-before("delete", "false");
+    }
+    &.action-open-in-new {
+        @include icon-before("open_in_new", "false");
+    }
+    &.action-link-external {
+        @include icon-before("call_made", "false");
+    }
+    &.action-load-more {
+        @include icon-before("autorenew", "false");
+    }
+    &.action-next {
+        @include icon-before("chevron_right", "false");
+    }
+    &.action-previous {
+        @include icon-before("chevron_left", "false");
+    }
+    &.action-remove {
+        @include icon-before("remove", "false");
+    }
+    &.action-save {
+        @include icon-before("check", "false");
+    }
+    &.action-search {
+        @include icon-before("search", "false");
+    }
+    &.action-toggle-expand {
+        @include icon-before("keyboard_arrow_down", "false");
+    }
+    &.action-toggle-filter-list {
+        @include icon-before("filter_list", "false");
+    }
+    &.action-toggle-menu {
+        @include icon-before("menu", "false");
+    }
+    &.action-expand-all {
+        // @include icon-before("view_list", "false");
+        @include icon-before("arrow_downward", "false");
+        &:before {
+            display: inline-block;
+        }
+    }
+    &.action-collapse-all {
+        // @include icon-before("list", "false");
+        @include icon-before("arrow_upward", "false");
+        &:before {
+            display: inline-block;
+        }
+    }
+}

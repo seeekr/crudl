@@ -1,0 +1,50 @@
+// ****************************************************************************
+// crudl.io
+// HEADER
+//
+//
+// ****************************************************************************
+
+
+
+// Basic styles
+// ----------------------------------------------------------------------------
+
+#viewport-header {
+    transition: padding 2*$transition-speed $transition-cubic-bezier;
+    padding-left: $viewport-padding-left;
+    margin-left: -$viewport-padding-left;
+    padding-right: $viewport-padding-right;
+    margin-right: -$viewport-padding-right;
+    color: #fff;
+    background: $color-2-400;
+    > .title {
+        position: relative;
+        transition: opacity 2*$transition-speed $transition-cubic-bezier;
+        opacity: 1;
+    }
+    h2 {
+        position: relative;
+        margin-left: -2px;
+        padding: 84px $viewport-inner-padding-right 11px $viewport-inner-padding-left;
+        @extend .font-size-xl;
+        @extend .font-family-medium;
+        max-width: 80%;
+    }
+}
+
+
+
+// Fixed header
+// ----------------------------------------------------------------------------
+
+.header-fixed #viewport-header,
+.header-prepare-fixed #viewport-header {
+    > .title {
+        opacity: 0;
+    }
+}
+.header-fixed #app-title,
+.header-prepare-fixed #app-title {
+    opacity: 0;
+}

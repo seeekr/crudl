@@ -1,0 +1,79 @@
+// ****************************************************************************
+// crudl.io
+// BUTTONS
+//
+//
+// ****************************************************************************
+
+
+
+// Button sizes
+// ----------------------------------------------------------------------------
+
+%button-size-regular {
+    min-width: 48px;
+    height: 48px;
+}
+%button-size-medium {
+    min-width: 64px;
+    height: 64px;
+}
+%button-size-large {
+    min-width: 72px;
+    height: 72px;
+}
+%button-size-xlarge {
+    min-width: 96px;
+    height: 96px;
+}
+%button-size-xxlarge {
+    min-width: 144px;
+    height: 144px;
+}
+
+
+
+// Basic button
+// ----------------------------------------------------------------------------
+
+%button {
+    cursor: pointer;
+    position: relative;
+    display: inline-block;
+    margin: 0;
+    padding: $button-padding;
+    width: auto;
+    transition: all $transition-speed $transition-cubic-bezier;
+    @extend .font-size-r;
+    @extend .font-family-medium;
+    border: $button-border;
+    border-radius: $border-radius;
+    outline: 0;
+    height: $button-height;
+    text-align: center;
+    vertical-align: top;
+    // Fixing Mozilla's button padding bug:
+    // https://davidwalsh.name/firefox-buttons
+    &::-moz-focus-inner {
+    	border: 0;
+    	padding: 0;
+    }
+}
+
+
+
+// Extending basic button
+// ----------------------------------------------------------------------------
+
+button,
+[role=button],
+input[type=submit],
+input[type=reset] {
+    @extend %button;
+    & + button,
+    & + [role=button],
+    & + input[type=submit],
+    & + input[type=reset] {
+        margin-left: 20px;
+    }
+}

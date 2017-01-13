@@ -1,0 +1,113 @@
+// ****************************************************************************
+// PLACEHOLDERS
+//
+// Global placeholders
+// ****************************************************************************
+
+
+
+// Clearfix
+// ----------------------------------------------------------------------------
+
+.mgs-clearfix {
+    &:after {
+        content: "";
+        display: table;
+        clear: both;
+    }
+}
+// .mgs-clearfix {
+//     @extend %mgs-clearfix;
+// }
+
+
+
+// First & Last
+// ----------------------------------------------------------------------------
+
+.mgs-first {
+    clear: left !important;
+    margin-left: 0 !important;
+}
+// .mgs-first {
+//     @extend %mgs-first;
+// }
+
+.mgs-last {
+    clear: right !important;
+    margin-right: 0 !important;
+}
+// .mgs-last {
+//     @extend %mgs-last;
+// }
+
+
+
+// Container
+// ----------------------------------------------------------------------------
+
+.mgs-container {
+    position: relative;
+    @extend .mgs-clearfix;
+}
+// .mgs-container {
+//     @extend %mgs-container;
+// }
+
+
+
+// Row
+// ----------------------------------------------------------------------------
+
+.mgs-row {
+    position: relative;
+    float: left;
+    clear: both;
+    width: 100%;
+    // > [class^="mgs-"]:last-of-type {
+    //     @extend .mgs-last;
+    // }
+}
+%mgs-row {
+    position: relative;
+    float: left;
+    clear: both;
+    width: 100%;
+}
+// .mgs-row {
+//     @extend %mgs-row;
+// }
+
+
+
+// Column
+// ----------------------------------------------------------------------------
+
+.mgs-column {
+    position: relative;
+    float: left;
+}
+// .mgs-column {
+//     @extend %mgs-column;
+// }
+
+
+
+// Show & Hide
+// ----------------------------------------------------------------------------
+
+// Basically show all hide-classes
+[class^="mgs-hide"] {
+    display: block;
+}
+// elements-of-type is a Compass helper, doesn't exist in SASS
+// #{elements-of-type(inline)} {
+//     &[class^="mgs-hide"] {
+//         display: inline;
+//     }
+// }
+
+// Basically hide all show-classes
+[class^="mgs-show"] {
+    display: none;
+}

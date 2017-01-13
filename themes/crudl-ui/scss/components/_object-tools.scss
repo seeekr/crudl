@@ -1,0 +1,34 @@
+// ****************************************************************************
+// crudl.io
+// OBJECT TOOLS
+//
+//
+// ****************************************************************************
+
+
+
+// Basics
+// ----------------------------------------------------------------------------
+
+[role=group].buttons.object-tools {
+    position: absolute;
+    right: -$viewport-padding-right;
+    bottom: 0;
+    margin-left: $viewport-inner-padding-left;
+}
+
+
+
+// Buttons
+// ----------------------------------------------------------------------------
+
+[role=group].buttons.object-tools {
+    button,
+    [role=button] {
+        @extend %button-size-regular;
+        @include button-style(#fff, transparent, transparent);
+        &:hover {
+            @include button-style($color-2-800, transparent, transparent);
+        }
+    }
+}

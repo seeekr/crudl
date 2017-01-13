@@ -1,0 +1,124 @@
+// ****************************************************************************
+// crudl.io
+// RADIOGROUP
+//
+//
+// ****************************************************************************
+
+
+
+// Group
+// ----------------------------------------------------------------------------
+
+.type-radiogroup {
+    [role=radiogroup] {
+        label {
+            margin: 0;
+            display: inline-block;
+        }
+        li + li {
+            margin-top: 5px;
+        }
+    }
+}
+
+
+
+// Label
+// ----------------------------------------------------------------------------
+
+.type-radiogroup {
+    .label {
+        display: inline-block;
+        margin: 4px 0 0 20px;
+    }
+}
+
+
+
+// Fields
+// ----------------------------------------------------------------------------
+
+.type-radiogroup {
+    .field[role=radio] {
+        position: relative;
+        display: inline-block;
+        margin: 0;
+        padding: $field-padding;
+        width: $field-radio-width;
+        height: $field-radio-height;
+        transition: border $transition-speed $transition-cubic-bezier, background $transition-speed $transition-cubic-bezier;
+        border: $field-border;
+        border-radius: $field-radio-width;
+        background: $field-background;
+        vertical-align: top;
+        &:before {
+            content: " ";
+            transition: background $transition-speed $transition-cubic-bezier;
+            background: transparent;
+        }
+        &:focus {
+            border-color: $field-radio-focus-border-color;
+        }
+        &[aria-checked=true] {
+            border-color: $field-radio-checked-background;
+            &:before {
+                position: relative;
+                top: -5px;
+                left: -7px;
+                display: block;
+                width: $field-radio-width - 10;
+                height: $field-radio-width - 10;
+                border-radius: $field-radio-width - 10;
+                background: $field-radio-checked-background;
+            }
+            &:focus {
+                border-color: $field-radio-focus-border-color;
+                &:before {
+                    background: $field-radio-focus-background;
+                }
+            }
+        }
+        input {
+            display: none;
+        }
+    }
+}
+
+
+
+// Disabled & readonly
+// ----------------------------------------------------------------------------
+
+.type-radiogroup.disabled {
+    .field[role=radio] {
+        border-color: $field-disabled-border-color !important;
+        background: $field-disabled-background !important;
+        &[aria-checked=true] {
+            &:before {
+                background: transparentize($field-disabled-color, .54) !important;
+            }
+        }
+    }
+}
+
+.type-radiogroup.readonly {
+    .field[role=radio] {
+        border-color: $field-readonly-border-color !important;
+        background: $field-readonly-background !important;
+        &[aria-checked=true] {
+            &:before {
+                background: transparentize($field-readonly-color, .54) !important;
+            }
+        }
+    }
+}
+
+
+
+// Help text
+// ----------------------------------------------------------------------------
+
+.help + [role=radiogroup] {
+    margin-top: 10px;
+}

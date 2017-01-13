@@ -1,0 +1,133 @@
+// ****************************************************************************
+// MGS
+//
+// Global functions
+// ****************************************************************************
+
+
+
+// Define mgs-map-fetch
+// Function for fetching keys, values from nested map
+// based on https://gist.github.com/jlong/8760275
+// ----------------------------------------------------------------------------
+
+@function mgs-map-fetch($map, $keys) {
+    $key: nth($keys, 1);
+    $length: length($keys);
+    $value: map-get($map, $key);
+    @if ($length > 1) {
+        $rest: ();
+        @for $i from 2 through $length {
+            $rest: append($rest, nth($keys, $i))
+        }
+        @return mgs-map-fetch($value, $rest)
+    } @else {
+        @return $value;
+    }
+}
+
+
+
+// Use universal classes (True/False):
+// Find out if universal classes can be used
+// by comparing the number of columns through all breakpoints.
+//
+// If each breakpoint has the same number of columns
+// $mgs-universal-classes will be "True"
+// and universal classes will be established.
+// ----------------------------------------------------------------------------
+
+@function mgs-universal-classes($map) {
+    // Get number of columns of all breakpoints
+    $columns-list: ();
+    @each $breakpoint in map-keys(map-get($map, breakpoints)) {
+        $columns-list: join($columns-list, mgs-map-fetch($map, breakpoints $breakpoint "columns"));
+    }
+    // Compare number of columns through breakpoints and set $mgs-universal-classes
+    $i: 2;
+    $mgs-universal-classes: True;
+    @while $i <= length($columns-list) and $mgs-universal-classes == True {
+        @if nth($columns-list, $i - 1) == nth($columns-list, $i) {
+            $mgs-universal-classes: True;
+        } @else {
+            $mgs-universal-classes: False;
+        }
+        $i: $i + 1;
+    }
+    @return $mgs-universal-classes;
+}
+
+
+
+// Container
+// Calculate container width for a breakpoint
+// ----------------------------------------------------------------------------
+
+@function mgs-container-width($breakpoint) {
+
+    // Fetch needed breakpoint's options
+    $container-width: mgs-map-fetch($mgs, breakpoints $breakpoint "container-width");
+    $columns: mgs-map-fetch($mgs, breakpoints $breakpoint "columns");
+    $column-width: mgs-map-fetch($mgs, breakpoints $breakpoint "column-width");
+    $gutter-width: mgs-map-fetch($mgs, breakpoints $breakpoint "gutter-width");
+
+    // Calculate the container width as sum of columns and gutters
+    $calc-container-width: $column-width * $columns + ($gutter-width * ($columns - 1));
+
+    // If the option "container-width" is set to "auto":
+    // return the calculated width
+    @if $container-width == auto {
+        // Check if the calculated width is not greater than 100%
+        @if unit($calc-container-width) == "%" {
+            @if $calc-container-width > 100% {
+                @warn "The calculated container width is greater than 100% which will cause a broken layout. Try altering the columns, column-width or gutter-width.";
+            }
+        }
+        @return $calc-container-width;
+    }
+    // If the option "container-width" has a certain value:
+    // return this value
+    @else {
+        // Check if the container width is not smaller than the calculated width
+        @if unit($container-width) == "px" {
+            @if $calc-container-width > $container-width {
+                @warn "The container-width defined in the options is smaller than the sum of columns & gutters which will cause a broken layout. Try altering the container-width, column-width or gutter-width.";
+            }
+        }
+        @return $container-width;
+    }
+
+}
+
+
+
+// Column
+// Calculate the width of a column that spans $n column units for a breakpoint
+// ----------------------------------------------------------------------------
+
+@function mgs-column-width($breakpoint, $n) {
+
+    // Fetch needed breakpoint's options
+    $column-width: mgs-map-fetch($mgs, breakpoints $breakpoint "column-width");
+    $gutter-width: mgs-map-fetch($mgs, breakpoints $breakpoint "gutter-width");
+
+    // Return column ($n) width
+    @return ($column-width * $n) + ($gutter-width * ($n - 1));
+
+}
+
+
+
+// Gutter
+// Calculate gutter width for a breakpoint
+// ----------------------------------------------------------------------------
+
+@function mgs-gutter-width($breakpoint) {
+
+    // Fetch needed breakpoint's options
+    $gutter-width: mgs-map-fetch($mgs, breakpoints $breakpoint "gutter-width");
+
+    // Return gutter width
+    @return $gutter-width;
+
+}

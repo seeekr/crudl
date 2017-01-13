@@ -1,0 +1,84 @@
+// ****************************************************************************
+// crudl.io
+// MESSAGES
+//
+//
+// ****************************************************************************
+
+
+
+// Messages container
+// ----------------------------------------------------------------------------
+
+#messages {
+    position: fixed;
+    z-index: 900;
+    transition: left 2 * $transition-speed $transition-cubic-bezier;
+    left: 0px;
+    top: -1000px;
+    right: 0;
+    width: 0;
+    &.active {
+        top: 0;
+        width: 100%;
+    }
+}
+
+
+
+// Message: basic styles
+// ----------------------------------------------------------------------------
+
+#messages {
+    .message {
+        position: relative;
+        transition: opacity 3 * $transition-speed $transition-cubic-bezier;
+        width: 100%;
+        min-height: 48px;
+        @extend .font-size-s;
+        @extend .font-family-mono-medium;
+        word-break: break-word;
+        opacity: 0;
+        cursor: pointer;
+        span {
+            display: inline-block;
+            padding: 15px 24px;
+        }
+        button {
+            @extend %button-size-regular;
+            margin: 0;
+            @include button-style(transparentize(#fff, .54), transparent, transparent);
+            &:hover,
+            &:focus {
+                @include button-style(#fff, transparent, transparent);
+            }
+        }
+    }
+    &.active .message {
+        opacity: 1;
+        &.pre-clear {
+            transition: opacity 3 * $transition-speed $transition-cubic-bezier;
+            opacity: 0;
+        }
+    }
+}
+
+
+
+// Message: states
+// ----------------------------------------------------------------------------
+
+#messages .message {
+    &.success {
+        color: #fff;
+        background: $color-5-300;
+    }
+    &.error {
+        color: #fff;
+        background: $color-3-500;
+    }
+    &.info {
+        color: #fff;
+        background: $color-2-700;
+    }
+}

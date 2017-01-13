@@ -1,0 +1,50 @@
+[
+  {
+    "id": "changeView.button.delete",
+    "defaultMessage": "Delete"
+  },
+  {
+    "id": "changeView.button.save",
+    "defaultMessage": "Save"
+  },
+  {
+    "id": "changeView.button.saveAndContinue",
+    "defaultMessage": "Save and continue editing"
+  },
+  {
+    "id": "changeView.button.saveAndBack",
+    "defaultMessage": "Save and back"
+  },
+  {
+    "id": "changeView.button.cancel",
+    "defaultMessage": "Cancel"
+  },
+  {
+    "id": "changeView.modal.unsavedChanges.message",
+    "defaultMessage": "You have unsaved changes. Are you sure you want to leave?"
+  },
+  {
+    "id": "changeView.modal.unsavedChanges.labelConfirm",
+    "defaultMessage": "Yes, leave"
+  },
+  {
+    "id": "changeView.modal.deleteConfirm.message",
+    "defaultMessage": "Are you sure you want to delete this {item}?"
+  },
+  {
+    "id": "changeView.modal.deleteConfirm.labelConfirm",
+    "defaultMessage": "Yes, delete"
+  },
+  {
+    "id": "changeView.deleteSuccess",
+    "defaultMessage": "{item} was succesfully deleted."
+  },
+  {
+    "id": "changeView.saveSuccess",
+    "defaultMessage": "{item} was succesfully saved."
+  },
+  {
+    "id": "changeView.validationError",
+    "defaultMessage": "The form is not valid. Correct the errors and try again."
+  }
+]

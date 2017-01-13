@@ -1,0 +1,44 @@
+// ****************************************************************************
+// crudl.io
+// FORMS
+//
+//
+// ****************************************************************************
+
+
+
+// Help text (below fields)
+// ----------------------------------------------------------------------------
+
+.help {
+    position: relative;
+    margin: 8px 0 0;
+    @extend .font-size-xs;
+    @extend .font-family-mono;
+    color: $text-color-quiet;
+    .type-checkbox &,
+    .type-radiogroup & {
+        padding-left: 44px;
+    }
+}
+
+
+
+// Field wrappers
+// ----------------------------------------------------------------------------
+
+.basefield,
+.field {
+    position: relative;
+}
+
+#viewport-content {
+    .basefield,
+    .field-button-group,
+    .field {
+        max-width: 800px;
+        &.field-size-small {
+            max-width: 400px;
+        }
+    }
+}

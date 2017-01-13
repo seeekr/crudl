@@ -1,0 +1,99 @@
+// ****************************************************************************
+// crudl.io
+// TABS
+//
+//
+// ****************************************************************************
+
+
+
+// Tabpanel
+// ----------------------------------------------------------------------------
+
+.tabs {
+    button.tabscroll {
+        display: none;
+    }
+}
+
+[role=tabpanel] {
+    display: none;
+    &[aria-hidden=false] {
+        display: block;
+    }
+}
+
+
+
+// Horizontal tabs
+// ----------------------------------------------------------------------------
+
+$tab-padding: 8px 24px;
+$tab-margin: -8px -24px;
+$tab-border-width: 4px;
+
+.tabs {
+    position: relative;
+    z-index: 700;
+    margin: -55px (-$viewport-padding-right) 48px (-$viewport-padding-left);
+    padding: 0 $viewport-padding-right 0 ($viewport-padding-left + $viewport-inner-padding-left);
+    border-top: $tab-border-width solid $color-2-400;
+    border-bottom: $tab-border-width solid $color-2-400;
+    // border-bottom: $tab-border-width solid $color-2-600;
+    background: $color-2-400;
+}
+[role=tablist] {
+    position: relative;
+    z-index: 800;
+    margin-left: -24px;
+    margin-bottom: -$tab-border-width;
+    li {
+        position: relative;
+        z-index: 800;
+        display: inline-block;
+        padding: $tab-padding;
+        @extend .font-family-medium;
+        margin-right: 12px;
+        cursor: pointer;
+        > span {
+            display: block;
+            margin: $tab-margin;
+            padding: $tab-padding;
+            transition: color $transition-speed $transition-cubic-bezier, border $transition-speed $transition-cubic-bezier, background $transition-speed $transition-cubic-bezier;
+            color: $color-2-100;
+            border-bottom: $tab-border-width solid transparent;
+        }
+        &:first-child {
+            > span {
+                margin-left: -24px;
+            }
+        }
+        &:hover {
+            > span {
+                color: $color-2-50;
+                border-bottom-color: $color-2-50;
+            }
+        }
+        &[aria-selected=true] {
+            > span {
+                color: #fff;
+                border-bottom-color: $color-4-500;
+            }
+            &:after {
+                position: absolute;
+                bottom: -6px;
+                left: calc(50% - 8px);
+                content: " ";
+                display: block;
+                width: 16px;
+                height: 16px;
+                transform: rotate(45deg);
+                border-radius: $border-radius;
+                background: linear-gradient(-45deg, $color-4-500 50%, transparent 50%);
+            }
+        }
+        &[aria-disabled=true] {
+            cursor: default;
+        }
+    }
+}

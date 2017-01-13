@@ -1,0 +1,183 @@
+// ****************************************************************************
+// crudl.io
+// AUTOCOMPLETE
+//
+//
+// ****************************************************************************
+
+
+
+// Max width
+// ----------------------------------------------------------------------------
+
+.autocomplete {
+    max-width: 800px;
+}
+
+
+
+// Input field
+// ----------------------------------------------------------------------------
+
+.autocomplete {
+    input {
+        @include placeholder() {
+            color: $text-color;
+        }
+        &:focus {
+            @include placeholder() {
+                color: $text-color-quiet;
+            }
+        }
+        &[readonly] {
+            @include placeholder() {
+                color: $field-readonly-color !important;
+            }
+        }
+        &[disabled] {
+            @include placeholder() {
+                color: $field-disabled-color !important;
+            }
+        }
+    }
+}
+
+
+
+// Results
+// ----------------------------------------------------------------------------
+
+.autocomplete {
+    .results {
+        display: none;
+    }
+    &.results-true {
+        .results {
+            display: block;
+            position: absolute;
+            z-index: 990;
+            margin-top: -2px;
+            margin-bottom: 200px;
+            width: 100%;
+            max-width: inherit;
+            max-height: 296px;
+            overflow-x: hidden;
+            overflow-y: auto;
+            border: $autocomplete-results-border;
+            border-radius: $autocomplete-results-border-radius;
+            box-shadow: $autocomplete-results-box-shadow;
+            background: $autocomplete-results-background;
+            > ul {
+                > li {
+                    cursor: pointer;
+                    padding: $autocomplete-results-padding;
+                    & + li {
+                        margin-top: 2px;
+                    }
+                }
+            }
+            .result {
+                display: block;
+                margin: (-$autocomplete-results-padding-top) (-$autocomplete-results-padding-right) (-$autocomplete-results-padding-bottom) (-$autocomplete-results-padding-left);
+                padding: $autocomplete-results-padding;
+                @extend .font-family-medium;
+                background: #eee;
+                &:hover {
+                    background: lighten($link-color, 36);
+                }
+            }
+        }
+    }
+}
+
+
+
+// Selected items
+// ----------------------------------------------------------------------------
+
+.selected-items {
+    margin-top: 12px;
+    margin-bottom: 12px;
+    .field-button-group {
+        cursor: pointer;
+        margin-bottom: 2px;
+        transition: color $transition-speed $transition-cubic-bezier, border $transition-speed $transition-cubic-bezier, background $transition-speed $transition-cubic-bezier;
+        border-radius: $border-radius;
+        border: $autocomplete-selected-item-border;
+        background: $autocomplete-selected-item-background;
+        button,
+        [role=button] {
+            @include button-style(transparentize($link-color, .54), transparent, transparent);
+            &.action-clear {
+                @include button-style(transparentize($color-delete, .54), transparent, transparent);
+            }
+        }
+        &:hover,
+        &.focus {
+            .selected-item,
+            button,
+            [role=button] {
+                color: $autocomplete-selected-item-hover-color !important;
+            }
+            background: $autocomplete-selected-item-hover-background;
+        }
+    }
+    div.selected-item {
+        @extend %field;
+    }
+    input[readonly],
+    .selected-item {
+        cursor: pointer;
+        height: $button-height - ($button-border-width * 2) !important;
+        color: $autocomplete-selected-item-color;
+        border: 0 !important;
+        background: transparent !important;
+    }
+}
+.readonly .selected-items {
+    .field-button-group {
+        cursor: default !important;
+        border: $autocomplete-readonly-selected-item-border !important;
+        background: $autocomplete-readonly-selected-item-background !important;
+        input[readonly],
+        .selected-item {
+            cursor: default !important;
+            color: $autocomplete-readonly-selected-item-color !important;
+        }
+        button,
+        [role=button] {
+            display: none !important;
+        }
+    }
+}
+.disabled .selected-items {
+    .field-button-group {
+        cursor: default !important;
+        border: $autocomplete-disabled-selected-item-border !important;
+        background: $autocomplete-disabled-selected-item-background !important;
+        input[readonly],
+        .selected-item {
+            cursor: default !important;
+            color: $autocomplete-disabled-selected-item-color !important;
+
+        }
+        button,
+        [role=button] {
+            display: none !important;
+        }
+    }
+}
+
+// Selected items after results
+.results {
+    + .selected-items {
+        .field-button-group {
+            &:last-child {
+                border-bottom: 2px solid $field-border-color;
+            }
+            &:first-child {
+                border-top: 0;
+            }
+        }
+    }
+}

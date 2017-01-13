@@ -1,0 +1,32 @@
+// ****************************************************************************
+// crudl.io
+// FIELD TOOLS (RELATIONS etc.)
+//
+//
+// ****************************************************************************
+
+
+
+// Basics
+// ----------------------------------------------------------------------------
+
+.field-tools {
+    position: absolute;
+    top: 0;
+    right: 0;
+    @extend .font-size-s;
+    font-family: $font-family-medium;
+}
+
+.field-tools li {
+    position: relative;
+    display: inline-block;
+    & + li {
+        margin-left: 1rem;
+    }
+}
+
+
+.field-tools a {
+    cursor: pointer;
+}

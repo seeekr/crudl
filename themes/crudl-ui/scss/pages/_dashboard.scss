@@ -1,0 +1,60 @@
+// ****************************************************************************
+// crudl.io
+// DASHBOARD
+//
+//
+// ****************************************************************************
+
+
+
+// Page specific styles
+// ----------------------------------------------------------------------------
+
+#app.dashboard {
+    strong, b {
+        @extend .font-family-mono-bold;
+    }
+    #viewport-content {
+        padding: 0 24px;
+        @extend .font-family-mono;
+    }
+    .mgs-container {
+        max-width: 1100px;
+    }
+    .box {
+        @extend .mgs-6;
+        &:last-child {
+            @extend .mgs-last;
+        }
+    }
+    .box {
+        h3 {
+            margin: 48px 0;
+            position: relative;
+            color: $text-color-silent;
+            @extend .font-family-mono-bold;
+            @extend .font-size-m;
+            &:after {
+                position: absolute;
+                bottom: -12px;
+                display: block;
+                content: " ";
+                width: 24px;
+                height: 0;
+                border-bottom: 4px solid $text-color-silent;
+            }
+        }
+        p {
+            margin: 10px 0;
+        }
+    }
+    .mgs-row {
+        &:first-of-type {
+            .box {
+                h3 {
+                    margin-top: 0;
+                }
+            }
+        }
+    }
+}

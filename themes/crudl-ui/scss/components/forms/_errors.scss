@@ -1,0 +1,33 @@
+// ****************************************************************************
+// crudl.io
+// ERRORS
+//
+//
+// ****************************************************************************
+
+
+
+// Form error (non field errors)
+// ----------------------------------------------------------------------------
+
+.form-error {
+    margin: 0 0 2px;
+    padding: 15px 24px;
+    @extend .font-size-s;
+    @extend .font-family-mono-medium;
+    color: $color-3-500;
+    border-radius: $border-radius;
+    background: $color-3-100;
+}
+
+
+
+// Error message (below fields)
+// ----------------------------------------------------------------------------
+
+p.error-message {
+    margin: 8px 0 0;
+    color: $color-error;
+    @extend .font-size-xs;
+    @extend .font-family-mono-bold;
+}

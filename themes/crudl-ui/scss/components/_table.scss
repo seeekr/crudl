@@ -1,0 +1,278 @@
+// ****************************************************************************
+// crudl.io
+// TABLE
+//
+//
+// ****************************************************************************
+
+
+
+// Basics
+// ----------------------------------------------------------------------------
+
+table {
+    position: relative;
+    margin: 0;
+    width: auto;
+    min-width: 100%;
+    table-layout: fixed;
+    border: 0;
+    border-bottom: 4px solid darken($color-1-50, 0);
+    border-spacing: 0;
+    border-collapse: collapse;
+    background: transparent;
+}
+
+th,
+td {
+    padding: $table-cell-spacing;
+    font-weight: normal;
+    text-align: left;
+    white-space: nowrap;
+    div {
+        display: inline-block;
+    }
+    &:first-child {
+        padding-left: 24px !important;
+    }
+}
+th {
+    @extend .font-family-bold;
+}
+
+thead {
+    tr {
+        border-bottom: $table-head-border;
+        border-bottom: 0;
+    }
+    th,
+    td {
+        font-size: $table-head-font-size;
+        color: $table-head-color;
+        vertical-align: bottom;
+        border-right: $table-head-cell-border;
+        border-bottom: $table-head-cell-border;
+        border-bottom: 0;
+        &:last-child {
+            border-right: 0;
+        }
+        div {
+            position: relative;
+            display: block;
+            margin: (-$table-cell-spacing-top) (-$table-cell-spacing-right) (-$table-cell-spacing-bottom) (-$table-cell-spacing-left);
+            padding: $table-cell-spacing-top $table-cell-spacing-right ($table-cell-spacing-bottom - $table-head-border-width) $table-cell-spacing-left;
+            transition: border $transition-speed $transition-cubic-bezier;
+            border-bottom: $table-head-cell-inner-border;
+        }
+    }
+}
+
+tbody {
+    tr {
+        transition: background $transition-speed $transition-cubic-bezier;
+        &:nth-child(even) {
+            background: $table-row-even-background;
+        }
+        &:nth-child(odd) {
+            background: $table-row-odd-background;
+        }
+        &:hover {
+            background: $table-row-hover-background;
+        }
+    }
+    th,
+    td {
+        border-right: $table-body-cell-border;
+        &:last-child {
+            border-right: 0;
+        }
+    }
+    tr {
+        &:nth-child(odd) {
+            th,
+            td {
+                border-right-color: $table-body-cell-odd-border-color;
+            }
+        }
+    }
+    th.main .item-handler {
+        transition: all $transition-speed $transition-cubic-bezier;
+        cursor: pointer;
+        color: $color-2-500;
+        &:hover {
+            color: $text-color;
+        }
+    }
+}
+
+
+
+// Specific cell formats and dependencies
+// ----------------------------------------------------------------------------
+
+th,
+td {
+    &.number,
+    &.integer,
+    &.decimal {
+        text-align: right;
+    }
+}
+
+th,
+td {
+    &.boolean {
+        text-align: center;
+    }
+}
+
+tbody {
+    td,
+    th {
+        &.boolean {
+            > div {
+                display: none;
+            }
+            &.true {
+                color: $boolean-true-color;
+                &:before {
+                    @include icon('check_circle');
+                    line-height: 0;
+                }
+            }
+            &.false {
+                color: $boolean-false-color;
+                &:before {
+                    @include icon('remove_circle');
+                    line-height: 0;
+                }
+            }
+        }
+    }
+}
+
+// Temporary styles for icon at user listview
+tbody {
+    th,
+    td {
+        img {
+            float: left;
+            margin: -4px 10px -5px 0;
+        }
+    }
+}
+
+
+
+// Sortable table
+// ----------------------------------------------------------------------------
+
+%sort-options-align-right {
+    float: right;
+    margin-right: -62px;
+    li {
+        display: inline-block;
+        float: left;
+    }
+}
+%sort-options-align-left {
+    float: left;
+    margin-left: -62px;
+    li {
+        display: inline-block;
+        float: right;
+    }
+}
+%table-head-sorted-align-left {
+    text-align: left;
+    white-space: nowrap;
+    > div {
+        padding-right: 74px;
+    }
+    ul.sort-options {
+        display: inline-block;
+        @extend %sort-options-align-right;
+    }
+}
+%table-head-sorted-align-right {
+    text-align: right !important;
+    white-space: nowrap;
+    > div {
+        padding-left: 74px;
+        padding-right: $table-cell-spacing-right;
+    }
+    ul.sort-options {
+        display: inline-block;
+        @extend %sort-options-align-left;
+    }
+}
+
+thead th {
+    ul.sort-options {
+        position: relative;
+        display: none;
+        margin-bottom: -20px;
+        white-space: nowrap;
+        li {
+            &.sort-remove {
+                @include icon-before("close", $float: "false");
+                visibility: hidden;
+            }
+        }
+    }
+}
+
+thead th {
+    &[aria-sort] {
+        @extend %table-head-sorted-align-left;
+        &.number,
+        &.integer,
+        &.decimal {
+            @extend %table-head-sorted-align-right;
+        }
+    }
+    &[aria-sort=ascending] {
+        .sort-icon {
+            @include icon-before("arrow_upward", $float: "false");
+        }
+    }
+    &[aria-sort=descending] {
+        .sort-icon {
+            @include icon-before("arrow_downward", $float: "false");
+        }
+    }
+}
+
+thead th.sortable {
+    cursor: pointer;
+    transition: color $transition-speed $transition-cubic-bezier, background $transition-speed $transition-cubic-bezier;
+    color: $table-head-sortable-color;
+    background: $table-head-sortable-background;
+    > div {
+        border-bottom-color: $table-head-sortable-cell-inner-border-color;
+    }
+    &:hover {
+        color: $table-head-sortable-hover-color;
+        background: $table-head-sortable-hover-background;
+        > div {
+            border-bottom-color: $table-head-sortable-cell-inner-hover-border-color;
+        }
+    }
+    &[aria-sort=ascending],
+    &[aria-sort=descending] {
+        color: $table-head-sorted-color;
+        ul.sort-options {
+            li.sort-priority {
+                visibility: visible;
+            }
+            &:hover {
+                li.sort-remove {
+                    visibility: visible;
+                }
+            }
+        }
+        > div {
+            border-bottom-color: $table-head-sorted-cell-inner-border-color;
+        }
+    }
+}

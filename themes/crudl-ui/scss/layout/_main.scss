@@ -1,0 +1,59 @@
+// ****************************************************************************
+// crudl.io
+// MAIN
+//
+//
+// ****************************************************************************
+
+
+
+// Basic styles
+// ----------------------------------------------------------------------------
+
+#main {
+    position: relative;
+    transition: padding 2*$transition-speed $transition-cubic-bezier;
+    padding-left: 0;
+    background: $viewport-background;
+}
+main {
+    z-index: 200;
+    padding: $viewport-padding;
+    height: auto;
+    min-height: 100%;
+    overflow: hidden;
+    @extend .overflow-y-scroll;
+    background: $viewport-background;
+}
+
+
+
+// Content
+// ----------------------------------------------------------------------------
+
+main #viewport-content {
+    position: relative;
+    margin-top: 48px;
+}
+
+
+
+// Scroll container
+// ----------------------------------------------------------------------------
+
+main .scroll-container {
+    &.scroll-horizontal {
+        position: relative;
+        margin: 0 (-$viewport-padding-right) 0 (-$viewport-padding-left);
+        padding-left: $viewport-padding-left;
+        padding-right: $viewport-padding-right;
+        width: auto;
+        min-width: 100%;
+        @extend .overflow-x-scroll;
+    }
+    .scroll-content {
+        display: inline-block;
+        min-width: 100%;
+        @extend .overflow-x-scroll;
+    }
+}

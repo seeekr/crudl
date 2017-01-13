@@ -1,0 +1,95 @@
+// ****************************************************************************
+// crudl.io
+// CHECKBOX
+//
+//
+// ****************************************************************************
+
+
+
+// Label
+// ----------------------------------------------------------------------------
+
+.type-checkbox {
+    label {
+        margin: 0;
+        display: inline-block;
+    }
+    .label {
+        display: inline-block;
+        margin: 4px 0 0 20px;
+    }
+}
+
+
+
+// Field
+// ----------------------------------------------------------------------------
+
+.type-checkbox {
+    .field[role=checkbox] {
+        position: relative;
+        display: inline-block;
+        margin: 0;
+        padding: $field-padding;
+        width: $field-checkbox-width;
+        height: $field-checkbox-height;
+        transition: border $transition-speed $transition-cubic-bezier, background $transition-speed $transition-cubic-bezier;
+        border: $field-border;
+        border-radius: $field-border-radius;
+        background: $field-background;
+        vertical-align: top;
+        &:focus {
+            border-color: $link-color;
+        }
+        &[aria-checked=true] {
+            border-color: $field-checkbox-checked-border-color;
+            background: $field-checkbox-checked-background;
+            &:before {
+                @include icon("check");
+                top: -6px;
+                left: (- $field-padding-left);
+                color: $field-checkbox-checked-color;
+            }
+            &:focus {
+                border-color: $field-checkbox-focus-border-color;
+                background: $field-checkbox-focus-background;
+                &:before {
+                    color: $field-checkbox-focus-color;
+                }
+            }
+        }
+        input {
+            display: none;
+        }
+    }
+}
+
+
+
+// Disabled & readonly
+// ----------------------------------------------------------------------------
+
+.type-checkbox.disabled {
+    .field[role=checkbox] {
+        border-color: $field-disabled-border-color !important;
+        background: $field-disabled-background !important;
+        &[aria-checked=true] {
+            &:before {
+                color: transparentize($field-disabled-color, .54) !important;
+            }
+        }
+    }
+}
+
+.type-checkbox.readonly {
+    .field[role=checkbox] {
+        border-color: $field-readonly-border-color !important;
+        background: $field-readonly-background !important;
+        &[aria-checked=true] {
+            &:before {
+                color: transparentize($field-readonly-color, .54) !important;
+            }
+        }
+    }
+}

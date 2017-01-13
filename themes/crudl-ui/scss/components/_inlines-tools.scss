@@ -1,0 +1,103 @@
+// ****************************************************************************
+// crudl.io
+// INLINES TOOLS
+//
+//
+// ****************************************************************************
+
+
+
+// Basics
+// ----------------------------------------------------------------------------
+
+.inlines-tools {
+    position: relative;
+    float: none;
+    width: 100%;
+    @extend .clearfix;
+    margin-bottom: 24px;
+    .fieldset-container-group + & {
+        margin-bottom: 0;
+        padding-bottom: 0;
+        border-bottom: 0;
+        margin-top: 24px;
+    }
+}
+
+
+
+// Button group
+// ----------------------------------------------------------------------------
+
+.inlines-tools {
+    [role=group].buttons {
+        li {
+            & + li {
+                margin-right: 4px;
+            }
+        }
+    }
+}
+
+
+
+// Buttons
+// ----------------------------------------------------------------------------
+
+.inlines-tools {
+    span[role=button] {
+        color: $text-color-shy;
+        border-color: transparent;
+        background: transparent;
+        a {
+            cursor: pointer;
+        }
+    }
+    button {
+        @extend .font-size-xs;
+        @extend .font-family-bold;
+        text-transform: uppercase;
+        color: $color-2-300;
+        padding-top: 0;
+        height: 32px;
+        line-height: 33px;
+        border-radius: 32px;
+        border-color: $color-1-50;
+        background: $color-1-50;
+        &:hover {
+            color: #fff;
+            border-color: $color-2-500;
+            background: $color-2-500;
+        }
+    }
+    li.initial {
+        padding-left: 24px;
+        button.action-add {
+            color: #fff;
+            border-color: $color-2-500;
+            background: $color-2-500;
+            &:hover {
+                border-color: $link-hover-color;
+                background: $link-hover-color;
+            }
+        }
+    }
+}
+
+
+
+// States
+// ----------------------------------------------------------------------------
+
+.inlines-tools {
+    &.state-expanded {
+        li.collapse-all {
+            display: none;
+        }
+    }
+    &.state-collapsed {
+        li.expand-all {
+            display: none;
+        }
+    }
+}

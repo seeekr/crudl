@@ -1,0 +1,10 @@
+[
+  {
+    "id": "modal.labelConfirm.default",
+    "defaultMessage": "Yes"
+  },
+  {
+    "id": "modal.labelCancel.default",
+    "defaultMessage": "Cancel"
+  }
+]

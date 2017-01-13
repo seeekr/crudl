@@ -1,0 +1,24 @@
+// ****************************************************************************
+// crudl.io
+// CONTEXT TOOLS
+//
+//
+// ****************************************************************************
+
+
+
+// Basics
+// ----------------------------------------------------------------------------
+
+.context-tools {
+    position: relative;
+    padding: 48px 24px 48px;
+}
+
+.context-tools + #viewport-content {
+    margin-top: 0;
+}
+
+#viewport-content + .context-tools {
+    padding: 42px 24px 0;
+}

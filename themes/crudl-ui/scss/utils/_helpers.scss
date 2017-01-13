@@ -1,0 +1,284 @@
+// ****************************************************************************
+// HELPERS
+//
+// Global classes, placeholders etc.
+// ****************************************************************************
+
+
+
+// Clearfix
+// ----------------------------------------------------------------------------
+
+.clearfix {
+    &:after {
+        content: "";
+        display: table;
+        clear: both;
+    }
+}
+%row {
+    position: relative;
+    float: left;
+    clear: both;
+    width: 100%;
+    @extend .clearfix;
+}
+
+
+
+// Typographic Placeholders
+// ----------------------------------------------------------------------------
+
+// Set font smoothings for better rendering
+%font-smoothing {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+// Disable tap highlight for touch devices
+%disable-highlight {
+    -webkit-tap-highlight-color: rgba(0,0,0,0);
+}
+
+
+
+// Diverse
+// ----------------------------------------------------------------------------
+
+.display-none {
+    display: none !important;
+}
+.display-block {
+    display: block !important;
+}
+[aria-hidden=true] {
+    display: none !important;
+}
+
+.overflow-x-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+.overflow-y-scroll {
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
+.overflow-ellipsis {
+    display: block;
+    max-width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.nowrap {
+    white-space: nowrap;
+}
+
+.transparent {
+    background: transparent !important;
+}
+
+
+
+// Fonts
+// ----------------------------------------------------------------------------
+
+.font-family {
+    font-family: $font-family;
+}
+.font-family-slab {
+    font-family: $font-family-slab;
+}
+
+.font-family-thin {
+    font-family: $font-family-thin;
+    font-weight: normal;
+}
+.font-family-thin-italic {
+    font-family: $font-family-thin-italic;
+    font-weight: normal;
+}
+.font-family-light {
+    font-family: $font-family-light;
+    font-weight: normal;
+}
+.font-family-light-italic {
+    font-family: $font-family-light-italic;
+    font-weight: normal;
+}
+.font-family-regular {
+    font-family: $font-family-regular;
+    font-weight: normal;
+}
+.font-family-medium {
+    font-family: $font-family-medium;
+    font-weight: normal;
+}
+.font-family-medium-italic {
+    font-family: $font-family-medium-italic;
+    font-weight: normal;
+}
+.font-family-bold {
+    font-family: $font-family-bold;
+    font-weight: normal;
+}
+.font-family-bold-italic {
+    font-family: $font-family-bold-italic;
+    font-weight: normal;
+}
+.font-family-regular-italic {
+    font-family: $font-family-regular-italic;
+    font-weight: normal;
+}
+
+.font-family-slab-thin {
+    font-family: $font-family-slab-thin;
+    font-weight: normal;
+}
+.font-family-slab-light {
+    font-family: $font-family-slab-light;
+    font-weight: normal;
+}
+.font-family-slab-regular {
+    font-family: $font-family-slab-regular;
+    font-weight: normal;
+}
+.font-family-slab-bold {
+    font-family: $font-family-slab-bold;
+    font-weight: normal;
+}
+
+.font-family-mono {
+    font-family: $font-family-mono;
+}
+.font-family-mono-italic {
+    font-family: $font-family-mono-italic;
+    font-weight: normal;
+}
+.font-family-mono-thin {
+    font-family: $font-family-mono-thin;
+    font-weight: normal;
+}
+.font-family-mono-thin-italic {
+    font-family: $font-family-mono-thin-italic;
+    font-weight: normal;
+}
+.font-family-mono-light {
+    font-family: $font-family-mono-light;
+    font-weight: normal;
+}
+.font-family-mono-regular {
+    font-family: $font-family-mono-regular;
+    font-weight: normal;
+}
+.font-family-mono-medium {
+    font-family: $font-family-mono-medium;
+    font-weight: normal;
+}
+.font-family-mono-medium-italic {
+    font-family: $font-family-mono-medium-italic;
+    font-weight: normal;
+}
+.font-family-mono-bold {
+    font-family: $font-family-mono-bold;
+    font-weight: normal;
+}
+.font-family-mono-bold-italic {
+    font-family: $font-family-mono-bold-italic;
+    font-weight: normal;
+}
+
+
+// Use mixin in @breakpoint scss files as extending classes is not allowed there
+@mixin font-family($font) {
+    font-family: #{$font};
+    font-weight: normal;
+}
+
+
+
+// Font Sizes & Line Heights
+// ----------------------------------------------------------------------------
+
+.font-size-xxl {
+    font-size: $font-size-xxl;
+    line-height: $line-height-xxl;
+}
+.font-size-xl {
+    font-size: $font-size-xl;
+    line-height: $line-height-xl;
+}
+.font-size-l {
+    font-size: $font-size-l;
+    line-height: $line-height-l;
+}
+.font-size-m {
+    font-size: $font-size-m;
+    line-height: $line-height-m;
+}
+.font-size-r {
+    font-size: $font-size-r;
+    line-height: $line-height-r;
+}
+.font-size-s {
+    font-size: $font-size-s;
+    line-height: $line-height-s;
+}
+.font-size-xs {
+    font-size: $font-size-xs;
+    line-height: $line-height-xs;
+}
+
+// Use mixin in @breakpoint scss files as extending classes is not allowed there
+@mixin font-size($size) {
+    @if ($size == 'xxl') {
+        font-size: $font-size-xxl;
+        line-height: $line-height-xxl;
+    }
+    @else if ($size == 'xl') {
+        font-size: $font-size-xl;
+        line-height: $line-height-xl;
+    }
+    @else if ($size == 'l') {
+        font-size: $font-size-l;
+        line-height: $line-height-l;
+    }
+    @else if ($size == 'm') {
+        font-size: $font-size-m;
+        line-height: $line-height-m;
+    }
+    @else if ($size == 'r') {
+        font-size: $font-size-r;
+        line-height: $line-height-r;
+    }
+    @else if ($size == 's') {
+        font-size: $font-size-s;
+        line-height: $line-height-s;
+    }
+    @else if ($size == 'xs') {
+        font-size: $font-size-xs;
+        line-height: $line-height-xs;
+    }
+}
+
+.line-height-xxl {
+    line-height: $line-height-xxl;
+}
+.line-height-xl {
+    line-height: $line-height-xl;
+}
+.line-height-l {
+    line-height: $line-height-l;
+}
+.line-height-m {
+    line-height: $line-height-m;
+}
+.line-height-r {
+    line-height: $line-height-r;
+}
+.line-height-s {
+    line-height: $line-height-s;
+}
+.line-height-xs {
+    line-height: $line-height-xs;
+}

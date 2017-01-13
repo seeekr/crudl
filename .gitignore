@@ -1,0 +1,6 @@
+.DS_STORE
+node_modules
+coverage/
+npm-debug.log
+NOTES.md
+eslint.html

@@ -1,0 +1,81 @@
+// ****************************************************************************
+// crudl.io
+// BUTTON COLORS
+//
+//
+// ****************************************************************************
+
+
+
+// Mixin
+// ----------------------------------------------------------------------------
+
+@mixin button-style($color, $border, $background) {
+    transition: all $transition-speed $transition-cubic-bezier;
+    color: $color;
+    border: $border;
+    background: $background;
+}
+
+
+
+// Transparent styles
+// ----------------------------------------------------------------------------
+
+.button-style-link-transparent {
+    @include button-style($link-color, transparent, transparent);
+}
+.button-style-delete-transparent {
+    @include button-style($color-delete, transparent, transparent);
+}
+.button-style-text-transparent {
+    @include button-style($text-color, transparent, transparent);
+}
+.button-style-text-quiet-transparent {
+    @include button-style($text-color-quiet, transparent, transparent);
+}
+.button-style-text-silent-transparent {
+    @include button-style($text-color-silent, transparent, transparent);
+}
+
+
+
+// Colored styles
+// ----------------------------------------------------------------------------
+
+.button-style-link {
+    @include button-style(#fff, $link-color, $link-color);
+}
+.button-style-link-silent {
+    @include button-style($link-color, $link-color-silent, $link-color-silent);
+}
+
+.button-style-delete {
+    @include button-style(#fff, $color-delete, $color-delete);
+}
+
+.button-style-text {
+    @include button-style(#fff, $text-color, $text-color);
+}
+.button-style-text-quiet {
+    @include button-style(#fff, $text-color-quiet, $text-color);
+}
+.button-style-text-silent {
+    @include button-style(#fff, $text-color-silent, $text-color);
+}
+
+
+
+// Assigning basic button style
+// ----------------------------------------------------------------------------
+
+button,
+[role=button] {
+    @extend .button-style-link;
+    &:hover {
+        @extend .button-style-text;
+    }
+    &:focus {
+        @extend .button-style-text;
+    }
+}

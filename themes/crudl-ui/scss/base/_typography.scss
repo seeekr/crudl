@@ -1,0 +1,61 @@
+// ****************************************************************************
+// crudl.io
+// TYPOGRAPHY
+//
+// Basic typography
+// ****************************************************************************
+
+html,
+body {
+    font-family: $font-family;
+    font-size: $base-font-size;
+    line-height: $base-line-height;
+    @extend %font-smoothing;
+}
+
+::selection {
+    color: $text-selection-color;
+    background-color: $text-selection-background;
+}
+
+
+
+// Headings
+// ----------------------------------------------------------------------------
+
+h1, h2, h3, h4 {
+    font-weight: normal;
+}
+
+
+
+// Links
+// ----------------------------------------------------------------------------
+
+a {
+    transition: color $transition-speed $transition-cubic-bezier;
+    color: $link-color;
+    text-decoration: none;
+    border: 0;
+    outline: 0;
+    &:hover {
+        color: $link-hover-color;
+    }
+}
+
+.oi-before {
+    margin-right: 1em;
+}
+.oi-after {
+    margin-left: 1em;
+}
+
+
+ul,
+ol {
+    list-style-type: none;
+}
+
+strong, b {
+    @extend .font-family-bold;
+}

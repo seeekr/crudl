@@ -1,0 +1,53 @@
+// ****************************************************************************
+// crudl.io
+// ACTIVE FLTERS
+//
+//
+// ****************************************************************************
+
+
+
+// Basics
+// ----------------------------------------------------------------------------
+
+.active-filters {
+    display: inline-block;
+    [role=option] {
+        display: inline-block;
+        margin: 8px 0 0 -24px;
+        padding: 12px 16px;
+        height: 40px;
+        @extend .font-size-s;
+        @extend .font-family-medium;
+        text-align: center;
+        border-radius: $border-radius;
+        background: $color-4-400;
+        & + [role=option] {
+            margin-left: 2px;
+        }
+        &.title {
+            padding: 12px 24px;
+            background: $color-1-50;
+        }
+        .label {
+            opacity: .54;
+            &:after {
+                content: ":"
+            }
+        }
+        .value {
+            display: inline-block;
+            margin: 0 0 0 8px;
+        }
+        button {
+            @include button-style(#fff, transparent, transparent);
+            margin: -12px -16px -12px 0;
+            @extend .font-size-s;
+            &:hover,
+            &:focus {
+                @include button-style($color-delete, transparent, transparent);
+            }
+        }
+
+    }
+}

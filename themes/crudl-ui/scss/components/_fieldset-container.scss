@@ -1,0 +1,97 @@
+// ****************************************************************************
+// crudl.io
+// FIELDSET CONTAINER
+//
+//
+// ****************************************************************************
+
+
+
+// Basics
+// ----------------------------------------------------------------------------
+
+.fieldset-container {
+    border-radius: $border-radius;
+    & + .fieldset-container {
+        margin-top: 24px;
+    }
+}
+
+.fieldset-container {
+    .fieldset {
+        border-top: $fieldset-border;
+        &:first-child {
+            border-top: 0;
+        }
+    }
+}
+
+
+
+// Header
+// ----------------------------------------------------------------------------
+
+.fieldset-container-header {
+    position: relative;
+    padding: $fieldset-container-header-padding;
+    transition: color $transition-speed $transition-cubic-bezier, border $transition-speed $transition-cubic-bezier, background $transition-speed $transition-cubic-bezier;
+    border-radius: $border-radius;
+    cursor: pointer;
+    &:before {
+        position: absolute;
+        left: 0px;
+        top: 0;
+        display: inline-block;
+        content: " ";
+        width: 0;
+        height: 48px;
+        transition: border $transition-speed $transition-cubic-bezier;
+    }
+    h3 {
+        @extend .font-family-medium;
+        &:before {
+            @include icon("keyboard_arrow_right");
+            margin-left: -59px;
+            margin-right: 34px;
+            font-size: 1.5rem;
+            transition: transform $transition-speed $transition-cubic-bezier;
+        }
+    }
+    &[aria-expanded=false] {
+        color: $fieldset-container-header-color;
+        border-left: 48px solid $fieldset-container-header-icon-background;
+        background: $fieldset-container-header-background;
+        &:before {
+            border-right: $fieldset-container-header-icon-border;
+        }
+        h3:before {
+            color: $fieldset-container-header-icon-color;
+            transform: rotate(0);
+        }
+        &:hover {
+            color: $fieldset-container-hover-header-color;
+            border-left-color: $fieldset-container-hover-header-icon-background;
+            background: $fieldset-container-hover-header-background;
+            &:before {
+                border-right: $fieldset-container-hover-header-icon-border;
+            }
+            h3:before {
+                color: $fieldset-container-hover-header-icon-color;
+                transform: rotate(90deg);
+            }
+        }
+    }
+    &[aria-expanded=true] {
+        color: $fieldset-container-expanded-header-color;
+        border-bottom-right-radius: 0;
+        border-left: 48px solid $fieldset-container-expanded-header-icon-background;
+        background: $fieldset-container-expanded-header-background;
+        &:before {
+            border-right: $fieldset-container-expanded-header-icon-border;
+        }
+        h3:before {
+            color: $fieldset-container-expanded-header-icon-color;
+            transform: rotate(90deg);
+        }
+    }
+}

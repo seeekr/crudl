@@ -1,0 +1,133 @@
+// ****************************************************************************
+// crudl.io
+// MAIN STYLES
+//
+// Collecting SASS files for screen css output
+// ****************************************************************************
+
+
+
+// Reset/normalize
+// ----------------------------------------------------------------------------
+
+@import "base/reset";
+
+
+
+// Fonts
+// ----------------------------------------------------------------------------
+
+@import "base/fonts";
+@import "base/material-icons";
+
+
+
+
+// Import Variables
+// ----------------------------------------------------------------------------
+
+@import "utils/variables";
+@import "utils/helpers";
+@import "utils/mixins";
+@import "base/typography";
+
+
+
+// Mueller Grid System
+// ----------------------------------------------------------------------------
+
+// Define a mueller map
+@import "utils/mueller";
+
+// Import grid system
+@import "mueller/grid-system";
+
+
+
+// Import Components
+// ----------------------------------------------------------------------------
+
+@import "components/loading";
+
+@import "components/buttons/base";
+@import "components/buttons/button-styles";
+@import "components/buttons/button-types";
+@import "components/buttons/button-actions";
+@import "components/buttons/button-groups";
+
+@import "components/context-tools";
+@import "components/field-tools";
+@import "components/fieldset-container";
+@import "components/fieldset";
+@import "components/field-container";
+@import "components/fieldset-container-group";
+
+@import "components/field-button-groups/base";
+@import "components/field-button-groups/field-button-group-inner";
+
+@import "components/forms/forms";
+@import "components/forms/labels";
+@import "components/forms/errors";
+@import "components/forms/fields/base";
+@import "components/forms/fields/autocomplete";
+@import "components/forms/fields/checkbox";
+@import "components/forms/fields/radio";
+@import "components/forms/fields/search";
+@import "components/forms/fields/listbox";
+
+@import "components/filter";
+@import "components/active-filters";
+@import "components/table";
+@import "components/tabs";
+@import "components/object-tools";
+@import "components/inlines-tools";
+@import "components/toolbar";
+@import "components/pagination";
+@import "components/modal";
+
+
+
+// Import Layout
+// ----------------------------------------------------------------------------
+
+@import "layout/app";
+@import "layout/breadcrumbs";
+@import "layout/header";
+@import "layout/footer";
+@import "layout/navigation";
+@import "layout/messages";
+@import "layout/main";
+
+
+
+// Import Pages
+// ----------------------------------------------------------------------------
+
+@import "pages/dashboard";
+@import "pages/login";
+@import "pages/logout";
+
+
+
+// Temporary test styles
+// ----------------------------------------------------------------------------
+
+$body-background: #fff;
+.index-screen h2 {
+    font-family: $font-family-bold-italic !important;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    color: $text-color;
+    background: $body-background;
+}
+
+#crudl-root,
+#crudl-root > div {
+    width: 100%;
+}

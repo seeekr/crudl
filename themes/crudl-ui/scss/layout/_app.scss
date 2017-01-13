@@ -1,0 +1,64 @@
+// ****************************************************************************
+// crudl.io
+// APP
+//
+//
+// ****************************************************************************
+
+
+
+// Breakpoint specific basic dimensions
+// ----------------------------------------------------------------------------
+
+@media screen and (orientation: landscape) {
+    #app {
+        min-width: 758px;
+    }
+}
+
+@media screen and (orientation: portrait) {
+    #app {
+        min-width: 300px;
+    }
+}
+
+
+
+// Basic Styles
+// ----------------------------------------------------------------------------
+
+#app {
+    position: absolute;
+    width: 100%;
+    min-height: 100%;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background: $app-background;
+}
+
+
+
+// App title
+// ----------------------------------------------------------------------------
+
+#app-title {
+    display: none;
+    // position: fixed;
+    // z-index: 890;
+    // display: block;
+    // transition: left 2*$transition-speed $transition-cubic-bezier, opacity 2*$transition-speed $transition-cubic-bezier;
+    // top: 0;
+    // left: 72px;
+    // padding: 15px 24px 0 0;
+    // height: 48px;
+    // @extend .font-family-mono-medium;
+    // @extend .font-size-s;
+    // white-space: nowrap;
+    // color: #fff;
+    // background: transparentize($color-2-900, 1);
+    // overflow: hidden;
+    // text-overflow: ellipsis;
+    // opacity: 1;
+}

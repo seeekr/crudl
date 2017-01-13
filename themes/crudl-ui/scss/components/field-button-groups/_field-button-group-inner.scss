@@ -1,0 +1,219 @@
+// ****************************************************************************
+//  crudl.io
+//  FIELD-BUTTON GROUP INNER
+//
+//  Structure:
+//
+//  div[role=group].field-button-group.field-button-inner
+//      ⌙ div.field
+//          ⌙ input / div.label
+//      ⌙ ul[role=group].buttons
+//          ⌙ li
+//              ⌙ button / [role=button]
+//
+// ****************************************************************************
+
+
+
+// Basics
+// ----------------------------------------------------------------------------
+
+.field-button-group.field-button-inner {
+    transition: border $transition-speed $transition-cubic-bezier;
+    border: $field-border;
+    border-radius: $border-radius;
+    background: $field-background;
+
+    // Search field
+    .type-search & {
+        border-radius: 4rem;
+        input {
+            @extend %field-rounded;
+        }
+    }
+
+    // Expanded
+    &[aria-expanded=true] {
+        border: $field-focus-border;
+        background: $field-focus-background;
+    }
+
+    // Focus/Error states
+    &.focus,
+    &:focus {
+        border: $field-focus-border !important;
+        background: $field-focus-background !important;
+    }
+    .error & {
+        border: $field-error-border;
+        background: $field-error-background;
+    }
+}
+
+
+
+// Fields
+// ----------------------------------------------------------------------------
+
+.field-button-group.field-button-inner {
+    .field {
+        input {
+            &[type='text'],
+            &[type='password'],
+            &[type='email'],
+            &[type='url'] {
+                border: 0;
+                height: $button-height - ($button-border-width * 2);
+            }
+        }
+        select {
+            border: 0;
+            height: $button-height - ($button-border-width * 2);
+            &[multiple] {
+                height: 131px;
+            }
+        }
+        textarea {
+            border: 0;
+        }
+    }
+}
+
+
+
+// Buttons
+// ----------------------------------------------------------------------------
+
+.field-button-group.field-button-inner {
+    button,
+    [role=button] {
+        position: relative;
+        z-index: 100;
+        margin: 0;
+        padding-top: $button-padding-top;
+        min-width: 36px;
+        height: $button-height - ($button-border-width * 2);
+        border: 0;
+        border-radius: 0;
+        @include button-style($color-2-300, transparent, transparent);
+        &.icon-only {
+            width: $button-height - ($button-border-width * 2);
+        }
+        &:hover,
+        &:focus {
+            @extend .button-style-link;
+        }
+        &.action-toggle-expand {
+            @extend .button-style-text-silent-transparent;
+        }
+        &.action-search {
+            @extend .button-style-text-silent-transparent;
+        }
+        &.action-clear {
+            @extend .button-style-text-silent-transparent;
+            &:hover,
+            &:focus {
+                @extend .button-style-delete;
+            }
+        }
+        &.indicator,
+        &.indicator:hover,
+        &.indicator:focus {
+            @extend .button-style-text-silent-transparent;
+        }
+    }
+    &.focus {
+        button,
+        [role=button] {
+            &.inherit-focus {
+                @extend .button-style-link;
+            }
+        }
+    }
+}
+
+
+
+// Button group
+// ----------------------------------------------------------------------------
+
+.field-button-group.field-button-inner {
+    [role=group].buttons {
+        li {
+            border-left: 2px solid lighten($field-border-color, 7);
+            &:last-child {
+                button,
+                [role=button] {
+                    border-top-right-radius: $button-border-radius;
+                    border-bottom-right-radius: $button-border-radius;
+                    &.icon-only.boundless {
+                        width: $button-height - ($button-border-width * 4);
+                    }
+
+                }
+            }
+        }
+    }
+    &.focus [role=group].buttons li:last-child {
+        button,
+        [role=button] {
+            border-top-right-radius: 0 !important;
+            border-bottom-right-radius: 0 !important;
+        }
+    }
+}
+
+.hide-on-group-focus {
+    transition: opacity $transition-speed $transition-cubic-bezier;
+    opacity: 1;
+}
+.focus {
+    .hide-on-group-focus {
+        opacity: 0;
+    }
+}
+
+
+// Disabled & Readonly
+// ----------------------------------------------------------------------------
+
+.field-button-group.field-button-inner {
+    .disabled & {
+        cursor: default !important;
+        border-color: $field-disabled-border-color !important;
+        background: $field-disabled-background !important;
+        &.focus {
+            color: $field-disabled-color !important;
+            border-color: $field-disabled-border-color !important;
+            background: $field-disabled-background !important;
+        }
+        input,
+        .label {
+            color: $field-disabled-color !important;
+            border-color: transparent !important;
+            background: $field-disabled-background !important;
+        }
+        [role=group].buttons {
+            display: none;
+        }
+    }
+    .readonly & {
+        cursor: default !important;
+        border-color: $field-readonly-border-color !important;
+        background: $field-readonly-background !important;
+        &.focus {
+            color: $field-readonly-color !important;
+            border-color: $field-readonly-border-color !important;
+            background: $field-readonly-background !important;
+        }
+        input,
+        .label {
+            color: $field-readonly-color !important;
+            border-color: transparent !important;
+            background: $field-readonly-background !important;
+        }
+        [role=group].buttons {
+            display: none;
+        }
+    }
+}

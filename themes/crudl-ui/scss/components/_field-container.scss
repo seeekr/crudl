@@ -1,0 +1,49 @@
+// ****************************************************************************
+// crudl.io
+// FIELD CONTAINER
+//
+//
+// ****************************************************************************
+
+
+
+// Basics
+// ----------------------------------------------------------------------------
+
+.field-container {
+    padding: $field-container-padding;
+    border-radius: $border-radius;
+    > :last-child {
+        margin-bottom: 0;
+    }
+    & + .field-container {
+        border-top: 2px solid $viewport-background;
+    }
+}
+
+.field-container.hidden {
+    display: none !important;
+    & + .field-container {
+        border-top: 0 !important;
+    }
+}
+
+.fieldset {
+    .field-container {
+        padding-right: 0;
+        padding-left: 0;
+    }
+}
+
+
+
+// Type: Select
+// ----------------------------------------------------------------------------
+
+.field-container {
+    &.type-select {
+        input {
+            display: none;
+        }
+    }
+}

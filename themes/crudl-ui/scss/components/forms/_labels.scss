@@ -1,0 +1,38 @@
+// ****************************************************************************
+// crudl.io
+// LABELS
+//
+//
+// ****************************************************************************
+
+
+
+// Placeholder
+// ----------------------------------------------------------------------------
+
+%label {
+    position: relative;
+    display: block;
+    margin: 0 0 5px;
+    max-width: 800px;
+    @extend .font-size-s;
+    @extend .font-family-bold;
+    color: $text-color-quiet;
+    .required & {
+        &:after {
+            content: ' *';
+        }
+    }
+    .error & {
+        color: $color-error;
+    }
+}
+
+
+
+// Basics
+// ----------------------------------------------------------------------------
+
+label {
+    @extend %label;
+}

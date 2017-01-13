@@ -1,0 +1,147 @@
+// ****************************************************************************
+//  crudl.io
+//  FIELD-BUTTON GROUPS
+//
+//  Structure:
+//
+//  div[role=group].field-button-group && .field-button-inner / .field-button-outer
+//      ⌙ div.field
+//          ⌙ input / div.label
+//      ⌙ ul[role=group].buttons
+//          ⌙ li
+//              ⌙ button / [role=button]
+//
+// ****************************************************************************
+
+$field-button-border-width: $field-border-width;
+$field-button-background: lighten($link-color, 40);
+$field-button-border-color: lighten($link-color, 30);
+$field-button-border: $field-button-border-width solid $field-button-border-color;
+$field-button-color: darken($link-color, 5);
+$field-button-hover-background: lighten($link-color, 0);
+$field-button-hover-border-color: lighten($link-color, 0);
+$field-button-hover-border: $field-button-border-width solid $field-button-hover-border-color;
+$field-button-hover-color: #fff;
+
+
+
+// Placeholders
+// ----------------------------------------------------------------------------
+
+%field-buttons-combo-field {
+    border: 0;
+    background: 0;
+}
+%field-buttons-combo-button {
+    position: relative;
+    z-index: 100;
+    .state-focus & {
+        border-color: $field-focus-border-color;
+    }
+    &[aria-disabled=true] {
+        color: $text-color-silent !important;
+    }
+    span {
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+    }
+}
+
+
+
+// Basics
+// ----------------------------------------------------------------------------
+
+.field-button-group {
+    position: relative;
+    display: flex;
+    flex-flow: row nowrap;
+}
+
+.field-button-group .field {
+    flex: 1 auto;
+    border-radius: $field-border-radius;
+    input {
+        &[type='text'],
+        &[type='password'],
+        &[type='email'],
+        &[type='url'] {
+            @extend %field-buttons-combo-field;
+        }
+    }
+    select {
+        @extend %field-buttons-combo-field;
+    }
+}
+.field-button-group [role=group].buttons {
+    display: flex;
+    flex-flow: row nowrap;
+    align-self: flex-start;
+    font-size: 0;
+    line-height: 0;
+    white-space: nowrap;
+    button,
+    [role=button] {
+        @extend %field-buttons-combo-button;
+    }
+}
+
+
+
+// Readonly
+// ----------------------------------------------------------------------------
+
+.field-button-group {
+    input {
+        &[readonly] {
+            border-color: transparent !important;
+            background: transparent !important;
+        }
+    }
+}
+
+
+
+// Layout "Outer"
+// ----------------------------------------------------------------------------
+
+// .field-buttons-outer {
+//
+//     // Field
+//     .field-buttons-combo-field {
+//         border: $field-border;
+//         background: $field-background;
+//     }
+//
+//     // Focus
+//     &.state-focus {
+//         .field-buttons-combo-field {
+//             border: $field-focus-border;
+//             background: $field-focus-background;
+//         }
+//     }
+//
+//     // Error
+//     .state-error & {
+//         .field-buttons-combo-field {
+//             border: $field-error-border;
+//             background: $field-error-background;
+//         }
+//         &.state-focus {
+//             .field-buttons-combo-field {
+//                 background: $field-focus-background;
+//             }
+//         }
+//     }
+//
+//     // Buttons
+//     .field-buttons-combo-buttons {
+//         margin-left: 1rem;
+//         button {
+//             &:first-of-type {
+//                 border-top-left-radius: $border-radius;
+//                 border-bottom-left-radius: $border-radius;
+//             }
+//         }
+//     }
+// }

@@ -1,0 +1,139 @@
+// ****************************************************************************
+// crudl.io
+// PAGINATION
+//
+//
+// ****************************************************************************
+
+
+
+// Basic styles
+// ----------------------------------------------------------------------------
+
+ol.pagination {
+    display: inline-block;
+    margin: 8px 64px 0 -24px; // top margin needed for right position related to active-filters
+    li {
+        position: relative;
+        display: inline-block;
+        padding: 12px 24px;
+        height: 40px;
+        @extend .font-size-s;
+        @extend .font-family-medium;
+        text-align: center;
+        transition: color $transition-speed $transition-cubic-bezier, background $transition-speed $transition-cubic-bezier;
+        background: $color-1-50;
+        & + li {
+            margin-left: 2px;
+        }
+    }
+    li {
+        &.results {
+            border-top-left-radius: $border-radius;
+            border-bottom-left-radius: $border-radius;
+            &:last-child {
+                border-top-right-radius: $border-radius;
+                border-bottom-right-radius: $border-radius;
+            }
+            & + li {
+                margin-left: 2px;
+            }
+            &.filtered {
+                padding-left: 12px;
+                border-left: 12px solid $filter-active-color;
+                // background: $filter-active-color;
+                // background: repeating-linear-gradient(
+                //     45deg,
+                //     $color-4-100,
+                //     $color-4-100, 9px,
+                //     #fff 9px,
+                //     #fff 10px,
+                //     $color-1-50 10px,
+                //     $color-1-50 19px,
+                //     #fff 19px,
+                //     #fff 20px
+                // );
+            }
+        }
+        &.page {
+            cursor: pointer;
+            padding: 12px;
+            min-width: 40px;
+            transition: color $transition-speed $transition-cubic-bezier, background $transition-speed $transition-cubic-bezier;
+            color: $color-2-400;
+            background: $color-2-50;
+            &:hover {
+                color: #fff;
+                background: $color-2-400;
+            }
+            &:last-child {
+                border-top-right-radius: $border-radius;
+                border-bottom-right-radius: $border-radius;
+            }
+        }
+        &.show-more {
+            padding: 12px 16px;
+            // &:before {
+            //     @include icon('autorenew');
+            //     line-height: 0em;
+            //     margin: 0 -8px;
+            // }
+            // &.loading {
+            //     &:before {
+            //         -webkit-transform: translateZ(0);
+            //         -ms-transform: translateZ(0);
+            //         transform: translateZ(0);
+            //         -webkit-animation: load8 2s infinite linear;
+            //         animation: load8 2s infinite linear;
+            //     }
+            // }
+        }
+        &.current,
+        &.current:hover {
+            color: #fff;
+            background: $color-1-900;
+        }
+    }
+}
+
+@-webkit-keyframes load8 {
+  0% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+@keyframes load8 {
+  0% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+
+
+
+
+// Viewport pagination loading indicator
+// ----------------------------------------------------------------------------
+
+#viewport .pagination {
+    .loading-indicator {
+        position: relative;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: auto;
+        color: $text-color-shy;
+        line-height: 1.25rem;
+        > div {
+            margin-right: $table-cell-spacing-left;
+        }
+    }
+}

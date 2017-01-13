@@ -1,0 +1,165 @@
+// ****************************************************************************
+// crudl.io
+// FIELD CONTAINER GROUP
+//
+//
+// ****************************************************************************
+
+
+
+// Basics
+// ----------------------------------------------------------------------------
+
+.fieldset-container-group {
+    .fieldset-container-header {
+        padding-top: 10px;
+        padding-bottom: 14px;
+        border-radius: 0;
+        h3 {
+            @extend .font-size-r;
+        }
+    }
+    .fieldset-container {
+        & + .fieldset-container {
+            margin-top: 0;
+        }
+        .fieldset {
+            &:first-child {
+                border-top: $fieldset-border;
+            }
+        }
+    }
+    > [role=region] {
+        .fieldset-container {
+            &:last-of-type {
+                .fieldset-header {
+                    &[aria-expanded=false] {
+                        border-bottom-left-radius: $border-radius;
+                        border-bottom-right-radius: $border-radius;
+                    }
+                }
+            }
+        }
+    }
+    & + .fieldset-container-group {
+        margin-top: 2px;
+    }
+}
+
+
+
+// Header
+// ----------------------------------------------------------------------------
+
+.fieldset-container-group-header {
+    position: relative;
+    padding: $fieldset-container-group-header-padding;
+    transition: color $transition-speed $transition-cubic-bezier, border $transition-speed $transition-cubic-bezier, background $transition-speed $transition-cubic-bezier;
+    border-radius: $border-radius;
+    cursor: pointer;
+    &:before {
+        position: absolute;
+        left: 0px;
+        top: 0;
+        display: inline-block;
+        content: " ";
+        width: 0;
+        height: 48px;
+        transition: border $transition-speed $transition-cubic-bezier;
+    }
+    h2 {
+        @extend .font-family-medium;
+        &:before {
+            @include icon("keyboard_arrow_right");
+            margin-left: -59px;
+            margin-right: 34px;
+            font-size: 1.5rem;
+            transition: transform $transition-speed $transition-cubic-bezier;
+        }
+    }
+    &[aria-expanded=false] {
+        color: $fieldset-container-group-header-color;
+        border-left: 48px solid $fieldset-container-group-header-icon-background;
+        background: $fieldset-container-group-header-background;
+        &:before {
+            border-right: $fieldset-container-group-header-icon-border;
+        }
+        h2:before {
+            color: $fieldset-container-group-header-icon-color;
+            transform: rotate(0);
+        }
+        &:hover {
+            color: $fieldset-container-group-hover-header-color;
+            border-left-color: $fieldset-container-group-hover-header-icon-background;
+            background: $fieldset-container-group-hover-header-background;
+            &:before {
+                border-right: $fieldset-container-group-hover-header-icon-border;
+            }
+            h2:before {
+                color: $fieldset-container-group-hover-header-icon-color;
+                transform: rotate(90deg);
+            }
+        }
+    }
+    &[aria-expanded=true] {
+        color: $fieldset-container-group-expanded-header-color;
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: 0;
+        border-left: 48px solid $fieldset-container-group-expanded-header-icon-background;
+        background: $fieldset-container-group-expanded-header-background;
+        &:before {
+            border-right: $fieldset-container-group-expanded-header-icon-border;
+        }
+        h2:before {
+            color: $fieldset-container-group-expanded-header-icon-color;
+            transform: rotate(90deg);
+        }
+    }
+    [role=group].buttons {
+        // display:none;
+        position: absolute;
+        top: 0;
+        right: 0;
+        button {
+            @extend %button-size-regular;
+            border-radius: 0;
+            transition: opacity 2*$transition-speed $transition-cubic-bezier;
+            opacity: 1;
+            &.action-clear {
+                @extend .button-style-link-transparent;
+                &:hover {
+                    @extend .button-style-delete;
+                }
+            }
+            &.action-save {
+                @include button-style(#fff, $color-2-300, $color-2-300);
+                &:hover {
+                    @include button-style(#fff, $color-2-500, $color-2-500);
+                }
+            }
+            &[disabled] {
+                opacity: 0;
+                color: #fff !important;
+                border-color: transparent !important;
+                background: transparent !important;
+            }
+        }
+        li:last-child {
+            button {
+                border-top-right-radius: $button-border-radius;
+            }
+        }
+        li[aria-hidden=true] {
+            display: inline-block !important;
+            width: 0 !important;
+            height: 0 !important;
+            overflow: hidden;
+        }
+        li {
+            border-left: 2px solid transparentize(#fff, .54);
+            & + li {
+                margin-left: 0;
+            }
+        }
+    }
+}

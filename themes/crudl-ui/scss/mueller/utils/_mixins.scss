@@ -1,0 +1,373 @@
+// ****************************************************************************
+// MGS
+//
+// Global mixins
+// ****************************************************************************
+
+
+
+// Mueller Grid System
+// Establish a mueller grid system based on options
+// ----------------------------------------------------------------------------
+
+@mixin mgs($mgs) {
+
+    @each $breakpoint in map-keys(map-get($mgs, breakpoints)) {
+
+        // Set breakpoint specific variables
+        $columns: mgs-map-fetch($mgs, breakpoints $breakpoint "columns");
+        $column-units: mgs-map-fetch($mgs, breakpoints $breakpoint "column-units");
+        $column-width: mgs-map-fetch($mgs, breakpoints $breakpoint "column-width");
+        $gutter-width: mgs-map-fetch($mgs, breakpoints $breakpoint "gutter-width");
+        $gutter: mgs-map-fetch($mgs, breakpoints $breakpoint "gutter");
+        $base-font-size: mgs-map-fetch($mgs, breakpoints $breakpoint "base-font-size");
+        $base-line-height: mgs-map-fetch($mgs, breakpoints $breakpoint "base-line-height");
+
+        // Breakpoint specific grid placeholders & classes
+        @include mgs-breakpoint($breakpoint) {
+
+            // Establish container
+            @include mgs-container($breakpoint);
+
+            // Establish base font-size & line-height
+            @include mgs-baseline($breakpoint);
+
+            // Establish first/last classes
+            @include mgs-first($breakpoint);
+            @include mgs-last($breakpoint);
+
+            // Establish show/hide classes
+            @include mgs-show($breakpoint);
+            @include mgs-hide($breakpoint);
+
+            // Establish column-related classes,
+            // either for given units:
+            @if $column-units {
+                @each $n in $column-units {
+                    @include mgs-column($breakpoint, $n);
+                    @include mgs-append($breakpoint, $n);
+                    @include mgs-prepend($breakpoint, $n);
+                    @include mgs-pull($breakpoint, $n);
+                    @include mgs-push($breakpoint, $n);
+                }
+            }
+            // or for all columns:
+            @else {
+                @for $n from 0 through $columns {
+                    @include mgs-column($breakpoint, $n);
+                    @include mgs-append($breakpoint, $n);
+                    @include mgs-prepend($breakpoint, $n);
+                    @include mgs-pull($breakpoint, $n);
+                    @include mgs-push($breakpoint, $n);
+                }
+            }
+
+        }
+    }
+}
+
+
+
+// Breakpoint
+// Establish @media (min/max) for a breakpoint
+// ----------------------------------------------------------------------------
+
+@mixin mgs-breakpoint($breakpoint) {
+    // Fetch needed breakpoint's options
+    $breakpoint-width-min: mgs-map-fetch($mgs, breakpoints $breakpoint "breakpoint-width-min");
+    $breakpoint-width-max: mgs-map-fetch($mgs, breakpoints $breakpoint "breakpoint-width-max");
+
+    // Default: if no min-width and no max-width
+    @if not $breakpoint-width-min and not $breakpoint-width-max {
+        @content;
+    }
+    // Else: if min-width and max-width
+    @else if  $breakpoint-width-min and $breakpoint-width-max {
+        @media screen and (min-width: $breakpoint-width-min) and (max-width: $breakpoint-width-max) {
+            @content;
+        }
+    }
+    // Else: if min-width or max-width
+    @else {
+        // If min-width only
+        @if $breakpoint-width-min {
+            @media screen and (min-width: $breakpoint-width-min) {
+                @content;
+            }
+        }
+        // If max-width only
+        @if $breakpoint-width-max {
+            @media screen and (max-width: $breakpoint-width-max) {
+                @content;
+            }
+        }
+    }
+}
+
+
+
+// Container
+// Set container-width for a breakpoint
+// ----------------------------------------------------------------------------
+
+@mixin mgs-container($breakpoint) {
+    .mgs-#{$breakpoint}-container {
+        width: mgs-container-width($breakpoint);
+    }
+    @if $mgs-universal-classes == True {
+        .mgs-container {
+            width: mgs-container-width($breakpoint);
+        }
+    }
+}
+
+
+
+// Baseline
+// Establish base font-size & line-height for a breakpoint
+// ----------------------------------------------------------------------------
+
+@mixin mgs-baseline($breakpoint) {
+    // Fetch needed breakpoint's options
+    $base-font-size: mgs-map-fetch($mgs, breakpoints $breakpoint "base-font-size");
+    $base-line-height: mgs-map-fetch($mgs, breakpoints $breakpoint "base-line-height");
+
+    // If base-font-size is given
+    @if $base-font-size {
+        html,
+        body {
+            font-size: $base-font-size;
+            text-size-adjust: none;
+        }
+    }
+    // If base-font-size is given
+    @if $base-font-size {
+        html,
+        body {
+            line-height: $base-line-height;
+            text-size-adjust: none;
+        }
+    }
+}
+
+
+
+// Column
+// Establish classes for a column that spans $n column units
+// ----------------------------------------------------------------------------
+
+@mixin mgs-column($breakpoint, $n) {
+    // Establish column class
+    .mgs-#{$breakpoint}-#{$n} {
+        position: relative;
+        float: left;
+        width: mgs-column-width($breakpoint, $n);
+        margin-right: mgs-gutter-width($breakpoint);
+    }
+    @if $mgs-universal-classes == True {
+        .mgs-#{$n} {
+            position: relative;
+            float: left;
+            width: mgs-column-width($breakpoint, $n);
+            margin-right: mgs-gutter-width($breakpoint);
+        }
+    }
+}
+
+
+
+// Append & Prepend
+// ----------------------------------------------------------------------------
+
+// Add $n columns worth of space to the right of a column
+@mixin mgs-append($breakpoint, $n) {
+    .mgs-append-#{$breakpoint}-#{$n} {
+        padding-right: mgs-column-width($breakpoint, $n) + mgs-gutter-width($breakpoint) !important;
+    }
+    @if $mgs-universal-classes == True {
+        .mgs-append-#{$n} {
+            padding-right: mgs-column-width($breakpoint, $n) + mgs-gutter-width($breakpoint) !important;
+        }
+    }
+}
+
+// Add $n columns worth of space to the left of a column
+@mixin mgs-prepend($breakpoint, $n) {
+    .mgs-prepend-#{$breakpoint}-#{$n} {
+        padding-left: mgs-column-width($breakpoint, $n) + mgs-gutter-width($breakpoint) !important;
+    }
+    @if $mgs-universal-classes == True {
+        .mgs-prepend-#{$n} {
+            padding-left: mgs-column-width($breakpoint, $n) + mgs-gutter-width($breakpoint) !important;
+        }
+    }
+
+}
+
+
+
+// Pull & Push
+// ----------------------------------------------------------------------------
+
+// Add $n columns worth of negative space to the left of a column
+@mixin mgs-pull($breakpoint, $n) {
+
+    // Fetch needed breakpoint's options
+    $column-width: mgs-map-fetch($mgs, breakpoints $breakpoint "column-width");
+    $gutter-width: mgs-map-fetch($mgs, breakpoints $breakpoint "gutter-width");
+
+    .mgs-pull-#{$breakpoint}-#{$n} {
+        position: relative;
+        @if $n == 0 {
+            margin-left: 0 !important;
+        }
+        @else {
+            margin-left: - $n * ($column-width + $gutter-width) + $gutter-width;
+        }
+    }
+    @if $mgs-universal-classes == True {
+        .mgs-pull-#{$n} {
+            position: relative;
+            @if $n == 0 {
+                margin-left: 0 !important;
+            }
+            @else {
+                margin-left: - $n * ($column-width + $gutter-width) + $gutter-width;
+            }
+        }
+    }
+}
+
+// Add $n columns worth of negative space to the right of a column
+@mixin mgs-push($breakpoint, $n) {
+
+    // Fetch needed breakpoint's options
+    $column-width: mgs-map-fetch($mgs, breakpoints $breakpoint "column-width");
+    $gutter-width: mgs-map-fetch($mgs, breakpoints $breakpoint "gutter-width");
+
+    .mgs-push-#{$breakpoint}-#{$n} {
+        position: relative;
+        @if $n == 0 {
+            margin-left: 0 !important;
+            margin-right: 0 !important;
+        }
+        @else {
+            margin-left: $n * ($column-width + $gutter-width);
+            margin-right: - $n * ($column-width + $gutter-width);
+        }
+        // margin-top: 0;
+        // margin-bottom: 0;
+    }
+    @if $mgs-universal-classes == True {
+        .mgs-push-#{$n} {
+            position: relative;
+            @if $n == 0 {
+                margin-left: 0 !important;
+                margin-right: 0 !important;
+            }
+            @else {
+                margin-left: $n * ($column-width + $gutter-width);
+                margin-right: - $n * ($column-width + $gutter-width);
+            }
+            // margin-top: 0;
+            // margin-bottom: 0;
+        }
+    }
+
+}
+
+
+
+// First & Last
+// ----------------------------------------------------------------------------
+
+// First column
+@mixin mgs-first($breakpoint) {
+    .mgs-#{$breakpoint}-first {
+        clear: left !important;
+        margin-left: 0 !important;
+    }
+}
+
+// Last column
+@mixin mgs-last($breakpoint) {
+
+    // Fetch needed breakpoint's options
+    $breakpoint-width-min: mgs-map-fetch($mgs, breakpoints $breakpoint "breakpoint-width-min");
+    $breakpoint-width-max: mgs-map-fetch($mgs, breakpoints $breakpoint "breakpoint-width-max");
+
+
+    // Fetch needed breakpoint's options
+    $gutter-width: mgs-map-fetch($mgs, breakpoints $breakpoint "gutter-width");
+
+    @if not $breakpoint-width-min and not $breakpoint-width-max {
+        // [class="mgs-"] {
+        //     clear: none;
+        //     margin-right: $gutter-width;
+        // }
+        .mgs-#{$breakpoint}-last {
+            clear: none;
+            margin-right: $gutter-width;
+        }
+    } @else {
+        .mgs-#{$breakpoint}-last {
+            clear: right !important;
+            margin-right: 0 !important;
+        }
+    }
+
+
+}
+
+
+
+// Show & Hide
+// ----------------------------------------------------------------------------
+
+// Show in specific breakpoint
+@mixin mgs-show($breakpoint) {
+    .mgs-#{$breakpoint}-show {
+        display: block;
+    }
+    // elements-of-type is a Compass helper, doesn't exist in SASS
+    // #{elements-of-type(inline)} {
+    //     &.mgs-show-#{$breakpoint} {
+    //         display: inline !important;
+    //     }
+    // }
+    @if $mgs-universal-classes == True {
+        .mgs-show {
+            display: block;
+        }
+        // elements-of-type is a Compass helper, doesn't exist in SASS
+        // #{elements-of-type(inline)} {
+        //     &.mgs-show {
+        //         display: inline !important;
+        //     }
+        // }
+    }
+}
+
+// Hide in specific breakpoint
+@mixin mgs-hide($breakpoint) {
+    .mgs-#{$breakpoint}-hide {
+        display: none;
+    }
+    // elements-of-type is a Compass helper, doesn't exist in SASS
+    // #{elements-of-type(inline)} {
+    //     &.mgs-hide-#{$breakpoint} {
+    //         display: none !important;
+    //     }
+    // }
+    @if $mgs-universal-classes == True {
+        .mgs-hide {
+            display: none;
+        }
+        // elements-of-type is a Compass helper, doesn't exist in SASS
+        // #{elements-of-type(inline)} {
+        //     &.mgs-hide {
+        //         display: none !important;
+        //     }
+        // }
+    }
+}

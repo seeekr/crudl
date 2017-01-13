@@ -1,0 +1,47 @@
+// ****************************************************************************
+// crudl.io
+// FIELDSET
+//
+//
+// ****************************************************************************
+
+
+
+// Basics
+// ----------------------------------------------------------------------------
+
+.fieldset {
+    display: block;
+    padding: $fieldset-padding;
+    border-radius: $border-radius;
+    background: $fieldset-background;
+    [aria-expanded=false] > & {
+        display: none;
+    }
+    [aria-expanded=true] > & {
+        border-top: 4px solid #eee;
+        border-bottom: 4px solid #eee;
+    }
+    [aria-expanded=true] > header + & {
+        border-top: 0;
+    }
+}
+
+
+
+// Description
+// ----------------------------------------------------------------------------
+
+.fieldset-description {
+    border-bottom: 2px solid $viewport-background;
+    &:last-child {
+        border-bottom: 0;
+    }
+    div {
+        padding: 15px 0;
+        max-width: 800px;
+        @extend .font-size-s;
+        @extend .font-family-mono;
+        color: $text-color-quiet;
+    }
+}

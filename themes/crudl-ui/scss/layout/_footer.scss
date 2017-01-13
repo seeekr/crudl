@@ -1,0 +1,81 @@
+// ****************************************************************************
+// crudl.io
+// FOOTER
+//
+//
+// ****************************************************************************
+
+
+
+// Fixed footer
+// ----------------------------------------------------------------------------
+
+#viewport-footer {
+    position: fixed;
+    z-index: 970;
+    left: 48px;
+    bottom: 0;
+    transition: margin-left 2*$transition-speed $transition-cubic-bezier, padding 2*$transition-speed $transition-cubic-bezier;
+    margin: 48px (-$viewport-padding-right) 0 (-$viewport-padding-left);
+    padding: 0 2*$viewport-padding-right 0 $viewport-padding-left;
+    width: 100%;
+    background: transparentize($color-2-800, .1);
+    [role=group].buttons {
+        margin-right: -($viewport-inner-padding-right + $viewport-inner-padding-right);
+        li + li {
+            margin-left: 2px;
+        }
+    }
+    button {
+        @extend %button-size-regular;
+        border-radius: 0;
+        padding-left: 14px;
+        padding-right: 18px;
+        @include button-style(#fff, transparent, transparent);
+        opacity: 1;
+        &.action-cancel {
+            padding-left: 18px;
+            &:hover,
+            &:focus {
+                @include button-style(#fff, $color-2-500,$color-2-400);
+            }
+        }
+        &.action-delete {
+            padding-left: 12px;
+            &:before {
+                margin-right: 12px;
+            }
+            &:hover,
+            &:focus {
+                @include button-style(#fff, $color-3-500, $color-3-500);
+            }
+        }
+        &.action-save {
+            &:hover,
+            &:focus {
+                @include button-style(#fff, $color-2-500,$color-2-400);
+            }
+            &.secondary {
+                color: transparentize(#fff, .54);
+                &:hover,
+                &:focus {
+                    @include button-style(#fff, $color-2-500,$color-2-400);
+                }
+            }
+        }
+        &[aria-disabled=true] {
+            opacity: 0;
+        }
+    }
+}
+
+
+
+// Footer in inlines view
+// ----------------------------------------------------------------------------
+
+.inlines-view {
+    > .footer {
+        margin: 48px 0;
+    }
+}

@@ -1,0 +1,103 @@
+// ****************************************************************************
+// crudl.io
+// FIELDS BASE
+//
+//
+// ****************************************************************************
+
+
+
+// Placeholder
+// ----------------------------------------------------------------------------
+
+%field {
+    position: relative;
+    display: block;
+    margin: 0;
+    padding: $field-padding;
+    width: 100%;
+    height: 40px;
+    transition: color $transition-speed $transition-cubic-bezier, border $transition-speed $transition-cubic-bezier, background $transition-speed $transition-cubic-bezier;
+    color: $field-color;
+    border: $field-border;
+    border-radius: $field-border-radius;
+    @extend .font-size-r;
+    @extend .font-family-medium;
+    background: $field-background;
+    outline: 0;
+    vertical-align: top;
+    &:focus {
+        border-color: $field-focus-border-color;
+        background: $field-focus-background;
+    }
+    .error & {
+        color: $color-error;
+        border-color: $field-error-border-color;
+        &:focus {
+            color: $field-color;
+        }
+    }
+    .field-button-combo & {
+        display: inline-block;
+        width: auto;
+    }
+    &[readonly] {
+        color: $field-readonly-color !important;
+        -webkit-text-fill-color:$field-readonly-color !important;
+        border-color: $field-readonly-border-color !important;
+        background: $field-readonly-background !important;
+    }
+    &[disabled] {
+        color: $field-disabled-color !important;
+        -webkit-text-fill-color:$field-disabled-color !important;
+        border-color: $field-disabled-border-color !important;
+        background: $field-disabled-background !important;
+    }
+}
+
+%field-rounded {
+    border-radius: 4rem;
+    padding-left: $field-padding-left * 1.5;
+}
+
+
+
+// Fields
+// ----------------------------------------------------------------------------
+
+input {
+    @extend %field;
+}
+textarea {
+    @extend %field;
+    height: 275px;
+    max-width: 100%;
+    word-wrap: break-word;
+}
+select {
+    @extend %field;
+    &[multiple] {
+        height: 131px;
+    }
+}
+
+input[type=checkbox],
+input[type=radio] {
+    display: inline;
+    padding: 0;
+    width: auto;
+    height: auto;
+}
+
+
+
+// Hidden fields
+// ----------------------------------------------------------------------------
+
+input[type=hidden] {
+    display: none !important;
+    font-size: 0 !important;
+    line-height: 0 !important;
+    border: 0 !important;
+    background: transparent !important;
+}

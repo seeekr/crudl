@@ -1,0 +1,25 @@
+// ****************************************************************************
+// MIXINS
+//
+// Global available mixins
+// ****************************************************************************
+
+
+
+// Form field placeholder text
+// ----------------------------------------------------------------------------
+
+@mixin placeholder() {
+    &::-webkit-input-placeholder {
+        @content;
+    }
+    &:-moz-placeholder { /* Firefox 18- */
+        @content;
+    }
+    &::-moz-placeholder {  /* Firefox 19+ */
+        @content;
+    }
+    &:-ms-input-placeholder {
+        @content;
+    }
+}

@@ -1,0 +1,72 @@
+// ****************************************************************************
+// crudl.io
+// BUTTON TYPES
+//
+//
+// ****************************************************************************
+
+
+
+// Block
+// ----------------------------------------------------------------------------
+
+button,
+[role=button] {
+    &.block {
+        display: block;
+        width: 100%;
+    }
+}
+
+
+
+// Icon only
+// ----------------------------------------------------------------------------
+
+button,
+[role=button] {
+    &.icon-only {
+        padding-left: 0;
+        padding-right: 0;
+        width: $button-height;
+        &:before {
+            margin: 0;
+        }
+        .material-icons {
+            margin: 0;
+        }
+    }
+}
+
+
+
+// Boundless
+// ----------------------------------------------------------------------------
+
+button,
+[role=button] {
+    &.boundless {
+        padding-left: 0;
+        padding-right: 0;
+        .material-icons {
+            margin: 0;
+        }
+    }
+}
+
+
+
+// Indicator
+// ----------------------------------------------------------------------------
+
+button,
+[role=button] {
+    &.indicator {
+        cursor: default !important;
+        // @extend .button-style-quiet-transparent;
+        &:hover,
+        &:focus {
+            // @extend .button-style-quiet-transparent;
+        }
+    }
+}

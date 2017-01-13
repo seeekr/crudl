@@ -1,0 +1,96 @@
+// ****************************************************************************
+// crudl.io
+// LISTBOX
+//
+//
+// ****************************************************************************
+
+
+
+// Basics
+// ----------------------------------------------------------------------------
+
+.listbox {
+    max-width: 800px;
+    .context-menu & {
+        max-width: 282px;
+    }
+}
+
+.listbox {
+    [aria-controls] {
+        cursor: pointer;
+    }
+}
+
+
+
+// Label
+// ----------------------------------------------------------------------------
+
+.listbox {
+    .label {
+        padding: ($field-padding-top - $field-border-width) $field-padding-right ($field-padding-bottom - $field-border-width) $field-padding-left;
+        min-height: (40px - ($field-border-width * 2));
+        @extend .font-family-medium;
+    }
+}
+
+
+
+// Options
+// ----------------------------------------------------------------------------
+
+.listbox {
+    [aria-expanded=false] {
+        & + .options {
+            display: none;
+        }
+    }
+    .options {
+        &.empty {
+            display: none;
+        }
+        display: block;
+        position: absolute;
+        z-index: 890;
+        margin-top: -2px;
+        margin-bottom: 200px;
+        width: 100%;
+        max-width: inherit;
+        max-height: 296px;
+        overflow-x: hidden;
+        overflow-y: auto;
+        border: $autocomplete-results-border;
+        border-radius: $autocomplete-results-border-radius;
+        box-shadow: $autocomplete-results-box-shadow;
+        background: $autocomplete-results-background;
+        > ul {
+            > li {
+                cursor: pointer;
+                padding: $autocomplete-results-padding;
+                & + li {
+                    margin-top: 2px;
+                }
+            }
+        }
+        .option {
+            display: block;
+            margin: (-$autocomplete-results-padding-top) (-$autocomplete-results-padding-right) (-$autocomplete-results-padding-bottom) (-$autocomplete-results-padding-left);
+            padding: $autocomplete-results-padding;
+            @extend .font-family-medium;
+            background: $color-2-50;
+        }
+        [role=option] {
+            &.select-none {
+                opacity: .5;
+            }
+            &:hover,
+            &:focus {
+                .option {
+                    background: $color-2-100;
+                }
+            }
+        }
+    }
+}

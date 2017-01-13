@@ -1,0 +1,45 @@
+// ****************************************************************************
+// crudl.io
+// BREADCRUMBS
+//
+//
+// ****************************************************************************
+
+
+
+// Basic styles
+// ----------------------------------------------------------------------------
+
+#breadcrumbs {
+    position: fixed;
+    z-index: 900;
+    top: 0;
+    transition: left 2*$transition-speed $transition-cubic-bezier, opacity 2*$transition-speed $transition-cubic-bezier;
+    left: 72px;
+    padding: 16px 24px 0 0;
+    height: 48px;
+    color: $color-2-100;
+    @extend .font-family-mono-medium;
+    @extend .font-size-xs;
+    white-space: nowrap;
+    li {
+        position: relative;
+        float: left;
+        display: inline-block;
+        & + li {
+            &:before {
+                @include icon('keyboard_arrow_right');
+                float: left;
+                top: 0;
+                padding: 0 0.25rem;
+                color: $color-2-200;
+            }
+        }
+    }
+    a {
+        color: $color-2-100;
+        &:hover {
+            color: $color-2-10;
+        }
+    }
+}
