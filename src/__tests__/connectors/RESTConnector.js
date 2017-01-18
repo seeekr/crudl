@@ -1,13 +1,12 @@
 /* globals require, jest, expect, describe, it, beforeEach */
 
 import sinon from 'sinon'
-import RESTConnector from '../../connectors/RESTConnector.js'
-import AuthorizationError from '../../errors/AuthorizationError'
-import NotFoundError from '../../errors/NotFoundError'
-import PermissionError from '../../errors/PermissionError'
+import RESTConnector from '../../connectors/RESTConnector'
 
 jest.mock('../../Crudl')
+
 const crudl = require('../../Crudl')
+
 crudl.options = {
     basePath: '/admin/',
     baseURL: '/api/',
