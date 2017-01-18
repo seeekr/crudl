@@ -64,7 +64,7 @@ function bundleDevelopment(bundler) {
 
 const opts = assign({}, watchify.args, browersifyOptions, { debug: true });
 const bundler = watchify(browserify(opts).transform(
-    babelify.configure(babelifyOptions)
+    babelify.configure(babelifyOptions),
 ));
 bundler.on('update', () => bundleDevelopment(bundler)); // on any dep update, runs the bundler
 bundler.on('log', gutil.log); // output build logs to terminal
@@ -86,16 +86,13 @@ function bundleProduction() {
 
     // Prepend the license
     .pipe(concat('crudl.min.js'))
-    .pipe(concat.header(`/*\n${packageJSON.license}\n*/\n`))
+    .pipe(concat.header(`/* LICENSE: ${packageJSON.license} */\n`))
 
     // Copy to dist
     .pipe(gulp.dest(dist))
 
     .on('end', () => {
-        gutil.log(
-            `Successfully build ${gutil.colors.magenta(`${dist}/crudl.min.js`)}`,
-            `\n\n${packageJSON.license}\n\n`
-        )
+        gutil.log(`Successfully build ${gutil.colors.magenta(`${dist}/crudl.min.js`)}`)
     })
 }
 
@@ -111,7 +108,7 @@ const autoprefixerOptions = {
     browsers: ['last 2 versions'],
 };
 
-const sassSrcFiles = './themes/crudl-ui/scss/**/*';
+const sassSrcFiles = './static/crudl-ui/scss/**/*';
 
 // Watch sass files ...
 function sassWatch() {
@@ -130,20 +127,12 @@ function sassCompile() {
     .pipe(sass(sassOptions).on('error', sass.logError))
     .pipe(autoprefixer(autoprefixerOptions))
     .pipe(sourcemaps.write('./maps'))
-    .pipe(gulp.dest('./static/themes/crudl-ui/stylesheets'))
-}
-
-// Copy Fonts Task
-function copyThemeFonts() {
-    const srcFiles = './themes/crudl-ui/fonts/**/*';
-    gulp.src(srcFiles)
-    .pipe(watch(srcFiles))
-    .pipe(gulp.dest(`${dist}/static/themes/crudl-ui/fonts/`))
+    .pipe(gulp.dest('./static/crudl-ui/stylesheets'))
 }
 
 // Copy Task for static files
 function copyStaticFiles() {
-    const srcFiles = './static/**/*';
+    const srcFiles = ['./static/fonts/**/*', './static/stylesheets/**/*'];
     gulp.src(srcFiles)
     .pipe(watch(srcFiles))
     .pipe(gulp.dest(`${dist}/static`))
@@ -155,7 +144,6 @@ gulp.task('build', bundleProduction);
 gulp.task('sass-watch', sassWatch);
 gulp.task('sass-compile', sassCompile);
 gulp.task('copy-static-files', copyStaticFiles);
-gulp.task('copy-theme-fonts', copyThemeFonts);
 gulp.task('sass', ['sass-watch', 'copy-static-files']);
 
 gulp.task('default', ['dev', 'copy-static-files']);
