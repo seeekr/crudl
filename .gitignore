@@ -4,3 +4,5 @@ coverage/
 npm-debug.log
 NOTES.md
 eslint.html
+
+yarn.lock
