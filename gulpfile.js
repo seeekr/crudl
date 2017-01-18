@@ -63,9 +63,7 @@ function bundleDevelopment(bundler) {
 }
 
 const opts = assign({}, watchify.args, browersifyOptions, { debug: true });
-const bundler = watchify(browserify(opts).transform(
-    babelify.configure(babelifyOptions),
-));
+const bundler = watchify(browserify(opts).transform(babelify.configure(babelifyOptions)));
 bundler.on('update', () => bundleDevelopment(bundler)); // on any dep update, runs the bundler
 bundler.on('log', gutil.log); // output build logs to terminal
 

@@ -9,7 +9,7 @@ const Crudl = require('./src/Crudl')
 const license = require('./package.json').license
 
 if (typeof window.console !== 'undefined') {
-    window.console.log(license)
+    window.console.log(`CRUDL LICENSE: ${license}`)
 }
 
 module.exports = Crudl
