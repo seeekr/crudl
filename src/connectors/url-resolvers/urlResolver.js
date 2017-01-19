@@ -25,10 +25,10 @@ function urlResolver(basePattern = '', urlQuery = defaultURLQuery, baseURL) {
     return (req) => {
         try {
             const params = paramsAsObject(req.params, pattern)
-            const parsed = url.parse(pattern)
+            const parsed = url.parse(pattern, true)
             parsed.pathname = formatPattern(parsed.pathname, params)
             parsed.search = undefined
-            parsed.query = urlQuery(req)
+            parsed.query = Object.assign({}, parsed.query, urlQuery(req))
             return url.format(parsed)
         } catch (e) {
             throw new Error(`Could not resolve the url pattern '${pattern}'. (${e}).`)
