@@ -2,7 +2,8 @@
   "name": "crudl",
   "version": "0.2.0",
   "description": "A backend agnostic REST and GraphQL based admin interface",
-  "main": "./lib/Crudl.js",
+  "main": "./lib/index.js",
+  "browser": "./dist/crudl.min.js",
   "scripts": {
     "build": "npm run build:lib && npm run build:umd && npm run build:umd:min && npm run build:ui",
     "build:lib": "babel src --out-dir lib",
