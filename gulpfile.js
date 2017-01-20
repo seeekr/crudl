@@ -23,7 +23,7 @@ const dist = './dist';
 
 // Browserify Options
 const browersifyOptions = {
-    entries: ['index.js'],
+    entries: ['./src/index.js'],
     extensions: ['.jsx'],
     output: 'crudl.js',
     standalone: 'crudl',
@@ -130,10 +130,10 @@ function sassCompile() {
 
 // Copy Task for static files
 function copyStaticFiles() {
-    const srcFiles = ['./static/fonts/**/*', './static/stylesheets/**/*'];
+    const srcFiles = ['./static/crudl-ui/**/*', '!./static/crudl-ui/scss', '!./static/crudl-ui/scss/**/*'];
     gulp.src(srcFiles)
     .pipe(watch(srcFiles))
-    .pipe(gulp.dest(`${dist}/static`))
+    .pipe(gulp.dest(`${dist}/crudl-ui`))
 }
 
 gulp.task('dev', () => bundleDevelopment(bundler));

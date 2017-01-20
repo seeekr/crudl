@@ -2,7 +2,6 @@
 node_modules
 coverage/
 npm-debug.log
-NOTES.md
 eslint.html
-
+lib
 yarn.lock
