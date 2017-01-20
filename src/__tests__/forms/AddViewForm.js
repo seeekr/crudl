@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { shallow } from 'enzyme'
-import AddViewForm from '../../forms/AddViewForm.jsx'
+import AddViewForm from '../../forms/AddViewForm'
 
 jest.mock('../../Crudl')
 const crudl = require('../../Crudl')

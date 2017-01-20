@@ -3,7 +3,7 @@
 import React from 'react'
 import { shallow, mount } from 'enzyme'
 import configureStore from 'redux-mock-store'
-import { ChangeView } from '../../containers/ChangeView.jsx'
+import { ChangeView } from '../../containers/ChangeView'
 import { Provider } from 'react-redux'
 import { IntlProvider } from 'react-intl'
 

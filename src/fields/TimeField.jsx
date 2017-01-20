@@ -1,5 +1,5 @@
 import React from 'react'
-import FieldButtonGroup from './base/FieldButtonGroup.jsx'
+import FieldButtonGroup from './base/FieldButtonGroup'
 import baseField from './base/baseField'
 import * as frontendUtils from '../utils/frontend'
 import { fieldShape } from '../PropTypes'

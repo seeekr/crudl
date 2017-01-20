@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { shallow } from 'enzyme'
-import { ContinuousPagination } from '../../components/ContinuousPagination.jsx'
+import { ContinuousPagination } from '../../components/ContinuousPagination'
 
 
 describe('ContinuousPagination', () => {

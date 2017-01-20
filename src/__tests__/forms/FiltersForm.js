@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { shallow, mount } from 'enzyme'
-import FiltersForm from '../../forms/FiltersForm.jsx'
+import FiltersForm from '../../forms/FiltersForm'
 
 // jest.mock('../../WatchComponent')
 

@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { shallow, mount } from 'enzyme'
-import ChangeViewForm from '../../forms/ChangeViewForm.jsx'
+import ChangeViewForm from '../../forms/ChangeViewForm'
 import configureStore from 'redux-mock-store'
 import { Provider } from 'react-redux'
 import { reduxForm } from 'redux-form'

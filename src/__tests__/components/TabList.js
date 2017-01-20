@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { shallow } from 'enzyme'
-import TabList from '../../components/TabList.jsx'
+import TabList from '../../components/TabList'
 
 const props = {
     titles: [

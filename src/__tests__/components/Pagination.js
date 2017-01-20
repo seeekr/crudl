@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { shallow } from 'enzyme'
-import { Pagination } from '../../components/Pagination.jsx'
+import { Pagination } from '../../components/Pagination'
 
 
 describe('Pagination', () => {

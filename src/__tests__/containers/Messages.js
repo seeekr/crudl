@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { shallow, mount, render } from 'enzyme'
-import { Messages } from '../../containers/Messages.jsx'
+import { Messages } from '../../containers/Messages'
 
 const props = {
     message: 'Success message',

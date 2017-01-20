@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { mount, shallow } from 'enzyme'
-import ListViewItem from '../../components/ListViewTableItem.jsx'
+import ListViewItem from '../../components/ListViewTableItem'
 
 const props = {
     fields: [

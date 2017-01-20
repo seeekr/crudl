@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { shallow } from 'enzyme'
-import { FieldButtonGroup } from '../../fields/base/FieldButtonGroup.jsx'
+import { FieldButtonGroup } from '../../fields/base/FieldButtonGroup'
 
 const p = {
     children: undefined,

@@ -4,8 +4,8 @@
 import React from 'react'
 import { shallow, mount } from 'enzyme'
 import configureStore from 'redux-mock-store'
-import MainView, { TestView } from './TestView.jsx'
-import Footer from './TestFooter.jsx'
+import MainView, { TestView } from './TestView'
+import Footer from './TestFooter'
 
 /* MOCK STORE */
 const initialState = {

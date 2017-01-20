@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { shallow } from 'enzyme'
-import { NumberedPagination } from '../../components/NumberedPagination.jsx'
+import { NumberedPagination } from '../../components/NumberedPagination'
 
 
 describe('NumberedPagination', () => {

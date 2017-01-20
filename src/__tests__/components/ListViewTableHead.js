@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { shallow } from 'enzyme'
-import ListViewHeader from '../../components/ListViewTableHead.jsx'
+import ListViewHeader from '../../components/ListViewTableHead'
 
 const props = {
     fields: [

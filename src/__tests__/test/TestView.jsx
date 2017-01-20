@@ -1,8 +1,8 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { withRouter } from 'react-router'
-import Header from './TestHeader.jsx'
-import Footer from './TestFooter.jsx'
+import Header from './TestHeader'
+import Footer from './TestFooter'
 
 
 export class TestView extends React.Component {

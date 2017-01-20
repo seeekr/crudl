@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { shallow } from 'enzyme'
-import { ActiveFilters } from '../../containers/ActiveFilters.jsx'
+import { ActiveFilters } from '../../containers/ActiveFilters'
 
 const props = {
     activeFilters: [

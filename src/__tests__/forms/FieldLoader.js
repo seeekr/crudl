@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { shallow, mount, render } from 'enzyme'
-import FieldLoader from '../../forms/FieldLoader.jsx'
+import FieldLoader from '../../forms/FieldLoader'
 import { Provider } from 'react-redux'
 import configureStore from 'redux-mock-store'
 

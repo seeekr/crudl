@@ -4,7 +4,7 @@ import React from 'react'
 // import { Provider } from 'react-redux'
 import { shallow } from 'enzyme'
 import configureStore from 'redux-mock-store'
-import { ListView } from '../../containers/ListView.jsx'
+import { ListView } from '../../containers/ListView'
 
 jest.mock('../../Crudl')
 const crudl = require('../../Crudl')
