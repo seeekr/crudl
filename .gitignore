@@ -1,7 +1,5 @@
 .DS_STORE
 node_modules
-coverage/
 npm-debug.log
-eslint.html
 lib
 yarn.lock

@@ -2,14 +2,39 @@
   "name": "crudl",
   "version": "0.2.0",
   "description": "A backend agnostic REST and GraphQL based admin interface",
-  "main": "index.js",
+  "main": "./lib/Crudl.js",
   "scripts": {
-    "test": "jest",
-    "eslint": "find ./src  -name '*.js' -or -name '*.jsx' | xargs './node_modules/.bin/eslint' -f html > eslint.html;open eslint.html",
-    "eslint-fix": "find ./src  -name '*.js' -or -name '*.jsx' | xargs './node_modules/.bin/eslint' --fix"
+    "build": "npm run build:lib && npm run build:umd && npm run build:umd:min && npm run build:ui",
+    "build:lib": "babel src --out-dir lib",
+    "build:ui": "gulp build-ui",
+    "build:umd": "gulp build",
+    "build:umd:min": "gulp build-min",
+    "clean": "rimraf dist lib",
+    "prepublish": "npm run clean && npm run build",
+    "test": "jest"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/crudlio/crudl.git"
+  },
+  "keywords": [
+    "admin",
+    "interface",
+    "CMS",
+    "REST",
+    "GraphQL"
+  ],
   "author": "vonautomatisch",
   "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/crudlio/crudl.git"
+  },
+  "homepage": "http://crudl.io",
+  "files": [
+    "README.md",
+    "lib",
+    "dist"
+  ],
   "jest": {
     "browser": true,
     "verbose": true,
@@ -85,6 +110,7 @@
     "redux-devtools-dock-monitor": "^1.1.1",
     "redux-devtools-log-monitor": "^1.1.0",
     "redux-mock-store": "^1.2.1",
+    "rimraf": "^2.5.4",
     "sinon": "^1.17.6",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0",

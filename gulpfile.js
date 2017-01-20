@@ -42,30 +42,48 @@ const babelifyOptions = {
     ],
 }
 
-// Bundle task for the development (continuous watch)
-function bundleDevelopment(bundler) {
+// Watch for changes and bundle
+function continuousBundle() {
+    const bundle = b => b.bundle()
+        .on('error', (err) => {
+            notifier.notify({
+                title: 'Browserify Error',
+                message: err.message,
+            });
+            gutil.log('Browserify Error', err);
+        })
+        .pipe(source('crudl.js'))
+        .pipe(gulp.dest(dist))
+        .on('end', () => {
+            notifier.notify({
+                title: 'Browserify',
+                message: 'OK',
+            });
+        })
+    const opts = assign({}, watchify.args, browersifyOptions, { debug: true });
+    const bundler = watchify(browserify(opts).transform(babelify.configure(babelifyOptions)));
+    bundler.on('update', () => bundle(bundler)); // on any dep update, runs the bundler
+    bundler.on('log', gutil.log); // output build logs to terminal
+
+    return bundle(bundler)
+}
+
+// Bundle the dev module
+function bundleDevelopment() {
+    const opts = assign({}, browersifyOptions, { debug: true });
+    const bundler = browserify(opts).transform(babelify.configure(babelifyOptions));
+    bundler.on('log', gutil.log); // output build logs to terminal
+
     return bundler.bundle()
     .on('error', (err) => { // log errors if they happen
-        notifier.notify({
-            title: 'Browserify Error',
-            message: err.message,
-        });
         gutil.log('Browserify Error', err);
     })
     .pipe(source('crudl.js'))
     .pipe(gulp.dest(dist))
     .on('end', () => {
-        notifier.notify({
-            title: 'Browserify',
-            message: 'OK',
-        });
+        gutil.log(`Successfully build ${gutil.colors.magenta(`${dist}/crudl.js`)}`)
     })
 }
-
-const opts = assign({}, watchify.args, browersifyOptions, { debug: true });
-const bundler = watchify(browserify(opts).transform(babelify.configure(babelifyOptions)));
-bundler.on('update', () => bundleDevelopment(bundler)); // on any dep update, runs the bundler
-bundler.on('log', gutil.log); // output build logs to terminal
 
 // Bundle task for the production environment
 function bundleProduction() {
@@ -101,11 +119,9 @@ const sassOptions = {
     errLogToConsole: true,
     outputStyle: 'expanded',
 };
-
 const autoprefixerOptions = {
     browsers: ['last 2 versions'],
 };
-
 const sassSrcFiles = './static/crudl-ui/scss/**/*';
 
 // Watch sass files ...
@@ -125,23 +141,22 @@ function sassCompile() {
     .pipe(sass(sassOptions).on('error', sass.logError))
     .pipe(autoprefixer(autoprefixerOptions))
     .pipe(sourcemaps.write('./maps'))
-    .pipe(gulp.dest('./static/crudl-ui/stylesheets'))
+    .pipe(gulp.dest('./dist/crudl-ui/stylesheets'))
 }
 
 // Copy Task for static files
-function copyStaticFiles() {
-    const srcFiles = ['./static/crudl-ui/**/*', '!./static/crudl-ui/scss', '!./static/crudl-ui/scss/**/*'];
+function copyFonts() {
+    const srcFiles = ['./static/crudl-ui/fonts/**/*'];
     gulp.src(srcFiles)
-    .pipe(watch(srcFiles))
-    .pipe(gulp.dest(`${dist}/crudl-ui`))
+    .pipe(gulp.dest(`${dist}/crudl-ui/fonts`))
 }
-
-gulp.task('dev', () => bundleDevelopment(bundler));
-gulp.task('build', bundleProduction);
 
 gulp.task('sass-watch', sassWatch);
 gulp.task('sass-compile', sassCompile);
-gulp.task('copy-static-files', copyStaticFiles);
-gulp.task('sass', ['sass-watch', 'copy-static-files']);
 
-gulp.task('default', ['dev', 'copy-static-files']);
+gulp.task('dev', continuousBundle);
+gulp.task('build', bundleDevelopment);
+gulp.task('build-min', bundleProduction);
+gulp.task('build-ui', ['sass-compile'], copyFonts)
+
+gulp.task('default', ['dev']);
