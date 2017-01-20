@@ -8,7 +8,7 @@ Promise.config({ warnings: false })
 const Crudl = require('./Crudl')
 const license = require('../package.json').license
 
-if (typeof window.console !== 'undefined') {
+if (typeof window !== 'undefined' && typeof window.console !== 'undefined') {
     window.console.log(`CRUDL LICENSE: ${license}`)
 }
 
