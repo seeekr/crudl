@@ -1,5 +1,5 @@
 # crudl
-DISCLAIMER: This is a preliminary, sketchy and incomplete documentation.
+CRUDL is a React application for rapidly building an admin interface based on your API. You just need to define the endpoints and a visual representation in order to get a full-blown UI for managing your data.
 
 ## TOC
 * [About](#about)
@@ -26,9 +26,6 @@ DISCLAIMER: This is a preliminary, sketchy and incomplete documentation.
     * [Example of a connector providing permissions](#example-of-a-connector-providing-permissions)
 * [Messages](#messages)
 * [Credits & Links](#credits--links)
-
-## About
-CRUDL is a React application for rapidly building an admin interface based on your API. You just need to define the endpoints and a visual representation in order to get a full-blown UI for managing your data.
 
 ## Architecture
 The CRUDL architecture (depicted below) consists of three logical layers. The connectors, views, and the react-redux frontend. We use React and Redux for the frontend, which consists of different views such as *list*, *add*, and *change* view.  The purpose of the connectors layer is to provide the views with a unified access to different APIs like REST or GraphQL. You configure the connectors, the fileds, and the views by providing a [admin](#admin).
@@ -694,7 +691,7 @@ This ist the complete list of all message IDs:
 ```
 
 ## Credits & Links
-CRUDL and crudl-django-example is written and maintained by vonautomatisch (Patrick Kranzlmüller, Axel Swoboda).
+CRUDL is written and maintained by vonautomatisch (Patrick Kranzlmüller, Axel Swoboda).
 
 * http://crudl.io
 * https://twitter.com/crudlio
