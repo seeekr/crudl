@@ -1,17 +1,17 @@
+import { push } from 'react-router-redux'
 import NotFoundError from '../errors/NotFoundError'
 import AuthorizationError from '../errors/AuthorizationError'
-import { push } from 'react-router-redux'
 import { pageNotFoundMessage } from '../actions/frontend'
 import { errorMessage } from '../actions/messages'
 
 class ErrorsConnector {
 
-    constructor(connector, dispatch, logout, pageNotFound) {
+    constructor(connector, dispatch, logoutPath, pageNotFoundPath) {
         this.id = connector.id
         this.connector = connector
         this.dispatch = dispatch
-        this.logout = logout
-        this.pageNotFound = pageNotFound
+        this.logoutPath = logoutPath
+        this.pageNotFoundPath = pageNotFoundPath
         this.processError = this.processError.bind(this)
     }
 
@@ -21,7 +21,9 @@ class ErrorsConnector {
         }
 
         if (error instanceof AuthorizationError) {
-            this.dispatch(push({ pathname: this.logout }))
+            if (typeof this.logoutPath !== 'undefined') {
+                this.dispatch(push({ pathname: this.logoutPath }))
+            }
         }
 
         if (error instanceof NotFoundError) {
@@ -29,7 +31,7 @@ class ErrorsConnector {
                 this.dispatch(push({ pathname: error.redirectTo }))
             } else {
                 this.dispatch(pageNotFoundMessage(error.message))
-                this.dispatch(push({ pathname: this.pageNotFound }))
+                this.dispatch(push({ pathname: this.pageNotFoundPath }))
             }
         }
         throw error

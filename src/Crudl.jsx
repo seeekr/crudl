@@ -249,7 +249,7 @@ function createConnector(spec, admin) { // eslint-disable-line no-shadow
         cx = new ErrorsConnector(
             cx,
             (...args) => getStore().dispatch(...args),
-            resolvePath(admin.auth.logout.path),
+            (typeof admin.auth !== 'undefined') ? resolvePath(admin.auth.logout.path) : undefined,
             resolvePath(admin.custom.pageNotFound.path),
         )
 
@@ -271,7 +271,7 @@ export function setAdmin(adminToBeValidated) {
 
 function authenticate(wrappedFunc) {
     return function authCheck(nextState, replace) {
-        if (options.requireAuthentication && !store.getState().core.auth.loggedIn) {
+        if ((typeof admin.auth !== 'undefined') && !store.getState().core.auth.loggedIn) {
             replace({
                 pathname: resolvePath(admin.auth.login.path),
                 query: { next: nextState.location.pathname },
@@ -357,19 +357,20 @@ function crudlRouter() {
         })
     })
 
-    // Login page
-    root.childRoutes.push({
-        path: admin.auth.login.path,
-        component: wrapComponent(Login, { desc: admin.auth.login }),
-        onEnter: clearActiveView,
-    })
-
-    // Logout page
-    root.childRoutes.push({
-        path: admin.auth.logout.path,
-        component: wrapComponent(Logout, { loginPath: admin.auth.login.path }),
-        onEnter: clearActiveView,
-    })
+    if (admin.auth) {
+        // Login page
+        root.childRoutes.push({
+            path: admin.auth.login.path,
+            component: wrapComponent(Login, { desc: admin.auth.login }),
+            onEnter: clearActiveView,
+        })
+        // Logout page
+        root.childRoutes.push({
+            path: admin.auth.logout.path,
+            component: wrapComponent(Logout, { loginPath: admin.auth.login.path }),
+            onEnter: clearActiveView,
+        })
+    }
 
     root.childRoutes.push({
         path: admin.custom.pageNotFound.path,

@@ -20,7 +20,6 @@ class App extends React.Component {
 
     constructor() {
         super()
-        this.handleLogin = this.handleLogin.bind(this)
         this.handleLogout = this.handleLogout.bind(this)
         this.handleNavigationClick = this.handleNavigationClick.bind(this)
     }
@@ -71,11 +70,9 @@ class App extends React.Component {
     }
 
     handleLogout() {
+        if (typeof this.props.desc.auth !== 'undefined') {
             this.props.router.push(resolvePath(this.props.desc.auth.logout.path))
-    }
-
-    handleLogin() {
-        this.props.router.push(resolvePath(this.props.desc.auth.login.path))
+        }
     }
 
     handleNavigationClick() {
@@ -83,13 +80,13 @@ class App extends React.Component {
     }
 
     render() {
+        const authRequired = (typeof this.props.desc.auth !== 'undefined')
         return (
             <div id="app">
                 <header id="app-title" aria-hidden="true"><h1>{this.props.desc.title}</h1></header>
-                {(!options.requireAuthentication || this.props.loggedIn) &&
+                {(!authRequired || this.props.loggedIn) &&
                     <Navigation
-                        onLogin={this.handleLogin}
-                        onLogout={this.handleLogout}
+                        onLogout={authRequired ? this.handleLogout : undefined}
                         views={this.props.desc.views}
                         menu={this.props.desc.custom.menu}
                         />

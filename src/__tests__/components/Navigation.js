@@ -40,7 +40,6 @@ describe('Navigation', () => {
             },
         }
         const props = {
-            onLogin: jest.fn(),
             onLogout: jest.fn(),
             views,
             title: '',

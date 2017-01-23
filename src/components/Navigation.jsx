@@ -16,7 +16,7 @@ import messages from '../messages/logout'
 export class Navigation extends React.Component {
 
     static propTypes = {
-        onLogout: React.PropTypes.func.isRequired,
+        onLogout: React.PropTypes.func,
         views: viewsShape.isRequired,
         dispatch: React.PropTypes.func.isRequired,
         activeView: React.PropTypes.string,
@@ -146,9 +146,11 @@ export class Navigation extends React.Component {
                         <ul className="account">
                             {username}
                             <li>
-                                <FormattedMessage {...messages.logoutButton} >
-                                    {msg => <span className="logout" onClick={onLogout}>{msg}</span>}
-                                </FormattedMessage>
+                                {onLogout &&
+                                    <FormattedMessage {...messages.logoutButton} >
+                                        {msg => <span className="logout" onClick={onLogout}>{msg}</span>}
+                                    </FormattedMessage>
+                                }
                             </li>
                         </ul>
                     }

@@ -13,7 +13,7 @@ const admin = Joi.object().keys({
     auth: Joi.object().keys({
         login: login.required(),
         logout: logout.default(),
-    }).required(),
+    }),
     custom: Joi.object().keys({
         dashboard: stringOrReactProperty(''),
         pageNotFound: pageNotFound.default(),
@@ -25,7 +25,6 @@ const admin = Joi.object().keys({
         basePath: Joi.string().default('/'),
         debug: Joi.boolean().default(false),
         locale: Joi.string().default('en'),
-        requireAuthentication: Joi.boolean().default(true),
     }).default(),
     messages: Joi.object().default(),
     isValidated: Joi.bool().forbidden().default(true),
