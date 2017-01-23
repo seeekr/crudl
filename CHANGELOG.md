@@ -2,7 +2,7 @@
 
 ## 0.2.1 (not yet released)
 
-## 0.2.0 (January 20, 2017)
+## 0.2.0 (January 23, 2017)
 * NEW: Published npm package (crudl).
 * ADDED: Add/edit relations.
 * ADDED: Custom messages and enabled translations.
