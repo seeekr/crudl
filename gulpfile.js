@@ -36,9 +36,9 @@ const babelifyOptions = {
         'syntax-class-properties',
         'transform-class-properties',
         'transform-object-rest-spread',
-        ['react-intl', {
-            messagesDir: `${dist}/messages`,
-        }],
+        // ['react-intl', {
+        //     messagesDir: `${dist}/messages`,
+        // }],
     ],
 }
 
@@ -141,7 +141,7 @@ function sassCompile() {
     .pipe(sass(sassOptions).on('error', sass.logError))
     .pipe(autoprefixer(autoprefixerOptions))
     .pipe(sourcemaps.write('./maps'))
-    .pipe(gulp.dest('./dist/crudl-ui/stylesheets'))
+    .pipe(gulp.dest('./dist/crudl-ui/css'))
 }
 
 // Copy Task for static files

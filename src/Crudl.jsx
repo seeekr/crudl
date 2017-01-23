@@ -130,7 +130,7 @@ function exposePath(nextState) {
 
 function crudlStore(reducer) {
     const storage = compose(
-        filter(['core.auth', 'core.permissions'])
+        filter(['core.auth', 'core.permissions']),
     )(adapter(window.localStorage))
 
     const composition = [
@@ -250,7 +250,7 @@ function createConnector(spec, admin) { // eslint-disable-line no-shadow
             cx,
             (...args) => getStore().dispatch(...args),
             resolvePath(admin.auth.logout.path),
-            resolvePath(admin.custom.pageNotFound.path)
+            resolvePath(admin.custom.pageNotFound.path),
         )
 
         cx = new PermissionConnector(cx, admin, (...args) => getStore().dispatch(...args))
@@ -405,7 +405,7 @@ export function render(adminToBeValidated) {
                     {options.debug && <DevTools />}
                 </div>
             </Provider>
-        </IntlProvider>
-        , document.getElementById(options.rootElementId)
+        </IntlProvider>,
+        document.getElementById(options.rootElementId),
     )
 }

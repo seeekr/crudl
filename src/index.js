@@ -5,11 +5,7 @@ global.Promise = Bluebird
 
 Promise.config({ warnings: false })
 
-const Crudl = require('./Crudl')
-const license = require('../package.json').license
+const crudl = require('./Crudl')
 
-if (typeof window !== 'undefined' && typeof window.console !== 'undefined') {
-    window.console.log(`CRUDL LICENSE: ${license}`)
-}
-
-module.exports = Crudl
+module.exports = crudl
+module.exports.default = crudl
