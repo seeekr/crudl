@@ -1,5 +1,5 @@
 {
-  "name": "crudl",
+  "name": "@crudlio/crudl",
   "version": "0.2.0",
   "description": "A backend agnostic REST and GraphQL based admin interface",
   "main": "./lib/index.js",
