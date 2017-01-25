@@ -6,7 +6,7 @@ import { types } from '../actions/core'
 /**
  * The initial core state. Add variables as you like.
  */
-const initialState = {
+export const initialState = {
     auth: {
         loggedIn: false,
         requestHeaders: {},
@@ -20,6 +20,7 @@ const initialState = {
     },
     activeView: undefined,
     permissions: {},
+    admin: { versionKey: undefined },
 }
 
 /**
@@ -32,7 +33,7 @@ function transit(state, variable, value) {
     return newState
 }
 
-export default function (state = initialState, action) {
+function coreReducer(state = initialState, action) {
     // A simpler transit function:
     const t = (variable, value) => transit(state, variable, value)
 
@@ -59,3 +60,5 @@ export default function (state = initialState, action) {
             return state
     }
 }
+
+export default coreReducer

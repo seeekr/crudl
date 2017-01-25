@@ -1,4 +1,5 @@
 import url from 'url'
+import get from 'lodash/get'
 
 // React, Redux, and React-Intl
 import React from 'react'
@@ -43,7 +44,7 @@ import { pageNotFoundMessage } from './actions/frontend'
 
 // Misc Reducers
 import frontendReducer from './reducers/frontend'
-import coreReducer from './reducers/core'
+import coreReducer, { initialState as coreInitialState } from './reducers/core'
 import messagesReducer from './reducers/messages'
 import filtersReducer from './reducers/filters'
 
@@ -130,12 +131,15 @@ function exposePath(nextState) {
 
 function crudlStore(reducer) {
     const storage = compose(
-        filter(['core.auth', 'core.permissions']),
+        filter(['core.auth', 'core.permissions', 'core.admin']),
     )(adapter(window.localStorage))
 
     const composition = [
         persistState(storage),
-        applyMiddleware(routerMiddleware(history), exposeStateInfo),
+        applyMiddleware(
+            routerMiddleware(history),
+            exposeStateInfo,
+        ),
     ]
 
     if (options.debug) {
@@ -146,6 +150,8 @@ function crudlStore(reducer) {
 }
 
 function crudlReducer() {
+    // Store the admin key
+    coreInitialState.admin.versionKey = admin.versionKey
     // Combine all reducers
     const reducer = combineReducers({
         form: formReducer,
@@ -158,7 +164,14 @@ function crudlReducer() {
 
     // Deep merge the persisted state
     return compose(
-        mergePersistedState((initial, persisted) => lodashMerge({}, initial, persisted))
+        mergePersistedState((initial, persisted) => {
+            const adminKey = get(initial, 'core.admin.versionKey')
+            const storedKey = get(persisted, 'core.admin.versionKey')
+            if (adminKey && adminKey === storedKey) {
+                return lodashMerge({}, initial, persisted)
+            }
+            return initial
+        }),
     )(reducer)
 }
 
