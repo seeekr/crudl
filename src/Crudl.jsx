@@ -154,7 +154,7 @@ function crudlStore(reducer) {
 
 function crudlReducer() {
     // Store the admin key
-    coreInitialState.admin.versionKey = admin.versionKey
+    coreInitialState.admin.id = admin.id
     // Combine all reducers
     const reducer = combineReducers({
         form: formReducer,
@@ -168,8 +168,8 @@ function crudlReducer() {
     // Deep merge the persisted state
     return compose(
         mergePersistedState((initial, persisted) => {
-            const adminKey = get(initial, 'core.admin.versionKey')
-            const storedKey = get(persisted, 'core.admin.versionKey')
+            const adminKey = get(initial, 'core.admin.id')
+            const storedKey = get(persisted, 'core.admin.id')
             if (adminKey && adminKey === storedKey) {
                 return lodashMerge({}, initial, persisted)
             }

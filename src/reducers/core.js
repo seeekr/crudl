@@ -20,7 +20,7 @@ export const initialState = {
     },
     activeView: undefined,
     permissions: {},
-    admin: { versionKey: undefined },
+    admin: { id: undefined },
 }
 
 /**

@@ -54,7 +54,7 @@ The admin is an object with the following attributes and properties:
 ```js
 const admin = {
     title,              // Title of the CRUDL instance (a string or a react element property)
-    connectors,         // an array of connectors
+    connectors,         // a dictionary of connectors
     views,              // a dictionary of views
     auth: {
         login,          // Login view descriptor
@@ -71,6 +71,11 @@ const admin = {
         baseURL,        // The baseURL of the API backend (default  '/api/')
         rootElementId,  // Where to place the root react element (default 'crudl-root')
     }
+    crudlVersion,       // The required crudl version in the semver format (e.g., "^0.3.0")
+    id,                 // The id of the admin. This id is stored (together with other info) locally in the
+                        // localStorage of the browser. If the admin id and the locally stored id do not match,
+                        // the stored information will not be used. That means, for example, that by changing
+                        // the admin id, you can enforce a logout of all users.
 }
 ```
 The provided admin will be validated (using [Joi](https://github.com/hapijs/joi)) and all its attributes and properties are checked against the admin's schema.

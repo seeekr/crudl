@@ -28,7 +28,7 @@ const admin = Joi.object().keys({
         locale: Joi.string().default('en'),
     }).default(),
     messages: Joi.object().default(),
-    versionKey: Joi.string(),
+    id: Joi.string(),
     crudlVersion: Joi.string().default(version),
     isValidated: Joi.bool().forbidden().default(true),
 })
