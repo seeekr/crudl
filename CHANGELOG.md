@@ -1,6 +1,8 @@
 # CHANGELOG
 
-## 0.2.1 (not yet released)
+## 0.3.0 (not yet released)
+* NEW: Check version compatibility of admin and crudl. It is possible to specify the required crudl version in the admin (e.g. `admin.crudlVersion = '^0.3.0'`)
+* NEW: You can specify a _version key_ for an admin. Any locally persisted user data will be invalidated if the version keys do not match. This means, for example, that you can enforce a logout of all users by changing the version key of an admin.
 
 ## 0.2.0 (January 23, 2017)
 * NEW: Published npm package (crudl).

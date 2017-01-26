@@ -1,5 +1,8 @@
 import url from 'url'
 import get from 'lodash/get'
+import semver from 'semver'
+// Version
+import { version } from '../package.json'
 
 // React, Redux, and React-Intl
 import React from 'react'
@@ -275,6 +278,11 @@ function createConnector(spec, admin) { // eslint-disable-line no-shadow
 
 export function setAdmin(adminToBeValidated) {
     admin = validateAdmin(adminToBeValidated)
+    // Check admin versions
+    if (!semver.satisfies(version, admin.crudlVersion)) {
+        throw new Error(`The provided crudl@${version} does not satify the required version ${admin.crudlVersion}.`)
+    }
+
     Object.assign(options, admin.options)
     // Create connector instances
     Object.keys(admin.connectors).forEach((name) => {

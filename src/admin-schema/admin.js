@@ -1,5 +1,6 @@
-import { Joi, stringOrReactProperty } from './base'
+import { version } from '../../package.json'
 
+import { Joi, stringOrReactProperty } from './base'
 import views from './views'
 import connectors from './connectors'
 import login from './login'
@@ -28,6 +29,7 @@ const admin = Joi.object().keys({
     }).default(),
     messages: Joi.object().default(),
     versionKey: Joi.string(),
+    crudlVersion: Joi.string().default(version),
     isValidated: Joi.bool().forbidden().default(true),
 })
 
