@@ -11,12 +11,18 @@ class CheckboxField extends React.Component {
         readOnly: React.PropTypes.bool.isRequired,
         input: React.PropTypes.shape({
             onChange: React.PropTypes.func.isRequired,
+            value: React.PropTypes.any,
         }).isRequired,
         label: React.PropTypes.string.isRequired,
     };
 
-    handleKeyPress(value) {
-        this.props.input.onChange(!value)
+    constructor() {
+        super()
+        this.toggleCheck = this.toggleCheck.bind(this)
+    }
+
+    toggleCheck() {
+        this.props.input.onChange(!this.props.input.value)
     }
 
     render() {
@@ -30,14 +36,14 @@ class CheckboxField extends React.Component {
                     role="checkbox"
                     tabIndex="0"
                     aria-checked={checked}
-                    onKeyPress={() => this.handleKeyPress(input.value)}
+                    onKeyPress={this.toggleCheck}
                     >
                     <input
                         type="checkbox"
                         id={desc.id}
                         tabIndex="0"
                         aria-hidden="true"
-                        {...input}
+                        onClick={this.toggleCheck}
                         data-field-display-name={desc.id}
                         data-field-display-values={input.value}
                         readOnly={applyReadOnly}
