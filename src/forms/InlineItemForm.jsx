@@ -30,9 +30,9 @@ class InlineItemForm extends React.Component {
     }
 
     componentWillReceiveProps(props) {
-        const { desc, error, index } = props
+        const { desc, error, index, anyTouched, invalid } = props
 
-        if (typeof error !== 'undefined') {
+        if (typeof error !== 'undefined' || (anyTouched && invalid)) {
             showExpanded(createInlinesItemId(desc.id, index))
         }
     }

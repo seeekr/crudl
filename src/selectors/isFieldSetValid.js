@@ -8,6 +8,7 @@ export default function isFieldSetValid(formName, fieldNames) {
         const subState = {
             form: {
                 [formName]: Object.assign({}, formState, {
+                    error: undefined,
                     syncError: false,
                     registeredFields: registeredFields.filter(({ name }) => fieldNames.indexOf(name) >= 0),
                 }),
