@@ -66,7 +66,7 @@ class SuggestionField extends WatchComponent {
             visuallyBlurElem(this.refs.group)
         } else {
             // Use parentId to find out if event.target has a parent with a certain id
-            const parentId = `autocomplete-${this.props.desc.id}`
+            const parentId = `autocomplete-${this.props.id}`
             // Close all results if event.target is not a child of parentId
             // otherwise keep visual focus
             const isChild = hasParentId(e.target, parentId)
@@ -102,7 +102,7 @@ class SuggestionField extends WatchComponent {
         // Search with a delay if query is not empty
         if (query.length > 0) {
             this.searchTimeout = window.setTimeout(() => {
-                this.props.desc.actions.search(req({ query }))
+                this.props.actions.search(req({ query }))
                 .then(res => this.setState({ options: res.data }))
             }, this.props.searchDelay)
         }
@@ -125,27 +125,27 @@ class SuggestionField extends WatchComponent {
     handleFieldFocus() {
         this.refs.searchField.focus()
         this.search('')
-        showExpanded(this.props.desc.id)
+        showExpanded(this.props.id)
     }
 
     clearSearch() {
-        closeExpanded(this.props.desc.id)
+        closeExpanded(this.props.id)
     }
 
     render() {
-        const { desc, disabled, readOnly } = this.props
+        const { id, required, disabled, readOnly } = this.props
         const selectedOption = this.state.selection.map(item => item.label)[0]
         const isSearchResult = this.state.options.length > 0
         const applyReadOnly = !disabled && readOnly
         const isAccessible = !disabled && !readOnly
         return (
-            <div className="autocomplete listbox" id={`autocomplete-${desc.id}`}>
+            <div className="autocomplete listbox" id={`autocomplete-${id}`}>
                 <div ref="group" role="group" className="field-button-group field-button-inner">
                     <div
                         className="field"
-                        aria-controls={desc.id}
+                        aria-controls={id}
                         aria-expanded="false"
-                        onClick={() => isAccessible && showExpanded(desc.id)}
+                        onClick={() => isAccessible && showExpanded(id)}
                     >
                         <input
                             ref="searchField"
@@ -155,14 +155,14 @@ class SuggestionField extends WatchComponent {
                             autoComplete="off"
                             onFocus={() => isAccessible && this.handleFieldFocus()}
                             onChange={(event) => this.search(event.target.value)}
-                            data-field-display-name={desc.id}
+                            data-field-display-name={id}
                             data-field-display-values={selectedOption}
                             readOnly={applyReadOnly}
                             disabled={disabled}
                         />
                     </div>
                     <ul role="group" className="buttons">
-                        {!desc.required && selectedOption &&
+                        {!required && selectedOption &&
                             <li><button
                                 type="button"
                                 aria-label="Clear"
@@ -182,7 +182,7 @@ class SuggestionField extends WatchComponent {
                 </div>
                 <div
                     className={classNames('options', { empty: !isSearchResult })}
-                    id={desc.id}
+                    id={id}
                     role="region"
                     aria-hidden="true"
                 >

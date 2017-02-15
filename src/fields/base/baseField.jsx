@@ -1,6 +1,5 @@
 import React from 'react'
-import { propTypes as RFPropTypes } from 'redux-form'
-import { fieldShape } from '../../PropTypes'
+import { baseFieldPropTypes } from '../../PropTypes'
 
 
 export default function baseField(Component) {
@@ -16,18 +15,7 @@ export default function baseField(Component) {
         static displayName = `BaseField(${Component.displayName || Component.name})`;
 
         static propTypes = {
-            desc: fieldShape,
-            input: React.PropTypes.object.isRequired,
-            meta: React.PropTypes.object.isRequired,
-            label: React.PropTypes.string.isRequired,
-            helpText: React.PropTypes.node.isRequired,
-            disabled: React.PropTypes.bool.isRequired,
-            readOnly: React.PropTypes.bool.isRequired,
-            error: RFPropTypes.error.isRequired,
-            hidden: React.PropTypes.bool.isRequired,
-            registerFilterField: React.PropTypes.func,
-            onAdd: React.PropTypes.func,
-            onEdit: React.PropTypes.func,
+            ...baseFieldPropTypes,
             ...Component.propTypes,
         };
 
@@ -88,21 +76,21 @@ export default function baseField(Component) {
                 return super.renderLabel(label)
             } else if (label) {
                 return (
-                    <label htmlFor={this.props.desc.id}>{label}</label>
+                    <label htmlFor={this.props.id}>{label}</label>
                 )
             }
             return null
         }
 
         renderRelations() {
-            const { desc, onAdd, onEdit, input } = this.props
-            const allowAdd = desc.add
-            const allowEdit = desc.edit && input.value
+            const { add, edit, onAdd, onEdit, input } = this.props
+            const allowAdd = !!add
+            const allowEdit = !!edit && input.value
             if (allowAdd || allowEdit) {
                 return (
                     <ul role="group" className="field-tools">
-                        {allowAdd && <li><a onClick={() => onAdd(desc)}>Add</a></li>}
-                        {allowEdit && <li><a onClick={() => onEdit(desc)}>Edit</a></li>}
+                        {allowAdd && <li><a onClick={onAdd}>Add</a></li>}
+                        {allowEdit && <li><a onClick={onEdit}>Edit</a></li>}
                     </ul>
                 )
             }

@@ -64,7 +64,7 @@ class AutocompleteMultipleField extends React.Component {
             visuallyBlurElem(this.refs.group)
         } else {
             // Use parentId to find out if event.target has a parent with a certain id
-            const parentId = `autocomplete-multiple-${this.props.desc.id}`
+            const parentId = `autocomplete-multiple-${this.props.id}`
             // Close all results if event.target is not a child of parentId
             // otherwise keep visual focus
             const isChild = hasParentId(e.target, parentId)
@@ -85,7 +85,7 @@ class AutocompleteMultipleField extends React.Component {
             this.setState({ selection: [] })
             input.onChange([])
         } else {
-            this.props.desc.actions.select(req({ selection }))
+            this.props.actions.select(req({ selection }))
             .then((res) => {
                 this.setState({ selection: res.data })
                 const values = res.data.map(item => item.value)
@@ -96,9 +96,9 @@ class AutocompleteMultipleField extends React.Component {
     }
 
     doSearch(query) {
-        this.props.desc.actions.search(req({ query }))
+        this.props.actions.search(req({ query }))
         .then((res) => {
-            showExpanded(this.props.desc.id)
+            showExpanded(this.props.id)
             this.setState({ options: res.data })
         })
     }
@@ -123,7 +123,7 @@ class AutocompleteMultipleField extends React.Component {
 
     remove(e, index) {
         const selection = this.state.selection.slice() // Create a copy
-        if (selection.length > 1 || !this.props.desc.required) {
+        if (selection.length > 1 || !this.props.required) {
             selection.splice(index, 1)
             this.select(selection)
         }
@@ -156,7 +156,7 @@ class AutocompleteMultipleField extends React.Component {
     }
 
     clearSearch() {
-        closeExpanded(this.props.desc.id)
+        closeExpanded(this.props.id)
         this.refs.searchField.value = ''
     }
 
@@ -169,7 +169,7 @@ class AutocompleteMultipleField extends React.Component {
     }
 
     render() {
-        const { desc, disabled, readOnly } = this.props
+        const { id, required, disabled, readOnly } = this.props
         const isSearchResult = this.state.options.length > 0
         const selectedOptions = this.state.selection.map(item => item.label)
         const applyReadOnly = !disabled && readOnly
@@ -201,8 +201,8 @@ class AutocompleteMultipleField extends React.Component {
                                     className="action-clear icon-only"
                                     tabIndex="0"
                                     aria-label="Remove item (need to save the form)"
-                                    aria-disabled={!isAccessible || array.length === 1 && desc.required}
-                                    disabled={!isAccessible || array.length === 1 && desc.required}
+                                    aria-disabled={!isAccessible || array.length === 1 && required}
+                                    disabled={!isAccessible || array.length === 1 && required}
                                     onFocus={event => isAccessible && this.focusSelectedOption(event)}
                                     onBlur={event => this.blurSelectedOption(event)}
                                     >&zwnj;</button>
@@ -211,14 +211,14 @@ class AutocompleteMultipleField extends React.Component {
                         </div>
                     ))}
                 </div>
-                <div className="autocomplete listbox" id={`autocomplete-multiple-${desc.id}`}>
+                <div className="autocomplete listbox" id={`autocomplete-multiple-${id}`}>
                     <div
                         ref="group"
                         role="group"
                         className="field-button-group field-button-inner"
                         onClick={event => !disabled && this.handleFieldFocus(event)}
                         >
-                        <div className="field" aria-controls={desc.id} aria-expanded="false">
+                        <div className="field" aria-controls={id} aria-expanded="false">
                             <input
                                 ref="searchField"
                                 type="text"
@@ -226,7 +226,7 @@ class AutocompleteMultipleField extends React.Component {
                                 autoComplete="off"
                                 onFocus={event => this.handleFieldFocus(event)}
                                 onChange={event => this.search(event.target.value)}
-                                data-field-display-name={desc.id}
+                                data-field-display-name={id}
                                 data-field-display-values={selectedOptions}
                                 readOnly={applyReadOnly}
                                 disabled={disabled}
@@ -245,7 +245,7 @@ class AutocompleteMultipleField extends React.Component {
                     </div>
                     <div
                         className={classNames('options', { empty: !isSearchResult })}
-                        id={desc.id}
+                        id={id}
                         role="region"
                         aria-hidden="true"
                         >

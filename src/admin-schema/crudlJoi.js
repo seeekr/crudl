@@ -1,5 +1,4 @@
 import Joi from 'joi'
-import { getParamNames } from 'react-router/lib/PatternUtils'
 
 /**
  * Definition of a property schema.

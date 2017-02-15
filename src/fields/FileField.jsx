@@ -72,22 +72,21 @@ class FileField extends WatchComponent {
     // FIXME: action send: what to do when the image has been selected (e.g. nothing, upload, changeToBase64)
 
     clearSearch() {
-        closeExpanded(this.props.desc.id)
+        closeExpanded(this.props.id)
     }
 
     render() {
-        const { desc, formField, disabled, readOnly } = this.props
-        console.log("XXX", formField.value)
+        const { id, required, disabled, readOnly } = this.props
         const applyReadOnly = !disabled && readOnly
         const repr = this.getRepr()
         // const isAccessible = !disabled && !readOnly
         // FIXME (Axel): Styling, readOnly, disabled */
         return (
-            <div className="autocomplete listbox" id={`autocomplete-${desc.id}`}>
+            <div className="autocomplete listbox" id={`autocomplete-${id}`}>
                 <div ref="group" role="group" className="field-button-group field-button-inner">
                     <div
                         className="field"
-                        aria-controls={desc.id}
+                        aria-controls={id}
                         aria-expanded="false"
                         ><div className="label">{repr}</div>
                         <input
@@ -96,13 +95,13 @@ class FileField extends WatchComponent {
                             className="filefield"
                             autoComplete="off"
                             onChange={(event) => this.handleChange(event)}
-                            data-field-display-name={desc.id}
+                            data-field-display-name={id}
                             readOnly={applyReadOnly}
                             disabled={disabled}
                             />
                     </div>
                     <ul role="group" className="buttons">
-                        {!desc.required &&
+                        {!required &&
                             <li>
                                 <button
                                     type="button"

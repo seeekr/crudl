@@ -1,33 +1,30 @@
 import React from 'react'
 import FieldButtonGroup from './base/FieldButtonGroup'
 import baseField from './base/baseField'
-import { fieldShape } from '../PropTypes'
+import { baseFieldPropTypes } from '../PropTypes'
 
 
 class UrlField extends React.Component {
 
     static propTypes = {
-        desc: fieldShape,
-        input: React.PropTypes.object.isRequired,
-        disabled: React.PropTypes.bool.isRequired,
-        readOnly: React.PropTypes.bool.isRequired,
+        ...baseFieldPropTypes,
         link: React.PropTypes.bool.isRequired,
         linkURL: React.PropTypes.string,
     };
 
     render() {
-        const { desc, input, link, linkURL, disabled, readOnly } = this.props
+        const { id, placeholder, input, link, linkURL, disabled, readOnly } = this.props
         const applyReadOnly = !disabled && readOnly
         return (
-            <FieldButtonGroup id={`url-${desc.id}`} layout="field-button-inner" {...this.props}>
+            <FieldButtonGroup id={`url-${id}`} layout="field-button-inner" {...this.props}>
                 <div className="field">
                     <input
                         type="text"
-                        placeholder={desc.placeholder}
-                        id={desc.id}
+                        placeholder={placeholder}
+                        id={id}
                         autoComplete="off"
                         {...input}
-                        data-field-display-name={desc.id}
+                        data-field-display-name={id}
                         data-field-display-values={input.value}
                         readOnly={applyReadOnly}
                         disabled={disabled}

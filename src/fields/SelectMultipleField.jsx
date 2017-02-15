@@ -25,15 +25,15 @@ class SelectMultipleField extends React.Component {
         // If "ESC" then blur searchfield, close listbox and destroy search
         // otherwise check if target hasParentId
         if (e.key === 'Escape' || e.keyCode === 27) {
-            closeExpanded(this.props.desc.id)
+            closeExpanded(this.props.id)
         } else {
             // Use parentId to find out if event.target has a parent with a certain id
-            const parentId = `select-multiple-${this.props.desc.id}`
+            const parentId = `select-multiple-${this.props.id}`
             // Close all results if event.target is not a child of parentId
             // otherwise keep visual focus
             const isChild = hasParentId(e.target, parentId)
             if (!isChild) {
-                closeExpanded(this.props.desc.id)
+                closeExpanded(this.props.id)
                 visuallyBlurElem(this.refs.group)
             } else {
                 if (!this.props.disabled && !this.props.readOnly) {
@@ -88,7 +88,7 @@ class SelectMultipleField extends React.Component {
     }
 
     render() {
-        const { desc, options, allowNone, disabled, readOnly } = this.props
+        const { id, label, options, allowNone, disabled, readOnly } = this.props
         const selectedOptions = this.getSelectedValues().map(value => this.getLabel(value)).filter(item => item)
         const isAccessible = !disabled && !readOnly
         return (
@@ -127,19 +127,19 @@ class SelectMultipleField extends React.Component {
                         </div>
                     ))}
                 </div>
-                <div className="select listbox" id={`select-multiple-${desc.id}`}>
+                <div className="select listbox" id={`select-multiple-${id}`}>
                     <div
                         ref="group"
                         role="group"
                         className="field-button-group field-button-inner"
-                        aria-controls={desc.id}
+                        aria-controls={id}
                         aria-expanded="false"
-                        data-field-display-name={desc.id}
+                        data-field-display-name={id}
                         data-field-display-values={selectedOptions}
-                        onClick={() => isAccessible && toggleExpanded(desc.id)}
+                        onClick={() => isAccessible && toggleExpanded(id)}
                         >
                         <div className="field" tabIndex={disabled ? '-1' : '0'}>
-                            <div className="label">{desc.label}</div>
+                            <div className="label">{label}</div>
                         </div>
                         <ul role="group" className="buttons">
                             <li><button
@@ -151,7 +151,7 @@ class SelectMultipleField extends React.Component {
                             </li>
                         </ul>
                     </div>
-                    <div className="options" id={desc.id} role="region" aria-hidden="true">
+                    <div className="options" id={id} role="region" aria-hidden="true">
                         <ul role="listbox">
                             {options.map(o => (
                                 <li

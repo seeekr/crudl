@@ -2,31 +2,23 @@ import { Joi, stringProperty, stringOrReactProperty, booleanProperty } from './b
 
 import onChange from './onChange'
 
-const field = Joi.object().keys({
-    // Required Properties
+const field = Joi.object().unknown(true).keys({
+    // Required
     name: stringProperty().required(),
     field: Joi.alternatives().try(Joi.string(), Joi.func()).required(),
-
-    // Optional properties
+    // Optional
+    id: Joi.string().default(Joi.ref('name')),
+    key: Joi.string().default(Joi.ref('name')),
     label: stringProperty().default(Joi.ref('name')),
     readOnly: booleanProperty(false),
-
-    // Misc optional
-    actions: Joi.object().pattern(/\w+/, Joi.func()),
-    id: Joi.string().default(Joi.ref('name')),
+    required: booleanProperty(false),
+    disabled: booleanProperty(false),
     initialValue: Joi.any(),
     defaultValue: Joi.any(),
-    key: Joi.string().default(Joi.ref('name')),
-    props: Joi.alternatives().try(Joi.object(), Joi.func()).default({}),
-    placeholder: stringProperty(''),
-    required: Joi.boolean().default(false),
     validate: Joi.func().default(() => undefined),
     onChange,
-
-    // before/after optional
     before: stringOrReactProperty(''),
     after: stringOrReactProperty(''),
-
     // Relations optional
     add: Joi.object().keys({
         path: stringProperty().required(),
@@ -36,6 +28,8 @@ const field = Joi.object().keys({
         path: stringProperty().required(),
         returnValue: Joi.func(),
     }),
+    // Async part of the descriptor: a function returning an object or a promise
+    lazy: Joi.func().default(() => ({})),
 })
 
 export default field

@@ -62,15 +62,15 @@ class SelectField extends React.Component {
         // If "ESC" then blur searchfield, close listbox and destroy search
         // otherwise check if target hasParentId
         if (e.key === 'Escape' || e.keyCode === 27) {
-            closeExpanded(this.props.desc.id)
+            closeExpanded(this.props.id)
         } else {
             // Use parentId to find out if event.target has a parent with a certain id
-            const parentId = `select-${this.props.desc.id}`
+            const parentId = `select-${this.props.id}`
             // Close all results if event.target is not a child of parentId
             // otherwise keep visual focus
             const isChild = hasParentId(e.target, parentId)
             if (!isChild) {
-                closeExpanded(this.props.desc.id)
+                closeExpanded(this.props.id)
                 visuallyBlurElem(this.refs.group)
             } else {
                 if (!this.props.disabled && !this.props.readOnly) {
@@ -82,7 +82,7 @@ class SelectField extends React.Component {
 
     select(value) {
         this.props.input.onChange(value)
-        closeExpanded(this.props.desc.id)
+        closeExpanded(this.props.id)
     }
 
     handleSelectItem(value = '') {
@@ -91,7 +91,7 @@ class SelectField extends React.Component {
 
     handleRemoveItem(event) {
         this.props.input.onChange('')
-        closeExpanded(this.props.desc.id)
+        closeExpanded(this.props.id)
         event.stopPropagation()
         event.nativeEvent.stopImmediatePropagation()
     }
@@ -110,27 +110,27 @@ class SelectField extends React.Component {
     }
 
     render() {
-        const { desc, options, input, disabled, readOnly } = this.props
+        const { id, required, options, input, disabled, readOnly } = this.props
         const selectedOption = this.getLabel(input.value)
         const isAccessible = !disabled && !readOnly
         return (
-            <div className="select listbox" id={`select-${desc.id}`}>
+            <div className="select listbox" id={`select-${id}`}>
                 <div
                     ref="group"
                     role="group"
                     className="field-button-group field-button-inner"
                     tabIndex={disabled ? '-1' : '0'}
-                    aria-controls={desc.id}
+                    aria-controls={id}
                     aria-expanded="false"
-                    data-field-display-name={desc.id}
+                    data-field-display-name={id}
                     data-field-display-values={selectedOption}
-                    onClick={() => isAccessible && toggleExpanded(desc.id)}
+                    onClick={() => isAccessible && toggleExpanded(id)}
                     >
                     <div className="field">
                         <div className="label">{selectedOption}</div>
                     </div>
                     <ul role="group" className="buttons">
-                        {!desc.required && selectedOption && <li>
+                        {!required && selectedOption && <li>
                             <button
                                 type="button"
                                 className="icon-only action-clear"
@@ -149,7 +149,7 @@ class SelectField extends React.Component {
                         </li>
                     </ul>
                 </div>
-                <div className="options" id={desc.id} role="region" aria-hidden="true">
+                <div className="options" id={id} role="region" aria-hidden="true">
                     <ul role="listbox">
                         {options.map(o => (
                             <li

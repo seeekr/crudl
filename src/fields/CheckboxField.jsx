@@ -1,19 +1,12 @@
 import React from 'react'
 import baseField from './base/baseField'
 
-import { fieldShape } from '../PropTypes'
+import { baseFieldPropTypes } from '../PropTypes'
 
 class CheckboxField extends React.Component {
 
     static propTypes = {
-        desc: fieldShape.isRequired,
-        disabled: React.PropTypes.bool.isRequired,
-        readOnly: React.PropTypes.bool.isRequired,
-        input: React.PropTypes.shape({
-            onChange: React.PropTypes.func.isRequired,
-            value: React.PropTypes.any,
-        }).isRequired,
-        label: React.PropTypes.string.isRequired,
+        ...baseFieldPropTypes,
     };
 
     constructor() {
@@ -26,11 +19,11 @@ class CheckboxField extends React.Component {
     }
 
     render() {
-        const { desc, input, disabled, readOnly } = this.props
+        const { id, input, disabled, readOnly } = this.props
         const applyReadOnly = !disabled && readOnly
         const checked = input.value
         return (
-            <label htmlFor={desc.id}>
+            <label htmlFor={id}>
                 <div
                     className="field"
                     role="checkbox"
@@ -40,11 +33,11 @@ class CheckboxField extends React.Component {
                     >
                     <input
                         type="checkbox"
-                        id={desc.id}
+                        id={id}
                         tabIndex="0"
                         aria-hidden="true"
                         onClick={this.toggleCheck}
-                        data-field-display-name={desc.id}
+                        data-field-display-name={id}
                         data-field-display-values={input.value}
                         readOnly={applyReadOnly}
                         disabled={disabled}

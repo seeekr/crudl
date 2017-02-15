@@ -19,7 +19,7 @@ class RadioGroup extends React.Component {
     }
 
     render() {
-        const { desc, options, input, helpText, disabled, readOnly } = this.props
+        const { id, options, input, helpText, disabled, readOnly } = this.props
         const applyReadOnly = !disabled && readOnly
         return (
             <div>
@@ -28,7 +28,7 @@ class RadioGroup extends React.Component {
                     {options.map((o) => {
                         const checked = input.value === o.value
                         return (
-                            <li key={desc.id + o.value} role="radio" aria-checked={checked} value={o.value}>
+                            <li key={id + o.value} role="radio" aria-checked={checked} value={o.value}>
                                 <label htmlFor={o.value}>
                                     <div
                                         className="field"
@@ -39,12 +39,12 @@ class RadioGroup extends React.Component {
                                         >
                                         <input
                                             type="radio"
-                                            name={desc.id}
+                                            name={id}
                                             id={o.value}
                                             {...input}
                                             value={o.value}
                                             aria-hidden="true"
-                                            data-field-display-name={desc.id}
+                                            data-field-display-name={id}
                                             data-field-display-values={input.value}
                                             checked={checked}
                                             readOnly={applyReadOnly}

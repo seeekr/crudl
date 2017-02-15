@@ -25,7 +25,7 @@ export const activeFiltersShape = React.PropTypes.arrayOf(
         name: React.PropTypes.string.isRequired,
         value: React.PropTypes.any.isRequired,
         label: React.PropTypes.string.isRequired,
-    })
+    }),
 )
 
 export const sortingShape = React.PropTypes.arrayOf(
@@ -33,7 +33,7 @@ export const sortingShape = React.PropTypes.arrayOf(
         name: React.PropTypes.string.isRequired,
         sortKey: React.PropTypes.any.isRequired,
         sorted: React.PropTypes.string.isRequired,
-    })
+    }),
 )
 
 // validated admin shape
@@ -80,3 +80,41 @@ export const viewCallsShape = React.PropTypes.shape({
     returnValue: React.PropTypes.any,
     storedData: React.PropTypes.any,
 })
+
+export const baseFieldPropTypes = {
+    // From redux
+    dispatch: React.PropTypes.func,
+    // From crudl form
+    input: React.PropTypes.object.isRequired,
+    meta: React.PropTypes.object.isRequired,
+    registerFilterField: React.PropTypes.func,
+    onAdd: React.PropTypes.func,
+    onEdit: React.PropTypes.func,
+    // From admin
+    name: React.PropTypes.string.isRequired,
+    field: React.PropTypes.node.isRequired,
+    id: React.PropTypes.string.isRequired,
+    key: React.PropTypes.string.isRequired,
+    label: React.PropTypes.string.isRequired,
+    readOnly: React.PropTypes.bool.isRequired,
+    required: React.PropTypes.bool.isRequired,
+    disabled: React.PropTypes.bool.isRequired,
+    initialValue: React.PropTypes.any,
+    defaultValue: React.PropTypes.any,
+    validate: React.PropTypes.func.isRequired,
+    onChange: React.PropTypes.object,
+    before: React.PropTypes.node.isRequired,
+    after: React.PropTypes.node.isRequired,
+    add: React.PropTypes.shape({
+        path: React.PropTypes.string.isRequired,
+        returnValue: React.PropTypes.func,
+    }),
+    edit: React.PropTypes.shape({
+        path: React.PropTypes.string.isRequired,
+        returnValue: React.PropTypes.func,
+    }),
+    // Async part of the descriptor: a function returning an object or a promise
+    lazy: React.PropTypes.func.isRequired,
+}
+
+export const formFieldsShape = React.PropTypes.object

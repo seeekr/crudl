@@ -1,7 +1,7 @@
+/* eslint-disable react/no-unused-prop-types */
 import React from 'react'
 import { autofill } from 'redux-form'
 import { connect } from 'react-redux'
-import get from 'lodash/get'
 import classNames from 'classnames'
 
 import asFunc from '../utils/asFunc'
@@ -9,7 +9,7 @@ import asArray from '../utils/asArray'
 import asPromise from '../utils/asPromise'
 import isPromise from '../utils/isPromise'
 import HiddenField from '../fields/HiddenField'
-import { fieldShape } from '../PropTypes'
+import { fieldShape, formFieldsShape, baseFieldPropTypes } from '../PropTypes'
 import formFields from '../selectors/formFields'
 import fieldComponents from '../fields'
 import withPropsWatch from '../utils/withPropsWatch'
@@ -25,23 +25,18 @@ function fieldClassName(Component) {
     return `type-${name}`
 }
 
-/* FIXME (Vaclav): Why is this component within containers? */
-/* FIXME (Vaclav): The proptypes defined here are different to what is used with the fieldloader
-with other components. */
-
 class FieldLoader extends React.Component {
 
     static propTypes = {
         desc: fieldShape,
-        meta: React.PropTypes.shape({
-            visited: React.PropTypes.bool,
-            autofilled: React.PropTypes.bool,
-            touched: React.PropTypes.bool,
-            error: React.PropTypes.node,
-        }).isRequired,
+        input: baseFieldPropTypes.input,
+        meta: baseFieldPropTypes.meta,
+        onAdd: baseFieldPropTypes.onAdd,
+        onEdit: baseFieldPropTypes.onEdit,
+        registerFilterField: baseFieldPropTypes.registerFilterField,
         dispatch: React.PropTypes.func.isRequired,
         formName: React.PropTypes.string,
-        fields: React.PropTypes.object.isRequired,
+        fields: formFieldsShape,
         watch: React.PropTypes.func.isRequired,
     };
 
@@ -89,6 +84,10 @@ class FieldLoader extends React.Component {
                 this.state = descProps
             }
         }
+
+        // Extend the descriptor asynchronously
+        const descPromise = asPromise(this.props.desc.lazy())
+        descPromise.then(asyncDesc => this.setState(asyncDesc))
     }
 
     handleOnChange(onChange, props) {
@@ -124,22 +123,46 @@ class FieldLoader extends React.Component {
 
     fieldProps() {
         return {
-            ...this.props,
+            // Coming from Redux Form
+            input: this.props.input,
+            meta: this.props.meta,
+            // Coming from the Forms
+            registerFilterField: this.props.registerFilterField,
+            onAdd: this.props.onAdd,
+            onEdit: this.props.onEdit,
+            // Coming from redux
+            dispatch: this.props.dispatch,
+            // Coming from the field descriptor
+            id: this.props.desc.id,
+            name: this.props.desc.name,
+            field: this.props.desc.field,
+            key: this.props.desc.key,
+            label: this.props.desc.label,
+            readOnly: this.props.desc.readOnly,
+            required: this.props.desc.required,
+            disabled: this.props.desc.disabled,
+            initialValue: this.props.desc.initialValue,
+            defaultValue: this.props.desc.defaultValue,
+            validate: this.props.desc.validate,
+            onChange: this.props.desc.onChange,
+            before: this.props.desc.before,
+            after: this.props.desc.after,
+            add: this.props.desc.add,
+            edit: this.props.desc.edit,
+            lazy: this.props.desc.lazy,
+            // Dynamicaly obtained props
             ...this.state,
-            hidden: this.props.desc.field === 'hidden' || get(this.state, 'hidden', false),
-            readOnly: this.props.desc.readOnly || get(this.state, 'readOnly', false),
-            disabled: this.props.desc.disabled || get(this.state, 'disabled', false),
-            error: (this.props.meta.touched && this.props.meta.error) || '',
+            // error: (this.props.meta.touched && this.props.meta.error) || '',
         }
     }
 
     render() {
         const props = this.fieldProps()
-        const { desc, disabled, readOnly, error, hidden } = props
+        const { disabled, readOnly, error, hidden, required } = props
 
-        const fieldContainerClass = classNames('field-container', fieldClassName(desc.field),
+        const fieldContainerClass = classNames('field-container', fieldClassName(this.props.desc.field),
         {
-            required: desc.required,
+            required,
             error: !!error,
             readonly: !disabled && readOnly,
             disabled,

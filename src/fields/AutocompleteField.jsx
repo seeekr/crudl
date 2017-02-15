@@ -7,6 +7,7 @@ import baseField from './base/baseField'
 import { hasParentId, visuallyFocusElem, visuallyBlurElem, showExpanded, closeExpanded } from '../utils/frontend'
 import { req } from '../Crudl'
 import withPropsWatch from '../utils/withPropsWatch'
+import { baseFieldPropTypes } from '../PropTypes'
 
 
 function asArray(value = []) {
@@ -24,6 +25,14 @@ function cleanValue(value) {
  */
 class AutocompleteField extends React.Component {
 
+    static propTypes = {
+        ...baseFieldPropTypes,
+        actions: React.PropTypes.shape({
+            select: React.PropTypes.func.isRequired,
+            search: React.PropTypes.func.isRequired,
+        }),
+    }
+
     static defaultProps = {
         allowNone: true, // Is it allowed to select no item?
         showAll: false, // Do `search` when the query string is empty?
@@ -35,17 +44,13 @@ class AutocompleteField extends React.Component {
         selection: [], // The displayed selection. An array of the form [ {value, label}, ... ]
     };
 
-    constructor() {
-        super()
-    }
-
     getDisplayValue(value) {
         const selectedOption = this.state.selection[0]
         // Try it synchronously first
         if (selectedOption && `${selectedOption.value}` === `${value}`) {
             return this.state.selection[0].label
         }
-        return this.props.desc.actions.select(req({ selection: [{ value }] }))
+        return this.props.actions.select(req({ selection: [{ value }] }))
         .then(res => res.data[0].label)
     }
 
@@ -79,7 +84,7 @@ class AutocompleteField extends React.Component {
             visuallyBlurElem(this.refs.group)
         } else {
             // Use parentId to find out if event.target has a parent with a certain id
-            const parentId = `autocomplete-${this.props.desc.id}`
+            const parentId = `autocomplete-${this.props.id}`
             // Close all results if event.target is not a child of parentId
             // otherwise keep visual focus
             const isChild = hasParentId(e.target, parentId)
@@ -100,7 +105,7 @@ class AutocompleteField extends React.Component {
             this.setState({ selection: [] })
             input.onChange('')
         } else {
-            this.props.desc.actions.select(req({ selection }))
+            this.props.actions.select(req({ selection }))
             .then((res) => {
                 this.setState({ selection: res.data })
                 let values = res.data.map(item => item.value)
@@ -115,14 +120,14 @@ class AutocompleteField extends React.Component {
         // Search with a delay if query is not empty
         if (query.length > 0) {
             this.searchTimeout = window.setTimeout(() => {
-                this.props.desc.actions.search(req({ query }))
+                this.props.actions.search(req({ query }))
                 .then(res => this.setState({ options: res.data }))
             }, this.props.searchDelay)
         } else {
             // Search immediately if showAll
             // Clear search otherwise
             if (this.props.showAll) {
-                this.props.desc.actions.search(req({ query }))
+                this.props.actions.search(req({ query }))
                 .then(res => this.setState({ options: res.data }))
             } else {
                 this.clearSearch()
@@ -145,28 +150,28 @@ class AutocompleteField extends React.Component {
     handleFieldFocus() {
         this.refs.searchField.focus()
         this.search('')
-        showExpanded(this.props.desc.id)
+        showExpanded(this.props.id)
     }
 
     clearSearch() {
-        closeExpanded(this.props.desc.id)
+        closeExpanded(this.props.id)
         this.refs.searchField.value = ''
     }
 
     render() {
-        const { desc, disabled, readOnly } = this.props
+        const { id, disabled, readOnly, required } = this.props
         const selectedOption = this.state.selection.map(item => item.label)[0]
         const isSearchResult = this.state.options.length > 0
         const applyReadOnly = !disabled && readOnly
         const isAccessible = !disabled && !readOnly
         return (
-            <div className="autocomplete listbox" id={`autocomplete-${desc.id}`}>
+            <div className="autocomplete listbox" id={`autocomplete-${id}`}>
                 <div ref="group" role="group" className="field-button-group field-button-inner">
                     <div
                         className="field"
-                        aria-controls={desc.id}
+                        aria-controls={id}
                         aria-expanded="false"
-                        onClick={() => isAccessible && showExpanded(desc.id)}
+                        onClick={() => isAccessible && showExpanded(id)}
                         >
                         <input
                             ref="searchField"
@@ -176,14 +181,14 @@ class AutocompleteField extends React.Component {
                             autoComplete="off"
                             onFocus={() => isAccessible && this.handleFieldFocus()}
                             onChange={event => this.search(event.target.value)}
-                            data-field-display-name={desc.id}
+                            data-field-display-name={id}
                             data-field-display-values={selectedOption}
                             readOnly={applyReadOnly}
                             disabled={disabled}
                             />
                     </div>
                     <ul role="group" className="buttons">
-                        {!desc.required
+                        {!required
                             &&
                             selectedOption
                             &&
@@ -206,7 +211,7 @@ class AutocompleteField extends React.Component {
                 </div>
                 <div
                     className={classNames('options', { empty: !isSearchResult })}
-                    id={desc.id}
+                    id={id}
                     role="region"
                     aria-hidden="true"
                     >
