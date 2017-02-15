@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars, no-underscore-dangle */
+
 import Joi from 'joi'
 
 /**
@@ -42,7 +44,10 @@ const property = {
                             // Validate the returnValue
                             const v = params.schema.validate(returnValue)
                             if (v.error) {
-                                throw new Error(`The return value of ${state.key}() must be a ${params.schema._type}. Found: ${returnValue}`) // eslint-disable-line
+                                throw new Error(
+                                    `The return value of ${state.key}() must be a ${params.schema._type} ` +
+                                    `Found: ${returnValue}`,
+                                )
                             }
                             return v.value
                         },
@@ -55,7 +60,7 @@ const property = {
                 if (v.error) {
                     return this.createError(
                         'property.of',
-                        { v: value, t: params.schema._type }, // eslint-disable-line no-underscore-dangle
+                        { v: value, t: params.schema._type },
                         state,
                         options)
                 }
@@ -78,7 +83,7 @@ const object = {
             params: {
                 id: Joi.string(),
             },
-            validate(params, value, state, options) { // eslint-disable-line no-unused-vars
+            validate(params, value, state, options) {
                 if (!value.id) {
                     Object.assign(value, { id: params.id || state.path.replace(/\./g, '/') })
                 }
@@ -88,12 +93,28 @@ const object = {
     ],
 }
 
-const intermediateJoi = Joi.extend(property, object)
+const boundFunc = {
+    name: 'func',
+    base: Joi.func(),
+    rules: [
+        {
+            name: 'bound',
+            validate(params, value, state, options) {
+                if (typeof value === 'function') {
+                    return value.bind(state.parent)
+                }
+                return value
+            },
+        },
+    ],
+}
+
+const intermediateJoi = Joi.extend(property, object, boundFunc)
 
 const formView = {
     name: 'formView',
     base: intermediateJoi.object(),
-    coerce(value, state, options) { // eslint-disable-line no-unused-vars
+    coerce(value, state, options) {
         // Change fields to fieldsets
         if (value && value.fields) {
             Object.assign(value, { fieldsets: [{ fields: value.fields }], fields: undefined })

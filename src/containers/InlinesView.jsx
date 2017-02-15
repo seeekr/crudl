@@ -4,7 +4,6 @@ import { reduxForm } from 'redux-form'
 import format from 'string-template'
 import { injectIntl, intlShape } from 'react-intl'
 
-import resultToValues from '../utils/resultToValues'
 import getInitialValues from '../utils/getInitialValues'
 import getValidator from '../utils/getValidator'
 import getFieldNames from '../utils/getFieldNames'
@@ -239,7 +238,7 @@ class InlinesView extends React.Component {
                                 onSubmitFail: () => {
                                     dispatch(errorMessage(intl.formatMessage(messages.validationError)))
                                 },
-                                initialValues: item.new ? item.data : resultToValues(desc, item.data),
+                                initialValues: item.new ? item.data : desc.getValue(item.data),
                             })
                         )
                     }

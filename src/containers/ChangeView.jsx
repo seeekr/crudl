@@ -157,8 +157,7 @@ export class ChangeView extends React.Component {
         const result = this.props.desc.normalize(response.data)
         const values = {}
         getAllFields(this.props.desc).forEach((f) => {
-            const value = select(result, f.key, f.defaultValue)
-            values[f.name] = value
+            values[f.name] = f.getValue(result)
         })
         return values
     }

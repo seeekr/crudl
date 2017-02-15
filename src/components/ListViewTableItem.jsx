@@ -26,7 +26,7 @@ class ListViewItem extends React.Component {
         return (
             <tr>
                 {fields.map((f, index) => {
-                    let value = select(data, f.key, f.defaultValue)
+                    let value = f.getValue(data)
                     let renderClass = f.render
 
                     if (typeof f.render === 'function') {
@@ -36,8 +36,8 @@ class ListViewItem extends React.Component {
 
                     const cellClass = classNames(renderClass, {
                         main: f.main,
-                        true: f.render && select(this.props.data, f.key, f.defaultValue),
-                        false: f.render && !select(this.props.data, f.key, f.defaultValue),
+                        true: f.render && value,
+                        false: f.render && !value,
                         // 'true': value,
                         // 'false': value
                     })
