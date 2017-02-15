@@ -8,7 +8,6 @@ const field = Joi.object().unknown(true).keys({
     field: Joi.alternatives().try(Joi.string(), Joi.func()).required(),
     // Optional
     id: Joi.string().default(Joi.ref('name')),
-    key: Joi.string().default(Joi.ref('name')),
     label: stringProperty().default(Joi.ref('name')),
     readOnly: booleanProperty(false),
     required: booleanProperty(false),

@@ -7,13 +7,11 @@ import classNames from 'classnames'
 import asFunc from '../utils/asFunc'
 import asArray from '../utils/asArray'
 import asPromise from '../utils/asPromise'
-import isPromise from '../utils/isPromise'
 import HiddenField from '../fields/HiddenField'
 import { fieldShape, formFieldsShape, baseFieldPropTypes } from '../PropTypes'
 import formFields from '../selectors/formFields'
 import fieldComponents from '../fields'
 import withPropsWatch from '../utils/withPropsWatch'
-
 
 function fieldClassName(Component) {
     let name
@@ -71,18 +69,6 @@ class FieldLoader extends React.Component {
                     watch(`fields.${name}`, props => this.handleOnChange(w, props))
                 })
             })
-        }
-
-        // Try to obtain the desc.props
-        const descProps = asFunc(this.props.desc.props)()
-        if (typeof descProps === 'object') {
-            // Did we get a promise back?
-            if (isPromise(descProps)) {
-                descProps.then(newProps => this.setState(newProps))
-                .catch(e => console.error(`In 'props' of ${desc.id}:`, e))
-            } else {
-                this.state = descProps
-            }
         }
 
         // Extend the descriptor asynchronously
