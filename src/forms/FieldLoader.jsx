@@ -122,7 +122,6 @@ class FieldLoader extends React.Component {
             ...this.props.desc,
             // Dynamicaly obtained props
             ...this.state,
-            // error: (this.props.meta.touched && this.props.meta.error) || '',
         }
     }
 

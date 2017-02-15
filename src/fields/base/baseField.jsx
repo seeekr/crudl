@@ -98,7 +98,8 @@ export default function baseField(Component) {
         }
 
         render() {
-            const { label, helpText, error } = this.props
+            const { label, helpText } = this.props
+            const error = (this.props.meta.touched && this.props.meta.error) || ''
             return (
                 <div className="basefield">
                     {!forgo('label') && this.renderLabel(label)}
