@@ -92,7 +92,10 @@ export const baseFieldPropTypes = {
     onEdit: React.PropTypes.func,
     // From admin
     name: React.PropTypes.string.isRequired,
-    field: React.PropTypes.node.isRequired,
+    field: React.PropTypes.oneOfType([
+        React.PropTypes.string,
+        React.PropTypes.func, // React component
+    ]).isRequired,
     id: React.PropTypes.string.isRequired,
     label: React.PropTypes.string.isRequired,
     readOnly: React.PropTypes.bool.isRequired,
