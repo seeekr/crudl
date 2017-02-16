@@ -8,6 +8,7 @@ import { autobind } from 'core-decorators'
 import getInitialValues from '../utils/getInitialValues'
 import getValidator from '../utils/getValidator'
 import getFieldNames from '../utils/getFieldNames'
+import getAllFields from '../utils/getAllFields'
 import { showAllExpanded, closeAllExpanded } from '../utils/frontend'
 import { successMessage, errorMessage } from '../actions/messages'
 import { showModalConfirm } from '../actions/frontend'
@@ -52,8 +53,17 @@ class InlinesView extends React.Component {
         return format(this.props.desc.itemTitle, { ord: index + 1, ...(data || this.state.items[index].data) })
     }
 
+    getValues(result) {
+        const { desc } = this.props
+        const values = {}
+        getAllFields(desc).forEach((f) => {
+            values[f.name] = f.getValue(result)
+        })
+        return values
+    }
+
     doList() {
-        const { desc, intl, dispatch } = this.props
+        const { desc, intl } = this.props
         if (hasPermission(desc.id, 'list')) {
             this.setState({ items: [] })
             desc.actions.list(req())
@@ -187,7 +197,6 @@ class InlinesView extends React.Component {
         })
     }
 
-
     render() {
         const { desc, dispatch, intl } = this.props
         const itemsLength = this.state.items.filter(item => !item.deleted).length
@@ -231,7 +240,7 @@ class InlinesView extends React.Component {
                                 onSubmitFail: () => {
                                     dispatch(errorMessage(intl.formatMessage(messages.validationError)))
                                 },
-                                initialValues: item.new ? item.data : desc.getValue(item.data),
+                                initialValues: item.new ? item.data : this.getValues(item.data),
                             })
                         )
                     }
