@@ -70,14 +70,12 @@ export function pageNotFoundMessage(message) {
 }
 
 export function showBlockOverlay() {
-    return showModalConfirm()
     return {
         type: types.SHOW_BLOCK_OVERLAY,
     }
 }
 
 export function hideBlockOverlay() {
-    return hideModalConfirm()
     return {
         type: types.HIDE_BLOCK_OVERLAY,
     }
