@@ -50,7 +50,11 @@ class FieldLoader extends React.Component {
     state = {};
 
     componentWillMount() {
-        const { desc, watch } = this.props
+        const { desc, watch, onAdd, onEdit } = this.props
+
+        // Transform onAdd and onEdit by partial application of the desc argument
+        this.onAdd = onAdd && (() => onAdd(desc))
+        this.onEdit = onEdit && (() => onEdit(desc))
 
         // Create the field component
         if (typeof desc.field === 'string') {
@@ -114,8 +118,8 @@ class FieldLoader extends React.Component {
             meta: this.props.meta,
             // Coming from the Forms
             registerFilterField: this.props.registerFilterField,
-            onAdd: this.props.onAdd,
-            onEdit: this.props.onEdit,
+            onAdd: this.onAdd, // The fixed form of this.props.onAdd (see componentWillMount)
+            onEdit: this.onEdit, // The fixed form of this.props.onEdit (see componentWillMount)
             // Coming from redux
             dispatch: this.props.dispatch,
             // Coming from the field descriptor
