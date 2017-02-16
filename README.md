@@ -22,6 +22,8 @@ CRUDL is a React application for rapidly building an admin interface based on yo
 * [Fieldsets](#fieldsets)
 * [Fields](#fields)
     * [onChange](#onchange)
+    * [getValue](#getvalue)
+    * [lazy](#lazy)
 * [Permissions](#permissions)
     * [Example of a connector providing permissions](#example-of-a-connector-providing-permissions)
 * [Messages](#messages)
@@ -114,7 +116,6 @@ CRUDL provides connectors for RESTful and GraphQL APIs. A REST connector must de
 A connector has the following schema:
 ```js
 {
-    id,             // A string uniquely identifying the connector
     url,            // REST: The endpoint URL (will be appended to options.baseURL)
     urlQuery,       // REST: A function that builds the url query part
     query,          // GraphQL: The GraphQL queries for create, read, update, and delete operations
@@ -390,25 +391,47 @@ With fieldsets, you are able to group fields with the change/addView.
 ```
 
 ## Fields
-With the fields, you describe the behaviour of a single element with the changeView and/or addView.
+With the fields, you describe the behavior of a single element with the changeView and/or addView. All the attributes of the field descriptor will be passed as props to the field component. The field descriptor can contain further custom attributes which are as well passed as props to the field component.
 ```js
 {
     // Required Properties
     name,                   // string property
-    field,                  // a string or react component property
+    field,                  // a property of either a string  (i.e. a name a field component)
+                            // or directly a react component
 
     // Optional properties
+    getValue,               // A function of the form `(data) => fieldValue`. Default: `(data) => data[name]`
     label,                  // string property (by default equal to the value of name)
     readOnly,               // booolean property
-
-    // Misc optional
+    required,               // booolean property
+    disabled,               // booolean property
     initialValue,           // Initial value in an add view
-    defaultValue,           // Default value if undefined
-    key,                    // The name of the key (by default equal to the value of name)
-    props,                  // An object or a promise function
-    required,               // boolean
     validate,               // a function (value, allFieldsValues) => error || undefined
-    onChange,               // onChange
+    onChange,               // onChange specification (see bellow)
+    add,                    // add relation specification (see bellow)
+    edit,                   // edit relation specification (see bellow)
+    lazy,                   // A function returning promise (see bellow)
+}
+```
+
+### getValue
+
+The value of the field is by default `data[name]`, where `name` is the required name attribute of the field descriptor and `data` is the response data from an API call. You can customize this behavior by providing your own `getValue` function of the form `(data) => fieldValue`. For example, suppose the returned data is
+```js
+{
+    username: 'joe'
+    contact: {
+        email: 'joe@github.com'
+        address: '...',
+    }
+}
+```
+and you want to describe an `email` field:
+```js
+{
+    name: 'email',
+    field: 'TextField',
+    getValue: data => data.contact.email,
 }
 ```
 
@@ -425,6 +448,32 @@ With onChange, you are able to define dependencies between one or more fields. F
     setInitialValue,        // a plain valuer or a promise function
 }
 ```
+
+### lazy
+
+By defining the `lazy` function, you may provide some attributes of the descriptor asynchronously. The lazy function takes zero arguments and must return a promise which resolves to an object (i.e. a partial descriptor).
+
+__Example:__ A Select field component has a prop `options` which is an array of object with atteributes `value` and `label`. You can provide these options _synchronously_ like this:
+```js
+{
+    name: 'rating',
+    label: 'Service Rating',
+    field: 'Select',
+    options: [{value: 0, label: 'Bad'}, {value: 1, label: 'Good'}, {value: 2, label: 'Excellent'}]
+},
+```
+Or you can provide these options asynchronously using the lazy function:
+```js
+{
+    name: 'rating',
+    label: 'Service Rating',
+    field: 'Select',
+    lazy: () => crudl.connectors.ratings.read(crudl.req()).then(response => ({
+        options: response.data,
+    })),
+},
+```
+Note that all the descriptor attributes will be passed as props to the field component. This is also true for asynchronously provided attributes.
 
 ## Permissions
 Each view may define its permissions. Permissions are defined on a per-action basis. A change view, for example, can define `get`, `save`, and `delete` actions, so it can specify corresponding `get`, `save`, and `delete` permissions like this:
