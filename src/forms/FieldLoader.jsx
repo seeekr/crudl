@@ -144,11 +144,7 @@ class FieldLoader extends React.Component {
 
         return (
             <div className={fieldContainerClass}>
-                {hidden ?
-                    <HiddenField {...props} />
-                    :
-                    React.createElement(this.fieldComponent, { ...props })
-                }
+                { React.createElement(this.fieldComponent, { ...props }) }
             </div>
         )
     }

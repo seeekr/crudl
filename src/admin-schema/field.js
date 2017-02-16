@@ -5,13 +5,17 @@ import onChange from './onChange'
 const field = Joi.object().unknown(true).keys({
     // Required
     name: stringProperty().required(),
-    field: Joi.alternatives().try(Joi.string(), Joi.func()).required(),
+    field: Joi.any().default('hidden').when('hidden', {
+        is: false,
+        then: Joi.alternatives().try(Joi.string(), Joi.func()).required(),
+    }),
     // Optional
     id: Joi.string().default(Joi.ref('name')),
     label: stringProperty().default(Joi.ref('name')),
     readOnly: booleanProperty(false),
     required: booleanProperty(false),
     disabled: booleanProperty(false),
+    hidden: booleanProperty(false),
     getValue: Joi.func().bound().default(function (result) { return result[this.name] }),
     initialValue: Joi.any(),
     validate: Joi.func().default(() => undefined),

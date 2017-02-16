@@ -1,16 +1,10 @@
 import React from 'react'
+import { baseFieldPropTypes } from '../PropTypes'
 
-class HiddenField extends React.Component {
+const HiddenField = props => (
+    <input type="hidden" {...props.input} />
+)
 
-    static propTypes = {
-        input: React.PropTypes.object.isRequired,
-    };
-
-    render() {
-        return (
-            <input type="hidden" {...this.props.input} />
-        )
-    }
-}
+HiddenField.propTypes = baseFieldPropTypes
 
 export default HiddenField

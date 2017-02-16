@@ -397,15 +397,17 @@ With the fields, you describe the behavior of a single element with the changeVi
 {
     // Required attributes
     name,                   // string property
-    field,                  // a property of either a string  (i.e. a name a field component)
-                            // or directly a react component
+    field,                  // either a string  (i.e. a name a field component) or
+                            // directly a react component. It is not required only when hidden == true
+                            // This attribute cannot be obtained asynchronously
 
     // Optional attributes
     getValue,               // A function of the form `(data) => fieldValue`. Default: `(data) => data[name]`
     label,                  // string property (by default equal to the value of name)
-    readOnly,               // booolean property
-    required,               // booolean property
-    disabled,               // booolean property
+    readOnly,               // boolean property
+    required,               // boolean property
+    disabled,               // boolean property
+    hidden,                 // boolean property
     initialValue,           // Initial value in an add view
     validate,               // a function (value, allFieldsValues) => error || undefined
     onChange,               // onChange specification (see bellow)
@@ -454,7 +456,7 @@ With onChange, you are able to define dependencies between one or more fields. F
 
 ### lazy
 
-By defining the `lazy` function, you may provide some attributes of the descriptor asynchronously. The lazy function takes zero arguments and must return a promise which resolves to an object (i.e. a partial descriptor).
+By defining the `lazy` function, you may provide some attributes of the descriptor asynchronously. The lazy function takes zero arguments and must return a promise which resolves to an object (i.e. a partial descriptor). You __cannot__ provide the attributes `name` and `field` asynchronously.
 
 __Example:__ A Select field component has a prop `options` which is an array of objects with attributes `value` and `label`. You can provide these options _synchronously_ like this:
 ```js

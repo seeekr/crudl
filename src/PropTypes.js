@@ -101,6 +101,7 @@ export const baseFieldPropTypes = {
     readOnly: React.PropTypes.bool.isRequired,
     required: React.PropTypes.bool.isRequired,
     disabled: React.PropTypes.bool.isRequired,
+    hidden: React.PropTypes.bool.isRequired,
     getValue: React.PropTypes.func.isRequired,
     initialValue: React.PropTypes.any,
     validate: React.PropTypes.func.isRequired,
