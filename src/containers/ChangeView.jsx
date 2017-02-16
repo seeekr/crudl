@@ -5,7 +5,6 @@ import { withRouter } from 'react-router'
 import { injectIntl, intlShape } from 'react-intl'
 import { routerShape, locationShape } from 'react-router/lib/PropTypes'
 
-import select from '../utils/select'
 import getAllFields from '../utils/getAllFields'
 import getValidator from '../utils/getValidator'
 import hasUnsavedChanges from '../utils/hasUnsavedChanges'
@@ -25,6 +24,7 @@ import permMessages from '../messages/permissions'
 import withPropsWatch from '../utils/withPropsWatch'
 import getFieldDesc from '../utils/getFieldDesc'
 import withViewCalls from '../utils/withViewCalls'
+import blocksUI from '../decorators/blocksUI'
 
 export class ChangeView extends React.Component {
 
@@ -162,31 +162,33 @@ export class ChangeView extends React.Component {
         return values
     }
 
+    @blocksUI
     doGet() {
         const { desc, intl, dispatch } = this.props
         if (hasPermission(desc.id, 'get')) {
             this.setState({ ready: false })
-            desc.actions.get(req())
-            .then((response) => {
-                const values = this.processResponse(response)
-                this.setState({ values, ready: true })
+            return desc.actions.get(req())
+                .then((response) => {
+                    const values = this.processResponse(response)
+                    this.setState({ values, ready: true })
 
-                // Did we return from a relation view?
-                const { hasReturned, storedData, returnValue } = this.props.viewCalls
-                if (hasReturned) {
-                    const { fieldName, relation } = storedData
-                    const fieldDesc = getFieldDesc(desc, fieldName)
-                    if (returnValue && fieldDesc[relation].returnValue) {
-                        dispatch(change(desc.id, fieldName, fieldDesc[relation].returnValue(returnValue)))
+                    // Did we return from a relation view?
+                    const { hasReturned, storedData, returnValue } = this.props.viewCalls
+                    if (hasReturned) {
+                        const { fieldName, relation } = storedData
+                        const fieldDesc = getFieldDesc(desc, fieldName)
+                        if (returnValue && fieldDesc[relation].returnValue) {
+                            dispatch(change(desc.id, fieldName, fieldDesc[relation].returnValue(returnValue)))
+                        }
                     }
-                }
-            })
-        } else {
-            dispatch(errorMessage(intl.formatMessage(permMessages.viewNotPermitted)))
-            this.setState({ ready: true, values: {} })
+                })
         }
+        dispatch(errorMessage(intl.formatMessage(permMessages.viewNotPermitted)))
+        this.setState({ ready: true, values: {} })
+        return undefined
     }
 
+    @blocksUI
     handleSave(data, stay = false) {
         const { dispatch, desc, intl } = this.props
         let preparedData
@@ -216,7 +218,7 @@ export class ChangeView extends React.Component {
         }
         // Not permitted
         dispatch(errorMessage(intl.formatMessage(permMessages.saveNotPermitted)))
-        return null
+        return undefined
     }
 
     handleCancel() {
@@ -233,18 +235,19 @@ export class ChangeView extends React.Component {
         }))
     }
 
+    @blocksUI
     doDelete(data) {
         const { dispatch, intl, desc } = this.props
         if (hasPermission(desc.id, 'delete')) {
-            desc.actions.delete(req(data)).then(() => {
+            return desc.actions.delete(req(data)).then(() => {
                 dispatch(cache.clearListView())
                 dispatch(successMessage(intl.formatMessage(messages.deleteSuccess, { item: desc.title })))
                 this.forceLeave = true
                 this.props.viewCalls.leaveView()
             })
-        } else {
-            dispatch(errorMessage(intl.formatMessage(permMessages.deleteNotPermitted)))
         }
+        dispatch(errorMessage(intl.formatMessage(permMessages.deleteNotPermitted)))
+        return undefined
     }
 
     enterAddRelation(fieldDesc) {

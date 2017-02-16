@@ -19,6 +19,7 @@ const initialState = {
     pageNotFound: {
         message: 'The requested page could not be found.',
     },
+    blockUI: false,
 }
 
 /**
@@ -54,6 +55,10 @@ export default function (state = initialState, action) {
             return t('modalConfirm', { visible: false })
         case types.PAGE_NOT_FOUND_MESSAGE:
             return t('pageNotFound', { message: action.message })
+        case types.SHOW_BLOCK_OVERLAY:
+            return t('blockUI', true)
+        case types.HIDE_BLOCK_OVERLAY:
+            return t('blockUI', false)
         default:
             return state
     }

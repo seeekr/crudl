@@ -33,6 +33,7 @@ const browersifyOptions = {
 const babelifyOptions = {
     presets: ['es2015', 'react'],
     plugins: [
+        'transform-decorators-legacy',
         'syntax-class-properties',
         'transform-class-properties',
         'transform-object-rest-spread',

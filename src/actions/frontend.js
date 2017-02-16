@@ -9,6 +9,8 @@ export const types = {
     SHOW_MODAL_CONFIRM: 'frontend.showModalConfirm',
     HIDE_MODAL_CONFIRM: 'frontend.hideModalConfirm',
     PAGE_NOT_FOUND_MESSAGE: 'frontend.pageNotFoundMessage',
+    SHOW_BLOCK_OVERLAY: 'frontend.showBlockOverlay',
+    HIDE_BLOCK_OVERLAY: 'frontend.hideBlockOverlay',
 }
 
 export function showNavigation() {
@@ -64,5 +66,19 @@ export function pageNotFoundMessage(message) {
     return {
         type: types.PAGE_NOT_FOUND_MESSAGE,
         message,
+    }
+}
+
+export function showBlockOverlay() {
+    return showModalConfirm()
+    return {
+        type: types.SHOW_BLOCK_OVERLAY,
+    }
+}
+
+export function hideBlockOverlay() {
+    return hideModalConfirm()
+    return {
+        type: types.HIDE_BLOCK_OVERLAY,
     }
 }

@@ -20,6 +20,7 @@ import messages from '../messages/addView'
 import permMessages from '../messages/permissions'
 import getFieldDesc from '../utils/getFieldDesc'
 import withViewCalls from '../utils/withViewCalls'
+import blocksUI from '../decorators/blocksUI'
 
 const BACK_TO_LIST_VIEW = 0
 const ADD_ANOTHER = 1
@@ -116,8 +117,9 @@ class AddView extends React.Component {
         return this.props.desc.denormalize(data)
     }
 
+    @blocksUI
     handleSave(data, nextStep = BACK_TO_LIST_VIEW) {
-        const { changeViewPath, dispatch, desc, location, intl } = this.props
+        const { changeViewPath, dispatch, desc, intl } = this.props
         if (hasPermission(desc.id, 'add')) {
             // Try to prepare the data.
             let preparedData
