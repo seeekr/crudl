@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 import { reduxForm } from 'redux-form'
 import format from 'string-template'
 import { injectIntl, intlShape } from 'react-intl'
+import { autobind } from 'core-decorators'
 
 import getInitialValues from '../utils/getInitialValues'
 import getValidator from '../utils/getValidator'
@@ -29,21 +30,13 @@ function createForm(desc, index, mapStateToProps) {
 
 /* FIXME (Vaclav): Shouldn't this be a component instead? Btw, why not TabView instead of InlinesView? */
 
+@autobind
 class InlinesView extends React.Component {
 
     static propTypes = {
         desc: tabShape.isRequired,
         intl: intlShape.isRequired,
         dispatch: React.PropTypes.func.isRequired,
-    }
-
-    constructor() {
-        super()
-        this.addItemForm = this.addItemForm.bind(this)
-        this.handleSave = this.handleSave.bind(this)
-        this.handleAdd = this.handleAdd.bind(this)
-        this.handleDelete = this.handleDelete.bind(this)
-        this.doList = this.doList.bind(this)
     }
 
     state = {

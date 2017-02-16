@@ -4,6 +4,7 @@ import { reduxForm, reset, SubmissionError, change } from 'redux-form'
 import { withRouter } from 'react-router'
 import { injectIntl, intlShape } from 'react-intl'
 import { locationShape, routerShape } from 'react-router/lib/PropTypes'
+import { autobind } from 'core-decorators'
 
 import getFieldNames from '../utils/getFieldNames'
 import getValidator from '../utils/getValidator'
@@ -27,6 +28,7 @@ const ADD_ANOTHER = 1
 const CONTINUE_EDITING = 2
 const BACK_TO_RELATION = 3
 
+@autobind
 class AddView extends React.Component {
 
     static propTypes = {
@@ -44,11 +46,6 @@ class AddView extends React.Component {
 
     constructor() {
         super()
-        this.doLeave = this.doLeave.bind(this)
-        this.routerWillLeave = this.routerWillLeave.bind(this)
-        this.handleCancel = this.handleCancel.bind(this)
-        this.enterAddRelation = this.enterAddRelation.bind(this)
-        this.enterEditRelation = this.enterEditRelation.bind(this)
         this.forceLeave = false
     }
 

@@ -1,9 +1,12 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { injectIntl, intlShape } from 'react-intl'
+import { autobind } from 'core-decorators'
+
 import { hideModalConfirm } from '../actions/frontend'
 import messages from '../messages/modal'
 
+@autobind
 class ModalConfirm extends React.Component {
 
     static propTypes = {
@@ -28,13 +31,6 @@ class ModalConfirm extends React.Component {
         modalType: '',
         message: '',
     };
-
-    constructor() {
-        super()
-        this.onCancel = this.onCancel.bind(this)
-        this.onConfirm = this.onConfirm.bind(this)
-        this.listenForEventKeydown = this.listenForEventKeydown.bind(this)
-    }
 
     componentDidMount() {
         document.body.addEventListener('keydown', this.listenForEventKeydown)

@@ -4,6 +4,7 @@ import { connect } from 'react-redux'
 import { withRouter } from 'react-router'
 import { locationShape, routerShape } from 'react-router/lib/PropTypes'
 import { injectIntl, intlShape } from 'react-intl'
+import { autobind } from 'core-decorators'
 
 import { resolvePath, req, hasPermission } from '../Crudl'
 import Header from '../components/Header'
@@ -53,6 +54,7 @@ function clearData(obj) {
     return newObj
 }
 
+@autobind
 export class ListView extends React.Component {
 
     static propTypes = {
@@ -73,18 +75,6 @@ export class ListView extends React.Component {
 
     constructor() {
         super()
-
-        this.list = this.list.bind(this)
-        this.handleRequestPage = this.handleRequestPage.bind(this)
-        this.handleEnterAddView = this.handleEnterAddView.bind(this)
-        this.handleEnterChangeView = this.handleEnterChangeView.bind(this)
-        this.handleClearSearch = this.handleClearSearch.bind(this)
-        this.handleSearch = this.handleSearch.bind(this)
-        this.handleClearFilters = this.handleClearFilters.bind(this)
-        this.handleFilters = this.handleFilters.bind(this)
-        this.handleSortingChange = this.handleSortingChange.bind(this)
-        this.handleRemoveActiveFilter = this.handleRemoveActiveFilter.bind(this)
-
         this.sorting = null
     }
 

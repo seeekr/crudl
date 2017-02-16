@@ -4,6 +4,7 @@ import { reduxForm, SubmissionError, change } from 'redux-form'
 import { withRouter } from 'react-router'
 import { injectIntl, intlShape } from 'react-intl'
 import { routerShape, locationShape } from 'react-router/lib/PropTypes'
+import { autobind } from 'core-decorators'
 
 import getAllFields from '../utils/getAllFields'
 import getValidator from '../utils/getValidator'
@@ -26,6 +27,7 @@ import getFieldDesc from '../utils/getFieldDesc'
 import withViewCalls from '../utils/withViewCalls'
 import blocksUI from '../decorators/blocksUI'
 
+@autobind
 export class ChangeView extends React.Component {
 
     static propTypes = {
@@ -43,18 +45,6 @@ export class ChangeView extends React.Component {
 
     constructor() {
         super()
-
-        this.doGet = this.doGet.bind(this)
-        this.doLeave = this.doLeave.bind(this)
-        this.doDelete = this.doDelete.bind(this)
-        this.handleDelete = this.handleDelete.bind(this)
-        this.handleSelectTab = this.handleSelectTab.bind(this)
-        this.routerWillLeave = this.routerWillLeave.bind(this)
-        this.switchTab = this.switchTab.bind(this)
-        this.handleCancel = this.handleCancel.bind(this)
-        this.enterAddRelation = this.enterAddRelation.bind(this)
-        this.enterEditRelation = this.enterEditRelation.bind(this)
-
         this.forceLeave = false
     }
 
