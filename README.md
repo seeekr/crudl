@@ -24,6 +24,7 @@ CRUDL is a React application for rapidly building an admin interface based on yo
     * [onChange](#onchange)
     * [getValue](#getvalue)
     * [lazy](#lazy)
+    * [Custom attributes](#custom-attributes)
 * [Permissions](#permissions)
     * [Example of a connector providing permissions](#example-of-a-connector-providing-permissions)
 * [Messages](#messages)
@@ -394,12 +395,12 @@ With fieldsets, you are able to group fields with the change/addView.
 With the fields, you describe the behavior of a single element with the changeView and/or addView. All the attributes of the field descriptor will be passed as props to the field component. The field descriptor can contain further custom attributes which are as well passed as props to the field component.
 ```js
 {
-    // Required Properties
+    // Required attributes
     name,                   // string property
     field,                  // a property of either a string  (i.e. a name a field component)
                             // or directly a react component
 
-    // Optional properties
+    // Optional attributes
     getValue,               // A function of the form `(data) => fieldValue`. Default: `(data) => data[name]`
     label,                  // string property (by default equal to the value of name)
     readOnly,               // booolean property
@@ -411,6 +412,8 @@ With the fields, you describe the behavior of a single element with the changeVi
     add,                    // add relation specification (see bellow)
     edit,                   // edit relation specification (see bellow)
     lazy,                   // A function returning promise (see bellow)
+
+    // further custom attributes and props
 }
 ```
 
@@ -453,7 +456,7 @@ With onChange, you are able to define dependencies between one or more fields. F
 
 By defining the `lazy` function, you may provide some attributes of the descriptor asynchronously. The lazy function takes zero arguments and must return a promise which resolves to an object (i.e. a partial descriptor).
 
-__Example:__ A Select field component has a prop `options` which is an array of object with atteributes `value` and `label`. You can provide these options _synchronously_ like this:
+__Example:__ A Select field component has a prop `options` which is an array of objects with attributes `value` and `label`. You can provide these options _synchronously_ like this:
 ```js
 {
     name: 'rating',
@@ -462,7 +465,7 @@ __Example:__ A Select field component has a prop `options` which is an array of 
     options: [{value: 0, label: 'Bad'}, {value: 1, label: 'Good'}, {value: 2, label: 'Excellent'}]
 },
 ```
-Or you can provide these options asynchronously using the lazy function:
+Or you can provide these options _asynchronously_ using the lazy function:
 ```js
 {
     name: 'rating',
@@ -474,6 +477,16 @@ Or you can provide these options asynchronously using the lazy function:
 },
 ```
 Note that all the descriptor attributes will be passed as props to the field component. This is also true for asynchronously provided attributes.
+
+### Custom attributes
+
+You can provide any number of further custom attributes which will then be passed as props to the field component. Note however that the following props are already passed to the field components and cannot be overwritten:
+- `dispatch`
+- `input`
+- `meta`
+- `registerFilterField`
+- `onAdd`
+- `onEdit`
 
 ## Permissions
 Each view may define its permissions. Permissions are defined on a per-action basis. A change view, for example, can define `get`, `save`, and `delete` actions, so it can specify corresponding `get`, `save`, and `delete` permissions like this:
