@@ -48,16 +48,14 @@ class ModalConfirm extends React.Component {
     }
 
     onConfirm(evt) {
-        if (!this.props.onConfirm()) {
-            this.props.dispatch(hideModalConfirm())
-        }
+        this.props.onConfirm()
+        this.props.dispatch(hideModalConfirm())
         evt.stopPropagation()
     }
 
     onCancel(evt) {
-        if (!this.props.onCancel()) {
-            this.props.dispatch(hideModalConfirm())
-        }
+        this.props.onCancel()
+        this.props.dispatch(hideModalConfirm())
         evt.stopPropagation()
     }
 
