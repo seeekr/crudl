@@ -5,20 +5,22 @@ import { render, shallow } from 'enzyme'
 import field from '../../admin-schema/field'
 import { PasswordField } from '../../fields/PasswordField'
 
+const desc = {
+    after: '',
+    before: '',
+    field: 'field',
+    id: 'id',
+    label: 'label',
+    name: 'name',
+    placeholder: '',
+    props: {},
+    readOnly: false,
+    required: false,
+    validate: jest.fn,
+}
+
 const p = {
-    desc: {
-        after: '',
-        before: '',
-        field: 'field',
-        id: 'id',
-        label: 'label',
-        name: 'name',
-        placeholder: '',
-        props: {},
-        readOnly: false,
-        required: false,
-        validate: jest.fn,
-    },
+    ...desc,
     input: {
         value: 'value',
         onChange: jest.fn,
@@ -50,19 +52,7 @@ describe('PasswordField', () => {
         expect(wrapper.find('input').at(0).prop('disabled')).toEqual(false)
         expect(wrapper.find('input').at(0).prop('readOnly')).toEqual(false)
         // desc.placeholder as string
-        wrapper.setProps({
-            desc: {
-                ...props.desc,
-                placeholder: 'string',
-            },
-        })
+        wrapper.setProps({ placeholder: 'string' })
         expect(wrapper.find('input').at(0).prop('placeholder')).toEqual('string')
-        // desc.placeholder as function
-        const d = field.validate({
-            ...props.desc,
-            placeholder: () => 'function',
-        }).value
-        wrapper.setProps({ desc: d })
-        expect(wrapper.find('input').at(0).prop('placeholder')).toEqual('function')
     })
 })

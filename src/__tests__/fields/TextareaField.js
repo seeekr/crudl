@@ -5,27 +5,27 @@ import { render, shallow } from 'enzyme'
 import field from '../../admin-schema/field'
 import { TextareaField } from '../../fields/TextareaField'
 
+const desc = {
+    after: '',
+    before: '',
+    field: 'field',
+    id: 'id',
+    label: 'label',
+    name: 'name',
+    placeholder: '',
+    required: false,
+    validate: jest.fn,
+    disabled: false,
+    readOnly: false,
+}
+
 const p = {
-    desc: {
-        after: '',
-        before: '',
-        field: 'field',
-        id: 'id',
-        label: 'label',
-        name: 'name',
-        placeholder: '',
-        props: {},
-        readOnly: false,
-        required: false,
-        validate: jest.fn,
-    },
+    ...desc,
     input: {
         value: 'value',
         onChange: jest.fn,
     },
     meta: {},
-    disabled: false,
-    readOnly: false,
 }
 
 describe('TextareaField', () => {
@@ -51,18 +51,15 @@ describe('TextareaField', () => {
         expect(wrapper.find('textarea').at(0).prop('readOnly')).toEqual(false)
         // desc.placeholder as string
         wrapper.setProps({
-            desc: {
-                ...props.desc,
-                placeholder: 'string',
-            },
+            placeholder: 'string',
         })
         expect(wrapper.find('textarea').at(0).prop('placeholder')).toEqual('string')
         // desc.placeholder as function
         const d = field.validate({
-            ...props.desc,
+            ...desc,
             placeholder: () => 'function',
         }).value
-        wrapper.setProps({ desc: d })
+        wrapper.setProps(d)
         expect(wrapper.find('textarea').at(0).prop('placeholder')).toEqual('function')
     })
 })

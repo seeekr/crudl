@@ -1,15 +1,15 @@
 /* globals jest, require, test, expect, describe, it, beforeEach */
 
 import React from 'react'
-import { mount, shallow } from 'enzyme'
+import { shallow } from 'enzyme'
 import ListViewItem from '../../components/ListViewTableItem'
 
 const props = {
     fields: [
         {
-            key: 'name',
             label: 'Name',
             name: 'name',
+            getValue: data => data.name,
             main: true,
             sortKey: 'slug',
             sortable: true,
@@ -17,9 +17,9 @@ const props = {
             sortpriotity: 1,
         },
         {
-            key: 'slug',
             label: 'Slug',
             name: 'slug',
+            getValue: data => data.slug,
             main: false,
             sortKey: 'slug',
             sortable: true,

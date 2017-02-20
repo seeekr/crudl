@@ -5,7 +5,7 @@ import * as actions from '../../actions/frontend.js'
 
 describe('actions frontend', () => {
     it('types', () => {
-      expect(Object.keys(actions.types).length).toEqual(9)
+      expect(Object.keys(actions.types).length).toEqual(11)
     })
     it('showNavigation should create an action to show the navigation', () => {
       const expectedAction = {
@@ -64,5 +64,17 @@ describe('actions frontend', () => {
           message,
       }
       expect(actions.pageNotFoundMessage(message)).toEqual(expectedAction)
+    })
+    it('showBlockOverlay should create an action to block the ui', () => {
+      const expectedAction = {
+          type: actions.types.SHOW_BLOCK_OVERLAY,
+      }
+      expect(actions.showBlockOverlay()).toEqual(expectedAction)
+    })
+    it('hideBlockOverlay should create an action to enable the ui', () => {
+      const expectedAction = {
+          type: actions.types.HIDE_BLOCK_OVERLAY,
+      }
+      expect(actions.hideBlockOverlay()).toEqual(expectedAction)
     })
 })

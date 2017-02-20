@@ -1,33 +1,32 @@
 /* globals jest, require, test, expect, describe, it, beforeEach */
-
-import React from 'react'
-import { shallow, mount, render } from 'enzyme'
-import FieldLoader from '../../forms/FieldLoader'
 import { Provider } from 'react-redux'
 import configureStore from 'redux-mock-store'
+import React from 'react'
+import { mount } from 'enzyme'
+import FieldLoader from '../../forms/FieldLoader'
+import fieldSchema from '../../admin-schema/field'
 
-const p = {
-    desc: {
-        after: '',
-        before: '',
-        field: '',
-        id: 'dummy',
-        label: 'dummy',
-        name: 'dummy',
-        placeholder: '',
-        props: {},
-        readOnly: false,
-        required: false,
-        validate: jest.fn(),
-    },
-    input: {},
-    meta: {},
-    label: '',
+const desc = {
+    after: '',
+    before: '',
+    field: '',
+    id: 'dummy',
+    label: 'dummy',
+    name: 'dummy',
+    placeholder: '',
+    props: {},
+    readOnly: false,
+    required: false,
+    validate: jest.fn(),
     helpText: '',
     disabled: false,
-    readOnly: false,
-    error: '',
     hidden: false,
+}
+
+const p = {
+    desc,
+    input: {},
+    meta: {},
     location: {},
     router: {},
 }
@@ -41,6 +40,7 @@ describe('FieldLoader', () => {
         const props = p
         props.desc.field = 'String'
         props.desc.id = 'name'
+        props.desc = fieldSchema.validate(props.desc).value
         const field = mount(
             <Provider store={store}>
                 <FieldLoader {...props} />

@@ -5,27 +5,28 @@ import { render, shallow } from 'enzyme'
 import field from '../../admin-schema/field'
 import { TextField } from '../../fields/TextField'
 
+const desc = {
+    after: '',
+    before: '',
+    field: 'field',
+    id: 'id',
+    label: 'label',
+    name: 'name',
+    placeholder: '',
+    props: {},
+    required: false,
+    validate: jest.fn,
+    disabled: false,
+    readOnly: false,
+}
+
 const p = {
-    desc: {
-        after: '',
-        before: '',
-        field: 'field',
-        id: 'id',
-        label: 'label',
-        name: 'name',
-        placeholder: '',
-        props: {},
-        readOnly: false,
-        required: false,
-        validate: jest.fn,
-    },
+    ...desc,
     input: {
         value: 'value',
         onChange: jest.fn,
     },
     meta: {},
-    disabled: false,
-    readOnly: false,
 }
 
 describe('TextField', () => {
@@ -46,37 +47,7 @@ describe('TextField', () => {
         expect(wrapper.find('input').at(0).prop('disabled')).toEqual(false)
         expect(wrapper.find('input').at(0).prop('readOnly')).toEqual(false)
         // desc.placeholder as string
-        wrapper.setProps({
-            desc: {
-                ...props.desc,
-                placeholder: 'string',
-            },
-        })
+        wrapper.setProps({ placeholder: 'string' })
         expect(wrapper.find('input').at(0).prop('placeholder')).toEqual('string')
-        // desc.placeholder as function
-        const d = field.validate({
-            ...props.desc,
-            placeholder: () => 'function',
-        }).value
-        wrapper.setProps({ desc: d })
-        expect(wrapper.find('input').at(0).prop('placeholder')).toEqual('function')
     })
-    // it('renders correctly with desc.placeholder as string', () => {
-    //     const props = p
-    //     props.desc.placeholder = 'placeholder'
-    //     props.desc = field.validate(props.desc).value // validate placeholder w. field schema
-    //     const wrapper = shallow(
-    //         <TextField {...props} />,
-    //     )
-    //     expect(wrapper.find('input').at(0).prop('placeholder')).toEqual('placeholder')
-    // })
-    // it('renders correctly with desc.placeholder as function', () => {
-    //     const props = p
-    //     props.desc.placeholder = () => 'placeholder'
-    //     props.desc = field.validate(props.desc).value // validate placeholder w. field schema
-    //     const wrapper = shallow(
-    //         <TextField {...props} />,
-    //     )
-    //     expect(wrapper.find('input').at(0).prop('placeholder')).toEqual('placeholder')
-    // })
 })

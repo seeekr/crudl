@@ -1,11 +1,12 @@
 /* globals jest, require, test, expect, describe, it, beforeEach */
+import { Provider } from 'react-redux'
+import { IntlProvider } from 'react-intl'
 
 import React from 'react'
 import { shallow, mount } from 'enzyme'
 import configureStore from 'redux-mock-store'
 import { ChangeView } from '../../containers/ChangeView'
-import { Provider } from 'react-redux'
-import { IntlProvider } from 'react-intl'
+import changeViewSchema from '../../admin-schema/changeView'
 
 jest.mock('../../Crudl')
 const crudl = require('../../Crudl')
@@ -71,7 +72,6 @@ const props = {
                         id: 'name',
                         label: 'Name',
                         name: 'name',
-                        key: 'name',
                         readOnly: false,
                         required: true,
                         validate: jest.fn(),
@@ -113,13 +113,16 @@ const props = {
         returnValue: undefined,
         storedData: undefined,
     },
+    router: {},
+    route: {},
+    dispatch: jest.fn,
 }
 
 describe('ChangeView', () => {
     it('renders correctly without tabs', () => {
+        props.desc = changeViewSchema.validate(props.desc).value
         const changeview = shallow(
             <ChangeView {...props} />,
-            { context: { store, router: {} } }
         )
         /* Loader */
         expect(changeview.find('ViewportLoading').length).toEqual(1)

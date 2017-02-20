@@ -2,18 +2,14 @@ import React from 'react'
 import baseField from './base/baseField'
 import { baseFieldPropTypes } from '../PropTypes'
 
-
-/* FIXME (Vaclav): readOnly is part of desc, but it´s a separate attribute
-as well, whereas disabled is not part of  ??? */
-
-/* FIXME (Vaclav): what about the hidden attribute. ??? */
-
-/* FIXME (Vaclav): what about the error resp. errors attribute. ??? */
-
 export class TextField extends React.Component {
 
     static propTypes = {
-        ...baseFieldPropTypes,
+        id: baseFieldPropTypes.id,
+        placeholder: React.PropTypes.string,
+        input: baseFieldPropTypes.input,
+        disabled: baseFieldPropTypes.disabled,
+        readOnly: baseFieldPropTypes.readOnly,
     }
 
     render() {

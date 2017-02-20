@@ -1,14 +1,16 @@
 /* globals jest, require, test, expect, describe, it, beforeEach */
-
-import React from 'react'
-import { shallow, mount } from 'enzyme'
-import ChangeViewForm from '../../forms/ChangeViewForm'
 import configureStore from 'redux-mock-store'
 import { Provider } from 'react-redux'
 import { reduxForm } from 'redux-form'
 
+import React from 'react'
+import { shallow, mount } from 'enzyme'
+import ChangeViewForm from '../../forms/ChangeViewForm'
+import changeViewSchema from '../../admin-schema/changeView'
+
 jest.mock('../../Crudl')
 const crudl = require('../../Crudl')
+
 crudl.hasPermission = () => true
 
 const s = {
@@ -109,6 +111,7 @@ props.onSaveAndContinue = onSaveAndContinue
 
 describe('ChangeViewForm', () => {
     it('renders correctly', () => {
+        props.desc = changeViewSchema.validate(props.desc).value
         const changeviewform = shallow(
             <ChangeViewForm {...props} />
         )
