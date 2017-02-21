@@ -9,6 +9,7 @@ let result = {}
 describe('reducers core', () => {
     beforeEach(() => {
         initial = {
+            admin: { id: undefined },
             auth: {
                 loggedIn: false,
                 requestHeaders: {},
@@ -24,6 +25,7 @@ describe('reducers core', () => {
             permissions: {},
         }
         result = {
+            admin: { id: undefined },
             auth: {
                 loggedIn: false,
                 requestHeaders: {},

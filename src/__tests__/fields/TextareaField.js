@@ -54,12 +54,5 @@ describe('TextareaField', () => {
             placeholder: 'string',
         })
         expect(wrapper.find('textarea').at(0).prop('placeholder')).toEqual('string')
-        // desc.placeholder as function
-        const d = field.validate({
-            ...desc,
-            placeholder: () => 'function',
-        }).value
-        wrapper.setProps(d)
-        expect(wrapper.find('textarea').at(0).prop('placeholder')).toEqual('function')
     })
 })
