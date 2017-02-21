@@ -2,7 +2,7 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { withRouter } from 'react-router'
 
-import Navigation from '../components/Navigation'
+import Navigation from '../containers/Navigation'
 import { toggleNavigation } from '../actions/frontend'
 import { resolvePath } from '../Crudl'
 

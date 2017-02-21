@@ -3,7 +3,7 @@
 import React from 'react'
 // import { Provider } from 'react-redux'
 import { shallow } from 'enzyme'
-import { Navigation } from '../../components/Navigation'
+import { Navigation } from '../../containers/Navigation'
 
 jest.mock('../../Crudl')
 
