@@ -13,9 +13,9 @@ class MenuItem extends React.Component {
         listPath: React.PropTypes.string,
         addPath: React.PropTypes.string,
         label: React.PropTypes.node,
+        isActive: React.PropTypes.bool,
         router: routerShape.isRequired,
         dispatch: React.PropTypes.func.isRequired,
-        isActive: React.PropTypes.bool,
     }
 
     handleItemClick() {
@@ -36,7 +36,13 @@ class MenuItem extends React.Component {
         const { label, listPath, addPath, isActive } = this.props
         return (
             <li>
-                { listPath && <a className={isActive ? 'active' : ''} onClick={this.handleItemClick}>{label}</a> }
+                { listPath &&
+                    <a
+                        className={isActive && 'active'}
+                        onClick={this.handleItemClick}
+                        >{label}
+                    </a>
+                }
                 { addPath &&
                     <button
                         className="action-add icon-only"
