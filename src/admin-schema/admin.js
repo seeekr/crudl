@@ -16,9 +16,9 @@ const admin = Joi.object().keys({
         logout: logout.default(),
     }),
     custom: Joi.object().keys({
-        dashboard: stringOrReactProperty(''),
+        dashboard: Joi.func(),
         pageNotFound: pageNotFound.default(),
-        menu: stringOrReactProperty(''),
+        menu: Joi.func(),
     }).default(),
     options: Joi.object().keys({
         rootElementId: Joi.string().default('crudl-root'),

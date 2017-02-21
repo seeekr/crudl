@@ -321,10 +321,10 @@ function crudlRouter() {
     // build the route config:
     const root = {
         path: options.basePath,
-        component: wrapComponent(App, { desc: admin }),
+        component: wrapComponent(App, { admin }),
         childRoutes: [],
         indexRoute: {
-            component: wrapComponent(Dashboard, { desc: admin, breadcrumbs: [appCrumb] }),
+            component: wrapComponent(Dashboard, { admin, breadcrumbs: [appCrumb] }),
             onEnter: authenticate(clearActiveView),
         },
         onEnter: exposePath,

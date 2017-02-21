@@ -4,7 +4,7 @@ import { withRouter } from 'react-router'
 
 import Navigation from '../components/Navigation'
 import { toggleNavigation } from '../actions/frontend'
-import { resolvePath, options } from '../Crudl'
+import { resolvePath } from '../Crudl'
 
 import { adminShape } from '../PropTypes'
 
@@ -14,7 +14,7 @@ import ModalConfirm from './ModalConfirm'
 class App extends React.Component {
 
     static propTypes = {
-        desc: adminShape,
+        admin: adminShape,
         loggedIn: React.PropTypes.bool.isRequired,
     };
 
@@ -70,8 +70,8 @@ class App extends React.Component {
     }
 
     handleLogout() {
-        if (typeof this.props.desc.auth !== 'undefined') {
-            this.props.router.push(resolvePath(this.props.desc.auth.logout.path))
+        if (typeof this.props.admin.auth !== 'undefined') {
+            this.props.router.push(resolvePath(this.props.admin.auth.logout.path))
         }
     }
 
@@ -80,18 +80,19 @@ class App extends React.Component {
     }
 
     render() {
-        const authRequired = (typeof this.props.desc.auth !== 'undefined')
+        const { admin, loggedIn, children } = this.props
+        const authRequired = (typeof admin.auth !== 'undefined')
         return (
             <div id="app">
-                <header id="app-title" aria-hidden="true"><h1>{this.props.desc.title}</h1></header>
-                {(!authRequired || this.props.loggedIn) &&
+                <header id="app-title" aria-hidden="true"><h1>{admin.title}</h1></header>
+                {(!authRequired || loggedIn) &&
                     <Navigation
                         onLogout={authRequired ? this.handleLogout : undefined}
-                        views={this.props.desc.views}
-                        menu={this.props.desc.custom.menu}
+                        views={admin.views}
+                        menuComponent={admin.custom.menu}
                         />
                 }
-                <div id="main">{this.props.children}</div>
+                <div id="main">{children}</div>
                 <Messages />
                 <ModalConfirm />
                 <div id="block-ui-overlay" />

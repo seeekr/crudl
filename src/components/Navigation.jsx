@@ -21,7 +21,7 @@ export class Navigation extends React.Component {
         dispatch: React.PropTypes.func.isRequired,
         activeView: React.PropTypes.string,
         navigationVisible: React.PropTypes.bool.isRequired,
-        menu: React.PropTypes.node,
+        menuComponent: React.PropTypes.func, // A react component
         router: routerShape.isRequired,
         auth: authShape.isRequired,
     };
@@ -81,21 +81,16 @@ export class Navigation extends React.Component {
     }
 
     render() {
-        const { views, onLogout, menu, auth } = this.props
+        const { views, onLogout, menuComponent, auth } = this.props
         let username
         if (auth.info.username) {
             username = <li><span className="user">{auth.info.username}</span></li>
         }
-        let custommenu
-        if (menu) {
-            custommenu = React.cloneElement(menu, {
-                navigation: this,
-                Link,
-                resolvePath,
-                views,
-            })
+        let menu
+        if (menuComponent) {
+            menu = React.createElement(menuComponent, { resolvePath, views, Link })
         } else {
-            custommenu = Object.keys(views).map((view) => {
+            menu = Object.keys(views).map((view) => {
                 const d = views[view]
                 const familyIDs = [d.listView.id, d.changeView.id, d.addView && d.addView.id]
                 if (hasPermission(d.listView.id, 'list')) {
@@ -138,9 +133,7 @@ export class Navigation extends React.Component {
                                     >Dashboard</IndexLink>
                             </li>
                         </ul>
-                        <ul>
-                            {custommenu}
-                        </ul>
+                        {menu}
                     </div>
                     {username &&
                         <ul className="account">

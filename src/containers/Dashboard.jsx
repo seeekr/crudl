@@ -7,7 +7,7 @@ import Header from '../components/Header'
 class Dashboard extends React.Component {
 
     static propTypes = {
-        desc: adminShape,
+        admin: adminShape,
         breadcrumbs: breadcrumbsShape.isRequired,
     };
 
@@ -22,9 +22,10 @@ class Dashboard extends React.Component {
     }
 
     render() {
+        const { admin, breadcrumbs } = this.props
         return (
             <main id="viewport">
-                <Header breadcrumbs={this.props.breadcrumbs} {...this.props}>
+                <Header breadcrumbs={breadcrumbs} {...this.props}>
                     <div id="header-toolbar" className="toolbar">
                         <div className="tools">
                             <div className="title display-when-fixed">Dashboard</div>
@@ -35,7 +36,7 @@ class Dashboard extends React.Component {
                     </div>
                 </Header>
                 <div id="viewport-content">
-                    {this.props.desc.custom.dashboard}
+                    {admin.custom.dashboard && <admin.custom.dashboard />}
                 </div>
             </main>
         )
