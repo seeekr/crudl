@@ -14,6 +14,7 @@ import TextareaField from './TextareaField'
 import TimeField from './TimeField'
 import UrlField from './UrlField'
 import HiddenField from './HiddenField'
+import FileField from './FileField'
 
 export default {
     'String': TextField,
@@ -24,6 +25,7 @@ export default {
     'Checkbox': CheckboxField,
     'Date': DateField,
     'Datetime': DateTimeField,
+    'File': FileField,
     'Password': PasswordField,
     'RadioGroup': RadioGroup,
     'Select': SelectField,

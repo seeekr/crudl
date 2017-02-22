@@ -3,13 +3,13 @@ import { autobind } from 'core-decorators'
 
 import baseField from './base/baseField'
 import { baseFieldPropTypes } from '../PropTypes'
+import asPromise from '../utils/asPromise'
+import { errorMessage } from '../actions/messages'
 
 /**
- * The FileField requires an action `upload` which returns an array of
- * the form: [ {value, label}, ... ] in order to display the list of options.
  * There are several possibilites and API could handle an upload:
  *      a) use Base64
- *      b) use FileUpload
+ *      b) use File Upload
  *      c) store file and use a reference (similar to FK)
  */
 @autobind
@@ -21,35 +21,55 @@ class FileField extends React.Component {
         required: baseFieldPropTypes.required,
         readOnly: baseFieldPropTypes.readOnly,
         disabled: baseFieldPropTypes.disabled,
+        onSelect: React.PropTypes.func,
+        dispatch: React.PropTypes.func.isRequired,
     }
 
-    state = {
-        file: undefined,
-        uploadResult: undefined,
+    static defaultProps = {
+        onSelect: (file, data) => data,
     }
 
-    getRepr() {
-        let repr = ''
-        repr = `${this.props.input.value}`
-        if (this.state.file) {
-            repr = `${this.state.file.name} ${this.state.file.size} ${this.state.file.type}`
-        }
-        return repr
+    static initialState = {
+        uploading: false,
+        previewURL: undefined,
+        previewData: undefined,
+        label: '',
     }
+
+    state = FileField.initialState
 
     handleFileSelect() {
+        const { dispatch, input, onSelect } = this.props
         const reader = new FileReader()
         const file = this.fileInput.files[0]
-        reader.onload = (upload) => {
-            this.setState({ file, uploadResult: upload.target.result })
-            this.props.input.onChange(upload.target.result) /* Base64 */
+        reader.onload = (event) => {
+            const data = event.target.result
+            this.setState({ uploading: true })
+
+            // Pass the file and the data to the onSelect function
+            asPromise(onSelect(file, data))
+
+            .then((result) => {
+                this.setState({
+                    uploading: false,
+                    previewURL: result.previewURL,
+                    previewData: result.previewData,
+                    label: result.label,
+                })
+                input.onChange(result.value)
+            })
+
+            .catch((error) => {
+                dispatch(errorMessage(`Upload failed: ${error}`))
+            })
         }
         reader.readAsDataURL(file)
     }
 
     handleRemoveItem() {
-        this.setState({ file: undefined, uploadResult: undefined })
         this.props.input.onChange('')
+        this.fileInput.value = ''
+        this.setState(FileField.initialState)
     }
 
     // FIXME: getValue: how to retrieve what value when representing the file
@@ -57,9 +77,9 @@ class FileField extends React.Component {
 
     render() {
         const { id, required, disabled, readOnly, input } = this.props
+        const { previewURL, previewData } = this.state
         const applyReadOnly = !disabled && readOnly
-        const repr = this.getRepr()
-        // FIXME (Axel): Styling, readOnly, disabled */
+        const label = this.state.label || this.props.input.value
         return (
             <div className="autocomplete listbox" id={`autocomplete-${id}`}>
                 <div role="group" className="field-button-group field-button-inner">
@@ -67,7 +87,7 @@ class FileField extends React.Component {
                         className="field"
                         aria-controls={id}
                         aria-expanded="false"
-                        ><div className="label">{repr}</div>
+                        ><div className="label">{this.state.uploading ? 'Uploading...' : label}</div>
                         <input
                             type="file"
                             className="filefield"
@@ -105,11 +125,11 @@ class FileField extends React.Component {
                 <div
                     ref={(c) => { this.previewGroup = c }}
                     className="preview"
-                    aria-hidden={this.state.uploadResult ? 'false' : 'true'}
+                    aria-hidden={previewURL || previewData ? 'false' : 'true'}
                     >
                     <img
                         ref={(c) => { this.preview = c }}
-                        src={this.state.uploadResult}
+                        src={this.state.previewURL || this.state.previewData}
                         height="100"
                         role="presentation"
                         />
