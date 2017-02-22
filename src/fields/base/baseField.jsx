@@ -3,13 +3,6 @@ import { baseFieldPropTypes } from '../../PropTypes'
 
 
 export default function baseField(Component) {
-    /**
-     * Return true if the lower level Component requires the propName
-     */
-    function forgo(propName) {
-        return Component.propTypes && Component.propTypes.hasOwnProperty(propName)
-    }
-
     class BaseField extends Component {
 
         static displayName = `BaseField(${Component.displayName || Component.name})`;
@@ -102,11 +95,11 @@ export default function baseField(Component) {
             const error = (this.props.meta.touched && this.props.meta.error) || ''
             return (
                 <div className="basefield">
-                    {!forgo('label') && this.renderLabel(label)}
+                    {this.renderLabel(label)}
                     {this.renderRelations()}
                     {super.render()}
-                    {!forgo('error') && this.renderError(error)}
-                    {!forgo('helpText') && this.renderHelpText(helpText)}
+                    {this.renderError(error)}
+                    {this.renderHelpText(helpText)}
                 </div>
             )
         }
