@@ -1,103 +1,82 @@
 import React from 'react'
-import classNames from 'classnames'
-import WatchComponent from '../components/WatchComponent'
-import isEqual from 'lodash/isEqual'
-import isArray from 'lodash/isArray'
+import { autobind } from 'core-decorators'
+
 import baseField from './base/baseField'
-import { hasParentId, visuallyFocusElem, visuallyBlurElem, showExpanded, closeExpanded } from '../utils/frontend'
-import { req } from '../Crudl'
-
-
-function asArray(value = []) {
-    return isArray(value) ? value : [value]
-}
-
-function cleanValue(value) {
-    return value || undefined
-}
+import { baseFieldPropTypes } from '../PropTypes'
 
 /**
- * The FileField requires an action `search` which returns an array of
+ * The FileField requires an action `upload` which returns an array of
  * the form: [ {value, label}, ... ] in order to display the list of options.
-
-There is several possibilites and API could handle an upload:
-a) use Base64
-b) use FileUpload
-c) store file and use a reference (similar to FK)
-
+ * There are several possibilites and API could handle an upload:
+ *      a) use Base64
+ *      b) use FileUpload
+ *      c) store file and use a reference (similar to FK)
  */
-class FileField extends WatchComponent {
+@autobind
+class FileField extends React.Component {
+
+    static propTypes = {
+        input: baseFieldPropTypes.input,
+        id: baseFieldPropTypes.id,
+        required: baseFieldPropTypes.required,
+        readOnly: baseFieldPropTypes.readOnly,
+        disabled: baseFieldPropTypes.disabled,
+    }
 
     state = {
-        filename: null,
-        filetype: null,
-        filesize: null,
-    }
-
-    handleChange(evt) {
-        const { formField } = this.props
-        const reader = new FileReader()
-        const file = evt.target.files[0]
-        reader.onload = ((upload) => {
-            this.refs.previewGroup.setAttribute('aria-hidden', false)
-            this.refs.preview.src = upload.target.result
-            this.setState({
-                filename: file.name,
-                filetype: file.type,
-                filesize: file.size,
-            })
-            formField.onChange(upload.target.result) /* Base64 */
-            // formField.onChange(file)
-        })
-        reader.readAsDataURL(file)
-    }
-
-    handleRemoveItem(event) {
-        this.props.formField.onChange('')
-        this.clearSearch()
-        event.stopPropagation()
-        event.nativeEvent.stopImmediatePropagation()
+        file: undefined,
+        uploadResult: undefined,
     }
 
     getRepr() {
         let repr = ''
-        repr = `${this.props.formField.value}`
-        if (this.state.filename) {
-            repr = `${this.state.filename} ${this.state.filesize} ${this.state.filetype}`
+        repr = `${this.props.input.value}`
+        if (this.state.file) {
+            repr = `${this.state.file.name} ${this.state.file.size} ${this.state.file.type}`
         }
         return repr
+    }
+
+    handleFileSelect() {
+        const reader = new FileReader()
+        const file = this.fileInput.files[0]
+        reader.onload = (upload) => {
+            this.setState({ file, uploadResult: upload.target.result })
+            this.props.input.onChange(upload.target.result) /* Base64 */
+        }
+        reader.readAsDataURL(file)
+    }
+
+    handleRemoveItem() {
+        this.setState({ file: undefined, uploadResult: undefined })
+        this.props.input.onChange('')
     }
 
     // FIXME: getValue: how to retrieve what value when representing the file
     // FIXME: action send: what to do when the image has been selected (e.g. nothing, upload, changeToBase64)
 
-    clearSearch() {
-        closeExpanded(this.props.id)
-    }
-
     render() {
-        const { id, required, disabled, readOnly } = this.props
+        const { id, required, disabled, readOnly, input } = this.props
         const applyReadOnly = !disabled && readOnly
         const repr = this.getRepr()
-        // const isAccessible = !disabled && !readOnly
         // FIXME (Axel): Styling, readOnly, disabled */
         return (
             <div className="autocomplete listbox" id={`autocomplete-${id}`}>
-                <div ref="group" role="group" className="field-button-group field-button-inner">
+                <div role="group" className="field-button-group field-button-inner">
                     <div
                         className="field"
                         aria-controls={id}
                         aria-expanded="false"
                         ><div className="label">{repr}</div>
                         <input
-                            ref="fileField"
                             type="file"
                             className="filefield"
                             autoComplete="off"
-                            onChange={(event) => this.handleChange(event)}
+                            onChange={this.handleFileSelect}
                             data-field-display-name={id}
                             readOnly={applyReadOnly}
                             disabled={disabled}
+                            ref={(c) => { this.fileInput = c }}
                             />
                     </div>
                     <ul role="group" className="buttons">
@@ -107,26 +86,30 @@ class FileField extends WatchComponent {
                                     type="button"
                                     aria-label="Clear"
                                     className="action-clear icon-only"
-                                    onClick={(event) => { this.handleRemoveItem(event) }}
+                                    onClick={this.handleRemoveItem}
                                     >&zwnj;</button>
                             </li>
                         }
-                        {formField.initialValue &&
+                        {input.initialValue &&
                             <li>
                                 <button
                                     type="button"
                                     aria-label="Clear"
                                     className="action-clear icon-only"
-                                    onClick={(event) => { this.handleRemoveItem(event) }}
+                                    onClick={this.handleRemoveItem}
                                     >&zwnj;</button>
                             </li>
                         }
                     </ul>
                 </div>
-                <div ref="previewGroup" className="preview" aria-hidden="true">
+                <div
+                    ref={(c) => { this.previewGroup = c }}
+                    className="preview"
+                    aria-hidden={this.state.uploadResult ? 'false' : 'true'}
+                    >
                     <img
-                        ref="preview"
-                        src=""
+                        ref={(c) => { this.preview = c }}
+                        src={this.state.uploadResult}
                         height="100"
                         role="presentation"
                         />
