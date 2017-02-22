@@ -7,7 +7,6 @@ import classNames from 'classnames'
 import asFunc from '../utils/asFunc'
 import asArray from '../utils/asArray'
 import asPromise from '../utils/asPromise'
-import HiddenField from '../fields/HiddenField'
 import { fieldShape, formFieldsShape, baseFieldPropTypes } from '../PropTypes'
 import formFields from '../selectors/formFields'
 import fieldComponents from '../fields'
@@ -131,12 +130,12 @@ class FieldLoader extends React.Component {
 
     render() {
         const props = this.fieldProps()
-        const { disabled, readOnly, error, hidden, required } = props
+        const { disabled, readOnly, hidden, required } = props
 
         const fieldContainerClass = classNames('field-container', fieldClassName(this.props.desc.field),
         {
             required,
-            error: !!error,
+            error: this.props.meta.touched && this.props.meta.error,
             readonly: !disabled && readOnly,
             disabled,
             hidden,
