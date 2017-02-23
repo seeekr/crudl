@@ -40,7 +40,14 @@ import { errorMessage } from '../actions/messages'
 class FileField extends React.Component {
 
     static propTypes = {
-        input: baseFieldPropTypes.input,
+        input: React.PropTypes.shape({
+            onChange: React.PropTypes.func.isRequired,
+            value: React.PropTypes.shape({
+                value: React.PropTypes.any,
+                label: React.PropTypes.node,
+                previewURL: React.PropTypes.string,
+            }),
+        }),
         id: baseFieldPropTypes.id,
         required: baseFieldPropTypes.required,
         readOnly: baseFieldPropTypes.readOnly,
