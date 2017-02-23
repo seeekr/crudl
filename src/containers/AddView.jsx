@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import { reduxForm, reset, SubmissionError, change } from 'redux-form'
 import { withRouter } from 'react-router'
 import { injectIntl, intlShape } from 'react-intl'
-import { locationShape, routerShape } from 'react-router/lib/PropTypes'
+import { routerShape } from 'react-router/lib/PropTypes'
 import { autobind } from 'core-decorators'
 
 import getFieldNames from '../utils/getFieldNames'
@@ -22,6 +22,7 @@ import permMessages from '../messages/permissions'
 import getFieldDesc from '../utils/getFieldDesc'
 import withViewCalls from '../utils/withViewCalls'
 import blocksUI from '../decorators/blocksUI'
+import denormalize from '../utils/denormalize'
 
 const BACK_TO_LIST_VIEW = 0
 const ADD_ANOTHER = 1
@@ -36,7 +37,6 @@ class AddView extends React.Component {
         changeViewPath: pathShape.isRequired,
         intl: intlShape.isRequired,
         dispatch: React.PropTypes.func.isRequired,
-        location: locationShape.isRequired,
         router: routerShape.isRequired,
         route: React.PropTypes.object.isRequired,
         forms: React.PropTypes.object.isRequired,
@@ -110,10 +110,6 @@ class AddView extends React.Component {
         return true
     }
 
-    prepareData(data) {
-        return this.props.desc.denormalize(data)
-    }
-
     @blocksUI
     handleSave(data, nextStep = BACK_TO_LIST_VIEW) {
         const { changeViewPath, dispatch, desc, intl } = this.props
@@ -121,7 +117,7 @@ class AddView extends React.Component {
             // Try to prepare the data.
             let preparedData
             try {
-                 preparedData = this.prepareData(data)
+                 preparedData = denormalize(desc, data)
             } catch (error) {
                 throw Promise.reject(new SubmissionError(error))
             }

@@ -6,7 +6,6 @@ import { injectIntl, intlShape } from 'react-intl'
 import { routerShape, locationShape } from 'react-router/lib/PropTypes'
 import { autobind } from 'core-decorators'
 
-import getAllFields from '../utils/getAllFields'
 import getValidator from '../utils/getValidator'
 import hasUnsavedChanges from '../utils/hasUnsavedChanges'
 import { req, resolvePath, hasPermission } from '../Crudl'
@@ -26,6 +25,8 @@ import withPropsWatch from '../utils/withPropsWatch'
 import getFieldDesc from '../utils/getFieldDesc'
 import withViewCalls from '../utils/withViewCalls'
 import blocksUI from '../decorators/blocksUI'
+import normalize from '../utils/normalize'
+import denormalize from '../utils/denormalize'
 
 @autobind
 export class ChangeView extends React.Component {
@@ -112,9 +113,7 @@ export class ChangeView extends React.Component {
         const { forms } = this.props
         // We assume here that the redux form state is not cluttered with inactive dirty forms
         // i.e. all forms in the state must either belong to this change view or they must not be dirty
-        return Object.keys(forms).some(
-            formName => hasUnsavedChanges(forms[formName]
-        ))
+        return Object.keys(forms).some(formName => hasUnsavedChanges(forms[formName]))
     }
 
     routerWillLeave(nextState) {
@@ -139,19 +138,6 @@ export class ChangeView extends React.Component {
         }
     }
 
-    prepareData(data) {
-        return this.props.desc.denormalize(data)
-    }
-
-    processResponse(response) {
-        const result = this.props.desc.normalize(response.data)
-        const values = {}
-        getAllFields(this.props.desc).forEach((f) => {
-            values[f.name] = f.getValue(result)
-        })
-        return values
-    }
-
     @blocksUI
     doGet() {
         const { desc, intl, dispatch } = this.props
@@ -159,7 +145,7 @@ export class ChangeView extends React.Component {
             this.setState({ ready: false })
             return desc.actions.get(req())
                 .then((response) => {
-                    const values = this.processResponse(response)
+                    const values = normalize(desc, response.data)
                     this.setState({ values, ready: true })
 
                     // Did we return from a relation view?
@@ -186,13 +172,13 @@ export class ChangeView extends React.Component {
         if (hasPermission(desc.id, 'save')) {
             // Try to prepare the data.
             try {
-                preparedData = this.prepareData(data)
+                preparedData = denormalize(desc, data)
             } catch (error) {
                 return Promise.reject(new SubmissionError(error))
             }
             return desc.actions.save(req(preparedData))
             .then((res) => {
-                const values = this.processResponse(res)
+                const values = normalize(desc, res.data)
                 dispatch(cache.clearListView())
                 dispatch(successMessage(intl.formatMessage(messages.saveSuccess, { item: desc.title })))
                 if (!stay) {

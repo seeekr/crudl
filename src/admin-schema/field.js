@@ -19,6 +19,8 @@ const field = Joi.object().unknown(true).keys({
     getValue: Joi.func().bound().default(function (result) { return result[this.name] }),
     initialValue: Joi.any(),
     validate: Joi.func().default(() => undefined),
+    normalize: Joi.func().default(data => data),
+    denormalize: Joi.func().default(data => data),
     onChange,
     before: stringOrReactProperty(''),
     after: stringOrReactProperty(''),

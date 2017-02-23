@@ -410,6 +410,8 @@ With the fields, you describe the behavior of a single element with the changeVi
     hidden,                 // boolean property
     initialValue,           // Initial value in an add view
     validate,               // a function (value, allFieldsValues) => error || undefined
+    normalize,              // a function (valueFromBackend) => valueToFrontend
+    denormalize,            // a function (valueFromFrontend) => valueToBackend
     onChange,               // onChange specification (see bellow)
     add,                    // add relation specification (see bellow)
     edit,                   // edit relation specification (see bellow)
