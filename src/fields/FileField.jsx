@@ -7,10 +7,34 @@ import asPromise from '../utils/asPromise'
 import { errorMessage } from '../actions/messages'
 
 /**
+ * FileField requires an input value in the form:
+ *      { value, label, previewURL }, where
+ * value (required) is the value to be send when the form is submitted
+ * label (optional) a string (e.g. a file name).
+ * preivewURL (optional) is an URL of a thumbnail if applicable (can also be urlData)
+ *
+ * FileField further requires a prop onSelect which must be a function of the form:
+ *      (file, urlData) => inputValue, where
+ * file is the File object of obtained from the FileList of the input element
+ * urlData is the result of the FileReader.readAsDataURL call.
+ * inputValue is either the input value described above or a promise resolving to such.
+ *
  * There are several possibilites and API could handle an upload:
  *      a) use Base64
  *      b) use File Upload
  *      c) store file and use a reference (similar to FK)
+ *
+ * In the case of a), the onSelect function simply returns the value as required by the backend. E.g.
+ *      onSelect: (file, urlData) => ({ value: { filename: file.name, file: urlData.split(',')[1] } })
+ *
+ * In the case of b) or c), the onSelect function must execute the upload and return a promise. For example:
+ *      onSelect: (file, urlData) => {
+ *          const data = prepareData(urlData)
+ *          return axios.put('/upload/server', data, config).then(res => ({
+ *              value: res.data.fileID,
+ *              previewURL: res.data.thumbnailURL,
+ *          }))
+ *      }
  */
 @autobind
 class FileField extends React.Component {
@@ -21,22 +45,9 @@ class FileField extends React.Component {
         required: baseFieldPropTypes.required,
         readOnly: baseFieldPropTypes.readOnly,
         disabled: baseFieldPropTypes.disabled,
-        onSelect: React.PropTypes.func,
+        onSelect: React.PropTypes.func.isRequired,
         dispatch: React.PropTypes.func.isRequired,
     }
-
-    static defaultProps = {
-        onSelect: (file, data) => data,
-    }
-
-    static initialState = {
-        uploading: false,
-        previewURL: undefined,
-        previewData: undefined,
-        label: '',
-    }
-
-    state = FileField.initialState
 
     handleFileSelect() {
         const { dispatch, input, onSelect } = this.props
@@ -44,19 +55,12 @@ class FileField extends React.Component {
         const file = this.fileInput.files[0]
         reader.onload = (event) => {
             const data = event.target.result
-            this.setState({ uploading: true })
 
             // Pass the file and the data to the onSelect function
             asPromise(onSelect(file, data))
 
             .then((result) => {
-                this.setState({
-                    uploading: false,
-                    previewURL: result.previewURL,
-                    previewData: result.previewData,
-                    label: result.label,
-                })
-                input.onChange(result.value)
+                input.onChange(result)
             })
 
             .catch((error) => {
@@ -67,19 +71,14 @@ class FileField extends React.Component {
     }
 
     handleRemoveItem() {
-        this.props.input.onChange('')
+        this.props.input.onChange({ value: undefined })
         this.fileInput.value = ''
-        this.setState(FileField.initialState)
     }
-
-    // FIXME: getValue: how to retrieve what value when representing the file
-    // FIXME: action send: what to do when the image has been selected (e.g. nothing, upload, changeToBase64)
 
     render() {
         const { id, required, disabled, readOnly, input } = this.props
-        const { previewURL, previewData } = this.state
+        const { value, label, previewURL } = input.value
         const applyReadOnly = !disabled && readOnly
-        const label = this.state.label || this.props.input.value
         return (
             <div className="autocomplete listbox" id={`autocomplete-${id}`}>
                 <div role="group" className="field-button-group field-button-inner">
@@ -87,7 +86,7 @@ class FileField extends React.Component {
                         className="field"
                         aria-controls={id}
                         aria-expanded="false"
-                        ><div className="label">{this.state.uploading ? 'Uploading...' : label}</div>
+                        ><div className="label">{label}</div>
                         <input
                             type="file"
                             className="filefield"
@@ -110,7 +109,7 @@ class FileField extends React.Component {
                                     >&zwnj;</button>
                             </li>
                         }
-                        {input.initialValue &&
+                        {value &&
                             <li>
                                 <button
                                     type="button"
@@ -125,11 +124,11 @@ class FileField extends React.Component {
                 <div
                     ref={(c) => { this.previewGroup = c }}
                     className="preview"
-                    aria-hidden={previewURL || previewData ? 'false' : 'true'}
+                    aria-hidden={previewURL ? 'false' : 'true'}
                     >
                     <img
                         ref={(c) => { this.preview = c }}
-                        src={this.state.previewURL || this.state.previewData}
+                        src={previewURL}
                         height="100"
                         role="presentation"
                         />
