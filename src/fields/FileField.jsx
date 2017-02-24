@@ -35,6 +35,10 @@ import { errorMessage } from '../actions/messages'
  *              previewURL: res.data.thumbnailURL,
  *          }))
  *      }
+ *
+ * FileField takes an optional prop onRemove, which will be invoked when user click on remove button. onRemove is a
+ * function of the form ({ value, label, previewURL }) => ({value, label, previewURL}).
+ * The default onRemove function is: () => ({ value: ''})
  */
 @autobind
 class FileField extends React.Component {
@@ -49,12 +53,14 @@ class FileField extends React.Component {
             }),
         }),
         id: baseFieldPropTypes.id,
-        required: baseFieldPropTypes.required,
         readOnly: baseFieldPropTypes.readOnly,
         disabled: baseFieldPropTypes.disabled,
         onSelect: React.PropTypes.func.isRequired,
+        onClear: React.PropTypes.func,
         dispatch: React.PropTypes.func.isRequired,
     }
+
+    static defaultProps = { onClear: () => ({ value: '' }) }
 
     handleFileSelect() {
         const { dispatch, input, onSelect } = this.props
@@ -78,12 +84,13 @@ class FileField extends React.Component {
     }
 
     handleRemoveItem() {
-        this.props.input.onChange({ value: undefined })
+        const newInputValue = this.props.onClear(this.props.input.value)
+        this.props.input.onChange(newInputValue)
         this.fileInput.value = ''
     }
 
     render() {
-        const { id, required, disabled, readOnly, input } = this.props
+        const { id, disabled, readOnly, input } = this.props
         const { value, label, previewURL } = input.value
         const applyReadOnly = !disabled && readOnly
         return (
@@ -106,16 +113,6 @@ class FileField extends React.Component {
                             />
                     </div>
                     <ul role="group" className="buttons">
-                        {!required &&
-                            <li>
-                                <button
-                                    type="button"
-                                    aria-label="Clear"
-                                    className="action-clear icon-only"
-                                    onClick={this.handleRemoveItem}
-                                    >&zwnj;</button>
-                            </li>
-                        }
                         {value &&
                             <li>
                                 <button
