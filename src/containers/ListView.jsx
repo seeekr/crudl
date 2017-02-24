@@ -82,6 +82,7 @@ export class ListView extends React.Component {
         results: [],
         pagination: undefined,
         loading: false,
+        selection: {},
     };
 
     componentWillMount() {
@@ -132,6 +133,10 @@ export class ListView extends React.Component {
         return this.getFilters()[name]
     }
 
+    getItemId(index) {
+        return resolvePath(this.props.changeViewPath, this.state.results[index])
+    }
+
     showFilters() {
         this.props.dispatch(showFilters())
     }
@@ -149,7 +154,7 @@ export class ListView extends React.Component {
                         this.getSearchQueries(),
                         this.getFilters(),
                         { s: this.props.location.query.s },
-                        { page }
+                        { page },
                     ),
                 })
             } else {
@@ -176,7 +181,7 @@ export class ListView extends React.Component {
                 {},
                 query,
                 this.getSearchQueries(),
-                { s: this.props.location.query.s }
+                { s: this.props.location.query.s },
             ),
         })
     }
@@ -197,7 +202,7 @@ export class ListView extends React.Component {
                 {},
                 filter,
                 { s: this.props.location.query.s },
-                this.getFilters()
+                this.getFilters(),
             ),
         })
     }
@@ -229,6 +234,26 @@ export class ListView extends React.Component {
         const filters = this.getFilters()
         delete (filters[name])
         this.handleFilters(filters)
+    }
+
+    handleSelectItemChange(itemId) {
+        const selection = Object.assign({}, this.state.selection)
+        if (selection[itemId]) {
+            delete selection[itemId]
+        } else {
+            selection[itemId] = true
+        }
+        this.setState({ selection })
+    }
+
+    handleSelectAllChange() {
+        const selection = {}
+        if (Object.keys(this.state.selection).length < this.state.results.length) {
+            this.state.results.forEach((item, index) => {
+                selection[this.getItemId(index)] = true
+            })
+        }
+        this.setState({ selection })
     }
 
     list(props, requestedPage, combineResults = (prev, next) => next) {
@@ -289,6 +314,7 @@ export class ListView extends React.Component {
         const searched = searchQueries.search !== undefined
         const filtered = Object.keys(filters).length > 0
         const sorting = getSorting(this.props)
+        const nSelected = Object.keys(this.state.selection).length
         return (
             <main id="viewport">
                 <Header breadcrumbs={breadcrumbs} {...this.props}>
@@ -344,7 +370,7 @@ export class ListView extends React.Component {
                                 type="button"
                                 aria-label="Hide filters"
                                 className="action-search icon-only"
-                                onClick={() => this.hideFilters()}
+                                onClick={this.hideFilters}
                                 >&zwnj;</button>
                         </header>
                         {desc.search &&
@@ -384,6 +410,7 @@ export class ListView extends React.Component {
                 <div id="viewport-content">
                     <div className="scroll-container scroll-horizontal">
                         <div className="scroll-content">
+                            <div>Number of selected items: {nSelected}</div>
                             {this.state.results.length > 0 &&
                                 <table className="list-view-table">
                                     <thead>
@@ -391,16 +418,21 @@ export class ListView extends React.Component {
                                             onSortingChange={this.handleSortingChange}
                                             sorting={sorting}
                                             fields={desc.fields}
+                                            onSelectAllChange={this.handleSelectAllChange}
+                                            allSelected={nSelected === this.state.results.length}
                                             />
                                     </thead>
                                     <tbody>
                                         {this.state.results.map((item, index) =>
                                             <ListViewTableItem
+                                                itemId={this.getItemId(index)}
                                                 key={index}
                                                 fields={desc.fields}
                                                 data={item}
                                                 onClick={canView() ? this.handleEnterChangeView : undefined}
-                                                />
+                                                onSelectChange={this.handleSelectItemChange}
+                                                selected={!!this.state.selection[this.getItemId(index)]}
+                                                />,
                                         )}
                                     </tbody>
                                 </table>

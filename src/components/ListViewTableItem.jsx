@@ -1,19 +1,18 @@
 import React from 'react'
 import classNames from 'classnames'
-import select from '../utils/select'
+import { autobind } from 'core-decorators'
 
+@autobind
 class ListViewItem extends React.Component {
 
     static propTypes = {
+        itemId: React.PropTypes.string.isRequired,
         fields: React.PropTypes.array.isRequired,
         data: React.PropTypes.object.isRequired,
         onClick: React.PropTypes.func.isRequired,
+        onSelectChange: React.PropTypes.func.isRequired,
+        selected: React.PropTypes.bool.isRequired,
     };
-
-    constructor() {
-        super()
-        this.handleClick = this.handleClick.bind(this)
-    }
 
     handleClick() {
         if (this.props.onClick) {
@@ -21,10 +20,18 @@ class ListViewItem extends React.Component {
         }
     }
 
+    handleSelectChanged() {
+        const { itemId, onSelectChange } = this.props
+        onSelectChange(itemId)
+    }
+
     render() {
-        const { fields, data, onClick } = this.props
+        const { fields, data, onClick, selected } = this.props
         return (
             <tr>
+                <td>
+                    <input type="checkbox" onChange={this.handleSelectChanged} checked={selected} />
+                </td>
                 {fields.map((f, index) => {
                     let value = f.getValue(data)
                     let renderClass = f.render

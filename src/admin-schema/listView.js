@@ -3,6 +3,11 @@ import { Joi, defineActions, definePermissions, stringOrReactProperty } from './
 import filters from './filters'
 import listViewField from './listViewField'
 
+const bulkActions = Joi.array().items(Joi.object().keys({
+    name: Joi.string().required(),
+    action: Joi.func().required(),
+}))
+
 const listView = Joi.object().provideId().keys({
     // Required
     path: Joi.string().required(),
@@ -18,6 +23,7 @@ const listView = Joi.object().provideId().keys({
     paginationComponent: Joi.func(),
     permissions: definePermissions('list'),
     id: Joi.string(),
+    bulkActions,
 
     // before/after optional
     before: stringOrReactProperty(''),
