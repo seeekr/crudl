@@ -11,7 +11,7 @@ import { errorMessage } from '../actions/messages'
       { value, label, previewURL }, where
  @value (required) is the value to be send when the form is submitted
  @label (optional) a string (e.g. a file name).
- @preivewURL (optional) is an URL of a thumbnail if applicable (can also be urlData)
+ @preivewURL (optional) is an URL of a thumbnail if applicable (can also be dataURL)
 
  FileField further requires a prop onSelect which must be a function of the form:
       (file, data) => inputValue, where
@@ -27,7 +27,7 @@ import { errorMessage } from '../actions/messages'
       c) store file and use a reference (similar to FK)
 
  In the case of a), the onSelect function simply returns the value as required by the backend. E.g.
-      onSelect: (file, urlData) => ({ value: { filename: file.name, file: urlData.split(',')[1] } })
+      onSelect: (file, dataURL) => ({ value: { filename: file.name, file: dataURL.split(',')[1] } })
 
  In the case of b) or c), the onSelect function must execute the upload and return a promise. For example:
       onSelect: (file, data) => {

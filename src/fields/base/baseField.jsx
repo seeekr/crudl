@@ -1,8 +1,15 @@
 import React from 'react'
 import { baseFieldPropTypes } from '../../PropTypes'
 
+const defaultOptions = {
+    renderLabel: true,
+    renderHelpText: true,
+    renderError: true,
+}
 
-export default function baseField(Component) {
+export default function baseField(Component, opts = {}) {
+    const options = Object.assign({}, defaultOptions, opts)
+
     class BaseField extends Component {
 
         static displayName = `BaseField(${Component.displayName || Component.name})`;
@@ -95,11 +102,11 @@ export default function baseField(Component) {
             const error = (this.props.meta.touched && this.props.meta.error) || ''
             return (
                 <div className="basefield">
-                    {this.renderLabel(label)}
+                    {options.renderLabel && this.renderLabel(label)}
                     {this.renderRelations()}
                     {super.render()}
-                    {this.renderError(error)}
-                    {this.renderHelpText(helpText)}
+                    {options.renderError && this.renderError(error)}
+                    {options.renderHelpText && this.renderHelpText(helpText)}
                 </div>
             )
         }

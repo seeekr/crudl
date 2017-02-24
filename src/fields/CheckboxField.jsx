@@ -49,4 +49,4 @@ class CheckboxField extends React.Component {
     }
 }
 
-export default baseField(CheckboxField)
+export default baseField(CheckboxField, { renderLabel: false })
