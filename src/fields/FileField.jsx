@@ -7,38 +7,44 @@ import asPromise from '../utils/asPromise'
 import { errorMessage } from '../actions/messages'
 
 /**
- * FileField requires an input value in the form:
- *      { value, label, previewURL }, where
- * value (required) is the value to be send when the form is submitted
- * label (optional) a string (e.g. a file name).
- * preivewURL (optional) is an URL of a thumbnail if applicable (can also be urlData)
- *
- * FileField further requires a prop onSelect which must be a function of the form:
- *      (file, urlData) => inputValue, where
- * file is the File object of obtained from the FileList of the input element
- * urlData is the result of the FileReader.readAsDataURL call.
- * inputValue is either the input value described above or a promise resolving to such.
- *
- * There are several possibilites and API could handle an upload:
- *      a) use Base64
- *      b) use File Upload
- *      c) store file and use a reference (similar to FK)
- *
- * In the case of a), the onSelect function simply returns the value as required by the backend. E.g.
- *      onSelect: (file, urlData) => ({ value: { filename: file.name, file: urlData.split(',')[1] } })
- *
- * In the case of b) or c), the onSelect function must execute the upload and return a promise. For example:
- *      onSelect: (file, urlData) => {
- *          const data = prepareData(urlData)
- *          return axios.put('/upload/server', data, config).then(res => ({
- *              value: res.data.fileID,
- *              previewURL: res.data.thumbnailURL,
- *          }))
- *      }
- *
- * FileField takes an optional prop onRemove, which will be invoked when user click on remove button. onRemove is a
- * function of the form ({ value, label, previewURL }) => ({value, label, previewURL}).
- * The default onRemove function is: () => ({ value: ''})
+ FileField requires an input value in the form:
+      { value, label, previewURL }, where
+ @value (required) is the value to be send when the form is submitted
+ @label (optional) a string (e.g. a file name).
+ @preivewURL (optional) is an URL of a thumbnail if applicable (can also be urlData)
+
+ FileField further requires a prop onSelect which must be a function of the form:
+      (file, data) => inputValue, where
+
+ @file is the File object of obtained from the FileList of the input element
+ @data is the result of the FileReader.readAs<ReadMethod>() call, where <ReadMethod> is given
+       by the prop `readAs` which is 'DataURL' by default (see below)
+ @inputValue is either the input value described above or a promise resolving to such.
+
+ There are several possibilites and API could handle an upload:
+      a) use Base64
+      b) use File Upload
+      c) store file and use a reference (similar to FK)
+
+ In the case of a), the onSelect function simply returns the value as required by the backend. E.g.
+      onSelect: (file, urlData) => ({ value: { filename: file.name, file: urlData.split(',')[1] } })
+
+ In the case of b) or c), the onSelect function must execute the upload and return a promise. For example:
+      onSelect: (file, data) => {
+          const data = prepareData(data)
+          return axios.put('/upload/server', data, config).then(response => ({
+              value: response.data.fileID,
+              previewURL: response.data.thumbnailURL,
+          }))
+      }
+
+ FURTHER PROPS:
+
+ onRemove is a function of the form ({ value, label, previewURL }) => ({value, label, previewURL}),
+ which will be invoked when user click on remove button. By default, the onRemove function is: () => ({ value: ''})
+
+ readAs is one of 'DataURL', 'Text', or 'ArrayBuffer'. The default value is 'DataURL'
+
  */
 @autobind
 class FileField extends React.Component {
@@ -57,10 +63,14 @@ class FileField extends React.Component {
         disabled: baseFieldPropTypes.disabled,
         onSelect: React.PropTypes.func.isRequired,
         onClear: React.PropTypes.func,
+        readAs: React.PropTypes.oneOf(['DataURL', 'ArrayBuffer', 'Text']),
         dispatch: React.PropTypes.func.isRequired,
     }
 
-    static defaultProps = { onClear: () => ({ value: '' }) }
+    static defaultProps = {
+        onClear: () => ({ value: '' }),
+        readAs: 'DataURL',
+    }
 
     handleFileSelect() {
         const { dispatch, input, onSelect } = this.props
@@ -80,7 +90,8 @@ class FileField extends React.Component {
                 dispatch(errorMessage(`Upload failed: ${error}`))
             })
         }
-        reader.readAsDataURL(file)
+        // readAsDataURL, readAsArrayBuffer, or readAsText
+        reader[`readAs${this.props.readAs}`](file)
     }
 
     handleRemoveItem() {
