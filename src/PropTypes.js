@@ -19,6 +19,7 @@ import fieldSchema from './admin-schema/field'
 import fieldsetSchema from './admin-schema/fieldset'
 import tabSchema from './admin-schema/tab'
 import filtersSchema from './admin-schema/filters'
+import bulkActionsSchema from './admin-schema/bulkActions'
 
 export const activeFiltersShape = React.PropTypes.arrayOf(
     React.PropTypes.shape({
@@ -52,12 +53,10 @@ export const pageNotFoundShape = joiToPropType(pageNotFoundSchema)
 export const listViewFieldShape = joiToPropType(listViewFieldSchema)
 export const fieldShape = joiToPropType(fieldSchema)
 export const fieldsetShape = joiToPropType(fieldsetSchema)
-
-
 export const tabShape = joiToPropType(tabSchema)
 export const pathShape = React.PropTypes.string
-
 export const filtersShape = joiToPropType(filtersSchema)
+export const bulkActionsShape = joiToPropType(bulkActionsSchema)
 
 export const breadcrumbsShape = React.PropTypes.arrayOf(React.PropTypes.shape({
     name: React.PropTypes.string.isRequired,

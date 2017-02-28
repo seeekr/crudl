@@ -15,7 +15,7 @@ import ActiveFilters from './ActiveFilters'
 import Filters from './Filters'
 import Search from './Search'
 import { pathShape, listViewShape, breadcrumbsShape, viewCallsShape } from '../PropTypes'
-import { toggleFilters, showFilters, hideFilters } from '../actions/frontend'
+import { toggleFilters, showFilters, hideFilters, showModalConfirm } from '../actions/frontend'
 import { cache } from '../actions/core'
 import { setFilters } from '../actions/filters'
 import { errorMessage } from '../actions/messages'
@@ -23,6 +23,7 @@ import { getInitialSorting, queryStringToSorting, sortingToQueryString, updateSo
 import withPropsWatch from '../utils/withPropsWatch'
 import permMessages from '../messages/permissions'
 import withViewCalls from '../utils/withViewCalls'
+import BulkActions from '../components/BulkActions'
 
 function getPath(props) {
     return props.location.pathname + props.location.search
@@ -236,12 +237,12 @@ export class ListView extends React.Component {
         this.handleFilters(filters)
     }
 
-    handleSelectItemChange(itemId) {
+    handleSelectItemChange(itemId, itemData) {
         const selection = Object.assign({}, this.state.selection)
         if (selection[itemId]) {
             delete selection[itemId]
         } else {
-            selection[itemId] = true
+            selection[itemId] = itemData
         }
         this.setState({ selection })
     }
@@ -250,10 +251,33 @@ export class ListView extends React.Component {
         const selection = {}
         if (Object.keys(this.state.selection).length < this.state.results.length) {
             this.state.results.forEach((item, index) => {
-                selection[this.getItemId(index)] = true
+                selection[this.getItemId(index)] = item
             })
         }
         this.setState({ selection })
+    }
+
+    handleApplyBulkAction(action) {
+        const { dispatch, desc } = this.props
+        // Show modal dialog if required
+        if (desc.bulkActions[action].modalConfirm) {
+            dispatch(showModalConfirm({
+                message: desc.bulkActions[action].modalConfirm.message,
+                labelConfirm: desc.bulkActions[action].modalConfirm.labelConfirm,
+                labelCancel: desc.bulkActions[action].modalConfirm.labelCancel,
+                modalType: desc.bulkActions[action].modalConfirm.modalType,
+                onConfirm: () => this.doApplyBulkAction(action),
+            }))
+        } else {
+            this.doApplyBulkAction(action)
+        }
+    }
+
+    doApplyBulkAction(action) {
+        const { desc } = this.props
+        // The selected items as an array
+        const selectedItems = Object.keys(this.state.selection).map(key => this.state.selection[key])
+        desc.bulkActions[action].action(req(), selectedItems)
     }
 
     list(props, requestedPage, combineResults = (prev, next) => next) {
@@ -410,7 +434,6 @@ export class ListView extends React.Component {
                 <div id="viewport-content">
                     <div className="scroll-container scroll-horizontal">
                         <div className="scroll-content">
-                            <div>Number of selected items: {nSelected}</div>
                             {this.state.results.length > 0 &&
                                 <table className="list-view-table">
                                     <thead>
@@ -418,6 +441,7 @@ export class ListView extends React.Component {
                                             onSortingChange={this.handleSortingChange}
                                             sorting={sorting}
                                             fields={desc.fields}
+                                            selectEnabled={!!desc.bulkActions}
                                             onSelectAllChange={this.handleSelectAllChange}
                                             allSelected={nSelected === this.state.results.length}
                                             />
@@ -430,6 +454,7 @@ export class ListView extends React.Component {
                                                 fields={desc.fields}
                                                 data={item}
                                                 onClick={canView() ? this.handleEnterChangeView : undefined}
+                                                selectEnabled={!!desc.bulkActions}
                                                 onSelectChange={this.handleSelectItemChange}
                                                 selected={!!this.state.selection[this.getItemId(index)]}
                                                 />,
@@ -440,6 +465,14 @@ export class ListView extends React.Component {
                         </div>
                     </div>
                 </div>
+                {desc.bulkActions &&
+                    <BulkActions
+                        id={`bulkActions-${desc.id}`}
+                        actions={desc.bulkActions}
+                        nSelected={nSelected}
+                        onApply={this.handleApplyBulkAction}
+                        />
+                }
                 <div className="context-tools">
                     {this.state.results.length > 5 &&
                         <Pagination

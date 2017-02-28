@@ -10,6 +10,7 @@ class ListViewItem extends React.Component {
         fields: React.PropTypes.array.isRequired,
         data: React.PropTypes.object.isRequired,
         onClick: React.PropTypes.func.isRequired,
+        selectEnabled: React.PropTypes.bool.isRequired,
         onSelectChange: React.PropTypes.func.isRequired,
         selected: React.PropTypes.bool.isRequired,
     };
@@ -21,17 +22,21 @@ class ListViewItem extends React.Component {
     }
 
     handleSelectChanged() {
-        const { itemId, onSelectChange } = this.props
-        onSelectChange(itemId)
+        const { itemId, data, onSelectChange } = this.props
+        onSelectChange(itemId, data)
     }
 
     render() {
-        const { fields, data, onClick, selected } = this.props
+        const { fields, data, onClick, selectEnabled, selected } = this.props
         return (
             <tr>
-                <td>
-                    <input type="checkbox" onChange={this.handleSelectChanged} checked={selected} />
-                </td>
+                {selectEnabled &&
+                    <td>
+                        <div>
+                            <input type="checkbox" onChange={this.handleSelectChanged} checked={selected} />
+                        </div>
+                    </td>
+                }
                 {fields.map((f, index) => {
                     let value = f.getValue(data)
                     let renderClass = f.render

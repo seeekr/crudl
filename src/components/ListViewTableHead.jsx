@@ -21,11 +21,15 @@ const getSortPriority = (name, sorting) => {
     return undefined
 }
 
-const ListViewHeader = ({ sorting, onSortingChange, fields, allSelected, onSelectAllChange }) => (
+const ListViewHeader = ({ sorting, onSortingChange, fields, selectEnabled, allSelected, onSelectAllChange }) => (
     <tr>
-        <th>
-            <input type="checkbox" checked={allSelected} onClick={onSelectAllChange} />
-        </th>
+        {selectEnabled &&
+            <th>
+                <div>
+                    <input type="checkbox" checked={allSelected} onClick={onSelectAllChange} />
+                </div>
+            </th>
+        }
         {fields.map((f, index) => {
             if (f.sortable || isSorted(f.name, sorting)) {
                 const cellClass = classNames(f.render, {
@@ -82,6 +86,7 @@ const ListViewHeader = ({ sorting, onSortingChange, fields, allSelected, onSelec
 ListViewHeader.propTypes = {
     fields: React.PropTypes.arrayOf(listViewFieldShape).isRequired,
     sorting: sortingShape,
+    selectEnabled: React.PropTypes.bool.isRequired,
     onSortingChange: React.PropTypes.func.isRequired,
     onSelectAllChange: React.PropTypes.func.isRequired,
     allSelected: React.PropTypes.bool.isRequired,

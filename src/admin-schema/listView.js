@@ -2,11 +2,7 @@ import { Joi, defineActions, definePermissions, stringOrReactProperty } from './
 
 import filters from './filters'
 import listViewField from './listViewField'
-
-const bulkActions = Joi.array().items(Joi.object().keys({
-    name: Joi.string().required(),
-    action: Joi.func().required(),
-}))
+import bulkActions from './bulkActions'
 
 const listView = Joi.object().provideId().keys({
     // Required
