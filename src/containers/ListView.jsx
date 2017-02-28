@@ -263,7 +263,7 @@ export class ListView extends React.Component {
                 props.dispatch(setFilters(this.getFilters(props)))
                 this.setState(props.cache.state)
             } else {
-                this.setState({ loading: true })
+                this.setState({ loading: true, selection: {} })
 
                 // Collect filters (filters and search queries)
                 let filters = this.getSearchQueries(props)
