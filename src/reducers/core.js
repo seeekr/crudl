@@ -27,6 +27,7 @@ export const initialState = {
             returnValue: undefined,
             storedData: undefined,
             callstack: [],
+            callInProgress: false,
         },
     },
 }

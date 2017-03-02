@@ -9,13 +9,6 @@ import { pathShape } from '../PropTypes'
 import { resolvePath } from '../Crudl'
 import { viewCalls } from '../actions/core'
 
-const initialCallstate = {
-    hasReturned: false,
-    returnValue: undefined,
-    storedData: undefined,
-    callstack: [],
-}
-
 function withViewCalls(Component) {
     @autobind
     class ViewCaller extends React.Component {
@@ -36,29 +29,34 @@ function withViewCalls(Component) {
         }
 
         enterView(path, data, params, fromRelation = false) {
-            const { location, router, dispatch } = this.props
+            const { location, router, dispatch, callstate } = this.props
             const { pathname, search, hash } = location
             const nextLocation = parsePath(path)
 
             const state = {
-                ...location.state,
                 hasReturned: false,
                 returnValue: undefined,
                 storedData: undefined,
                 callstack: [
-                    ...get(location.state, 'callstack', []),
+                    ...callstate.callstack,
                     {
                         returnLocation: { pathname, search, hash },
                         storedData: data,
                         params,
                         fromRelation,
-                    }],
+                    },
+                ],
+                callInProgress: true,
             }
 
             dispatch(viewCalls.setState(state))
 
             router.push({
                 ...nextLocation,
+                state: {
+                    ...location.state,
+                    callInProgress: true,
+                },
             })
         }
 
@@ -67,7 +65,7 @@ function withViewCalls(Component) {
         }
 
         leaveView(returnValue) {
-            const { router, defaultReturnPath, dispatch, callstate } = this.props
+            const { router, defaultReturnPath, dispatch, callstate, location } = this.props
             const callstack = callstate.callstack
             const head = callstack[callstack.length - 1]
 
@@ -86,6 +84,7 @@ function withViewCalls(Component) {
                 returnValue,
                 storedData: get(head, 'storedData'),
                 callstack: callstack.slice(0, -1),
+                callInProgress: true,
             }
 
             dispatch(viewCalls.setState(state))
@@ -93,6 +92,10 @@ function withViewCalls(Component) {
             // Leave
             router.push({
                 ...returnLocation,
+                state: {
+                    ...location.state,
+                    callInProgress: true,
+                },
             })
         }
 
@@ -109,11 +112,22 @@ function withViewCalls(Component) {
         render() {
             const callstate = this.props.callstate
             const { enterView, leaveView, enterRelation, switchToView } = this
-            const fromRelation = get(callstate.callstack[callstate.callstack.length - 1], 'fromRelation', false)
-            const params = get(callstate.callstack[callstate.callstack.length - 1], 'params', false)
-            const hasReturned = callstate.hasReturned
-            const returnValue = callstate.returnValue
-            const storedData = callstate.storedData
+            const callInProgress = get(this.props.location.state, 'callInProgress') && callstate.callInProgress
+
+            let fromRelation = false
+            let params = {}
+            let hasReturned = false
+            let returnValue
+            let storedData
+
+            if (callInProgress) {
+                fromRelation = get(callstate.callstack[callstate.callstack.length - 1], 'fromRelation', fromRelation)
+                params = get(callstate.callstack[callstate.callstack.length - 1], 'params', params)
+                hasReturned = callstate.hasReturned
+                returnValue = callstate.returnValue
+                storedData = callstate.storedData
+            }
+
             return (
                 <Component
                     {...this.props}
