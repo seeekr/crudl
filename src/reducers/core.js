@@ -21,6 +21,14 @@ export const initialState = {
     activeView: undefined,
     permissions: {},
     admin: { id: undefined },
+    viewCalls: {
+        state: {
+            hasReturned: false,
+            returnValue: undefined,
+            storedData: undefined,
+            callstack: [],
+        },
+    },
 }
 
 /**
@@ -56,6 +64,8 @@ function coreReducer(state = initialState, action) {
             return t('activeView', undefined)
         case types.SET_PERMISSIONS:
             return t('permissions', action.permissions)
+        case types.VIEW_CALLS_SET_STATE:
+            return t('viewCalls.state', action.state)
         default:
             return state
     }

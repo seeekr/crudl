@@ -1,10 +1,13 @@
 import React from 'react'
+import { connect } from 'react-redux'
 import get from 'lodash/get'
 import { routerShape, locationShape } from 'react-router/lib/PropTypes'
 import { parsePath } from 'history'
+import { autobind } from 'core-decorators'
 
 import { pathShape } from '../PropTypes'
 import { resolvePath } from '../Crudl'
+import { viewCalls } from '../actions/core'
 
 const initialCallstate = {
     hasReturned: false,
@@ -14,6 +17,7 @@ const initialCallstate = {
 }
 
 function withViewCalls(Component) {
+    @autobind
     class ViewCaller extends React.Component {
 
         static displayName = `ViewCaller(${Component.displayName || Component.name})`;
@@ -22,46 +26,49 @@ function withViewCalls(Component) {
             router: routerShape.isRequired,
             location: locationShape.isRequired,
             defaultReturnPath: pathShape,
+            dispatch: React.PropTypes.func.isRequired,
+            callstate: React.PropTypes.shape({
+                hasReturned: React.PropTypes.bool,
+                returnValue: React.PropTypes.any,
+                storedData: React.PropTypes.any,
+                callstate: React.PropTypes.array,
+            }).isRequired,
         }
 
-        constructor() {
-            super()
-            this.enterView = this.enterView.bind(this)
-            this.enterRelation = this.enterRelation.bind(this)
-            this.leaveView = this.leaveView.bind(this)
-            this.switchToView = this.switchToView.bind(this)
-        }
-
-        enterView(path, data, fromRelation = false) {
-            const { location, router } = this.props
+        enterView(path, data, params, fromRelation = false) {
+            const { location, router, dispatch } = this.props
             const { pathname, search, hash } = location
             const nextLocation = parsePath(path)
 
+            const state = {
+                ...location.state,
+                hasReturned: false,
+                returnValue: undefined,
+                storedData: undefined,
+                callstack: [
+                    ...get(location.state, 'callstack', []),
+                    {
+                        returnLocation: { pathname, search, hash },
+                        storedData: data,
+                        params,
+                        fromRelation,
+                    }],
+            }
+
+            dispatch(viewCalls.setState(state))
+
             router.push({
                 ...nextLocation,
-                state: {
-                    ...location.state,
-                    hasReturned: false,
-                    returnValue: undefined,
-                    storedData: undefined,
-                    callstack: [
-                        ...get(location.state, 'callstack', []),
-                        {
-                            returnLocation: { pathname, search, hash },
-                            storedData: data,
-                            fromRelation,
-                        }],
-                },
             })
         }
 
-        enterRelation(path, data) {
-            this.enterView(path, data, true)
+        enterRelation(path, data, params) {
+            this.enterView(path, data, params, true)
         }
 
         leaveView(returnValue) {
-            const { router, location, defaultReturnPath } = this.props
-            const callstack = get(location.state, 'callstack', [])
+            const { router, defaultReturnPath, dispatch, callstate } = this.props
+            const callstack = callstate.callstack
             const head = callstack[callstack.length - 1]
 
             // Obtain the return location
@@ -74,15 +81,18 @@ function withViewCalls(Component) {
                 throw new Error('Cannot leave the view. Neither callstack nor defaultReturnPath are defined!')
             }
 
+            const state = {
+                hasReturned: true,
+                returnValue,
+                storedData: get(head, 'storedData'),
+                callstack: callstack.slice(0, -1),
+            }
+
+            dispatch(viewCalls.setState(state))
+
             // Leave
             router.push({
                 ...returnLocation,
-                state: {
-                    hasReturned: true,
-                    returnValue,
-                    storedData: get(head, 'storedData'),
-                    callstack: callstack.slice(0, -1),
-                },
             })
         }
 
@@ -97,9 +107,10 @@ function withViewCalls(Component) {
         }
 
         render() {
+            const callstate = this.props.callstate
             const { enterView, leaveView, enterRelation, switchToView } = this
-            const callstate = get(this.props.location, 'state', initialCallstate)
             const fromRelation = get(callstate.callstack[callstate.callstack.length - 1], 'fromRelation', false)
+            const params = get(callstate.callstack[callstate.callstack.length - 1], 'params', false)
             const hasReturned = callstate.hasReturned
             const returnValue = callstate.returnValue
             const storedData = callstate.storedData
@@ -115,12 +126,15 @@ function withViewCalls(Component) {
                         hasReturned,
                         storedData,
                         returnValue,
+                        params,
                     }}
                     />
             )
         }
     }
-    return ViewCaller
+    return connect(state => ({
+        callstate: state.core.viewCalls.state,
+    }))(ViewCaller)
 }
 
 export default withViewCalls
