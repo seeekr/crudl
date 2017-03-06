@@ -1,8 +1,6 @@
 import url from 'url'
 import get from 'lodash/get'
 import semver from 'semver'
-// Version
-import { version } from '../package.json'
 
 // React, Redux, and React-Intl
 import React from 'react'
@@ -21,6 +19,9 @@ import adapter from 'redux-localstorage/lib/adapters/localStorage'
 import filter from 'redux-localstorage-filter';
 import lodashMerge from 'lodash/merge'
 
+// Version
+import { version } from '../package.json'
+
 // Containers
 import App from './containers/App'
 import ChangeView from './containers/ChangeView'
@@ -30,6 +31,7 @@ import Login from './containers/Login'
 import Logout from './containers/Logout'
 import Dashboard from './containers/Dashboard'
 import PageNotFound from './containers/PageNotFound'
+import IntermediateView from './containers/IntermediateView'
 
 // Connectors
 import RESTConnector from './connectors/RESTConnector'
@@ -337,6 +339,7 @@ function crudlRouter() {
         const listViewCrumb = { name: listView.title, path: listView.path }
         const changeViewCrumb = { name: changeView.title, path: '' }
         const addViewCrumb = addView && { name: addView.title, path: '' }
+
         // Collection (ListView)
         root.childRoutes.push({
             path: listView.path,
@@ -365,7 +368,7 @@ function crudlRouter() {
             })
         }
 
-        // Resource (ChangeView)
+        // Change existing resource (ChangeView)
         root.childRoutes.push({
             path: changeView.path,
             onEnter: authenticate(setActiveView(changeView.id)),

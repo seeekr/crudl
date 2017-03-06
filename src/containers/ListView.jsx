@@ -24,6 +24,7 @@ import withPropsWatch from '../utils/withPropsWatch'
 import permMessages from '../messages/permissions'
 import withViewCalls from '../utils/withViewCalls'
 import BulkActions from '../components/BulkActions'
+import asPromise from '../utils/asPromise'
 
 function getPath(props) {
     return props.location.pathname + props.location.search
@@ -84,6 +85,7 @@ export class ListView extends React.Component {
         pagination: undefined,
         loading: false,
         selection: {},
+        actionsEnabled: false, // Prevents action re-execution on page releoad
     };
 
     componentWillMount() {
@@ -273,14 +275,45 @@ export class ListView extends React.Component {
         }
     }
 
-    doApplyBulkAction(action) {
-        const { desc } = this.props
+    doApplyBulkAction(actionName) {
+        const { desc, viewCalls, breadcrumbs } = this.props
+        const bulkAction = desc.bulkActions[actionName]
         // The selected items as an array
         const selectedItems = Object.keys(this.state.selection).map(key => this.state.selection[key])
-        desc.bulkActions[action].action(req(), selectedItems)
+
+        if (bulkAction.before) {
+            asPromise(bulkAction.before(req(), selectedItems))
+            .then(result =>
+                viewCalls.enterView(
+                    resolvePath('intermediate-page'),
+                    { // storedData
+                        actionName,
+                        selectedItems,
+                    },
+                    { // params for the intermediate page view
+                        breadcrumbs,
+                        title: bulkAction.description || actionName,
+                        result,
+                    },
+                ),
+            )
+        }
     }
 
     list(props, requestedPage, combineResults = (prev, next) => next) {
+        if (props.viewCalls.hasReturned) {
+            console.log('Has returned!');
+            const { returnValue, storedData } = props.viewCalls
+            if (returnValue.proceed) {
+                const bulkAction = props.desc.bulkActions[storedData.actionName]
+                asPromise(bulkAction.action(req(), storedData.selectedItems))
+                .then(() => {
+                    console.log(`Action ${storedData.actionName} completed!`);
+                })
+            } else {
+                console.log('Action canceled');
+            }
+        }
         if (hasPermission(props.desc.id, 'list')) {
             let page = requestedPage
             if (!page && props.cache.key === getCacheKey(props)) {
@@ -503,4 +536,4 @@ function mapStateToProps(state) {
     }
 }
 
-export default connect(mapStateToProps)(withRouter(injectIntl(withPropsWatch(withViewCalls(ListView)))))
+export default connect(mapStateToProps)(withRouter(injectIntl(withViewCalls(withPropsWatch(ListView)))))

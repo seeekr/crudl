@@ -1,7 +1,9 @@
 import { Joi } from './base'
 
 const bulkAction = Joi.object().keys({
+    before: Joi.func().default(() => undefined),
     action: Joi.func().required(),
+    after: Joi.func().default(() => undefined),
     description: Joi.string(),
     modalConfirm: Joi.object({
         message: Joi.string().isRequired,
