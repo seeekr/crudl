@@ -5,7 +5,6 @@ import { routerShape, locationShape } from 'react-router/lib/PropTypes'
 import { parsePath } from 'history'
 import { autobind } from 'core-decorators'
 
-import { pathShape } from '../PropTypes'
 import { resolvePath, getSiblingDesc } from '../Crudl'
 import { viewCalls } from '../actions/core'
 
@@ -18,7 +17,6 @@ function withViewCalls(Component) {
         static propTypes = {
             router: routerShape.isRequired,
             location: locationShape.isRequired,
-            defaultReturnPath: pathShape,
             dispatch: React.PropTypes.func.isRequired,
             callstate: React.PropTypes.shape({
                 hasReturned: React.PropTypes.bool,
