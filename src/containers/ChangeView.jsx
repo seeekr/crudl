@@ -82,7 +82,7 @@ export class ChangeView extends React.Component {
             onSubmitFail: () => { dispatch(errorMessage(intl.formatMessage(messages.validationError))) },
             onCancel: this.handleCancel,
             onDelete: desc.actions.delete ? this.handleDelete : undefined,
-            fromRelation: viewCalls.fromRelation,
+            fromRelation: viewCalls.params.fromRelation,
             labels: {
                 save: intl.formatMessage(messages.save),
                 saveAndBack: intl.formatMessage(messages.saveAndBack),
@@ -227,17 +227,17 @@ export class ChangeView extends React.Component {
     }
 
     enterAddRelation(fieldDesc) {
-        this.props.viewCalls.enterRelation(resolvePath(fieldDesc.add.path), {
+        this.props.viewCalls.enterView(resolvePath(fieldDesc.add.path), {
             fieldName: fieldDesc.name,
             relation: 'add',
-        })
+        }, { fromRelation: true })
     }
 
     enterEditRelation(fieldDesc) {
-        this.props.viewCalls.enterRelation(resolvePath(fieldDesc.edit.path), {
+        this.props.viewCalls.enterView(resolvePath(fieldDesc.edit.path), {
             fieldName: fieldDesc.name,
             relation: 'edit',
-        })
+        }, { fromRelation: true })
     }
 
     switchTab(props) {

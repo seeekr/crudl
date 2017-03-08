@@ -61,7 +61,7 @@ class AddView extends React.Component {
         }
         const formProps = {
             desc: this.props.desc,
-            onSave: data => this.handleSave(data, viewCalls.fromRelation ? BACK_TO_RELATION : BACK_TO_LIST_VIEW),
+            onSave: data => this.handleSave(data, viewCalls.params.fromRelation ? BACK_TO_RELATION : BACK_TO_LIST_VIEW),
             onSaveAndContinue: data => this.handleSave(data, CONTINUE_EDITING),
             onSaveAndAddAnother: data => this.handleSave(data, ADD_ANOTHER),
             onCancel: this.handleCancel,
@@ -75,7 +75,7 @@ class AddView extends React.Component {
             },
             onAdd: this.enterAddRelation,
             onEdit: this.enterEditRelation,
-            fromRelation: viewCalls.fromRelation,
+            fromRelation: viewCalls.params.fromRelation,
         }
         this.addViewForm = React.createElement(reduxForm(formSpec)(AddViewForm), formProps)
     }
@@ -160,17 +160,17 @@ class AddView extends React.Component {
     }
 
     enterAddRelation(fieldDesc) {
-        this.props.viewCalls.enterRelation(resolvePath(fieldDesc.add.path), {
+        this.props.viewCalls.enterView(resolvePath(fieldDesc.add.path), {
             fieldName: fieldDesc.name,
             relation: 'add',
-        })
+        }, { fromRelation: true })
     }
 
     enterEditRelation(fieldDesc) {
-        this.props.viewCalls.enterRelation(resolvePath(fieldDesc.edit.path), {
+        this.props.viewCalls.enterView(resolvePath(fieldDesc.edit.path), {
             fieldName: fieldDesc.name,
             relation: 'edit',
-        })
+        }, { fromRelation: true })
     }
 
     render() {

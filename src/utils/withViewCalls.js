@@ -29,7 +29,7 @@ function withViewCalls(Component) {
             }).isRequired,
         }
 
-        enterView(path, data, params, fromRelation = false) {
+        enterView(path, data, params) {
             const { location, router, dispatch, callstate } = this.props
             const { pathname, search, hash } = location
             const nextLocation = parsePath(path)
@@ -44,7 +44,6 @@ function withViewCalls(Component) {
                         returnLocation: { pathname, search, hash },
                         storedData: data,
                         params,
-                        fromRelation,
                     },
                 ],
                 callInProgress: true,
@@ -113,17 +112,15 @@ function withViewCalls(Component) {
 
         render() {
             const callstate = this.props.callstate
-            const { enterView, leaveView, enterRelation, switchToView } = this
+            const { enterView, leaveView, switchToView } = this
             const callInProgress = get(this.props.location.state, 'callInProgress') && callstate.callInProgress
 
-            let fromRelation = false
             let params = {}
             let hasReturned = false
             let returnValue
             let storedData
 
             if (callInProgress) {
-                fromRelation = get(callstate.callstack[callstate.callstack.length - 1], 'fromRelation', fromRelation)
                 params = get(callstate.callstack[callstate.callstack.length - 1], 'params', params)
                 hasReturned = callstate.hasReturned
                 returnValue = callstate.returnValue
@@ -135,10 +132,8 @@ function withViewCalls(Component) {
                     {...this.props}
                     viewCalls={{
                         enterView,
-                        enterRelation,
                         leaveView,
                         switchToView,
-                        fromRelation,
                         hasReturned,
                         storedData,
                         returnValue,
