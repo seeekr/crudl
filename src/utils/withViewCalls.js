@@ -6,7 +6,7 @@ import { parsePath } from 'history'
 import { autobind } from 'core-decorators'
 
 import { pathShape } from '../PropTypes'
-import { resolvePath } from '../Crudl'
+import { resolvePath, getSiblingDesc } from '../Crudl'
 import { viewCalls } from '../actions/core'
 
 function withViewCalls(Component) {
@@ -25,6 +25,9 @@ function withViewCalls(Component) {
                 returnValue: React.PropTypes.any,
                 storedData: React.PropTypes.any,
                 callstate: React.PropTypes.array,
+            }).isRequired,
+            desc: React.PropTypes.shape({
+                id: React.PropTypes.string.isRequired,
             }).isRequired,
         }
 
@@ -65,9 +68,10 @@ function withViewCalls(Component) {
         }
 
         leaveView(returnValue) {
-            const { router, defaultReturnPath, dispatch, callstate, location } = this.props
+            const { router, dispatch, callstate, location, desc } = this.props
             const callstack = callstate.callstack
             const head = callstack[callstack.length - 1]
+            const defaultReturnPath = getSiblingDesc(desc.id, 'listView').path
 
             // Obtain the return location
             let returnLocation

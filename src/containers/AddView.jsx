@@ -10,7 +10,7 @@ import getFieldNames from '../utils/getFieldNames'
 import getValidator from '../utils/getValidator'
 import getInitialValues from '../utils/getInitialValues'
 import hasUnsavedChanges from '../utils/hasUnsavedChanges'
-import { resolvePath, req, hasPermission } from '../Crudl'
+import { resolvePath, req, hasPermission, getSiblingDesc } from '../Crudl'
 import Header from '../components/Header'
 import AddViewForm from '../forms/AddViewForm'
 import { successMessage, errorMessage } from '../actions/messages'
@@ -34,7 +34,6 @@ class AddView extends React.Component {
 
     static propTypes = {
         desc: addViewShape.isRequired,
-        changeViewPath: pathShape.isRequired,
         intl: intlShape.isRequired,
         dispatch: React.PropTypes.func.isRequired,
         router: routerShape.isRequired,
@@ -112,7 +111,8 @@ class AddView extends React.Component {
 
     @blocksUI
     handleSave(data, nextStep = BACK_TO_LIST_VIEW) {
-        const { changeViewPath, dispatch, desc, intl } = this.props
+        const { dispatch, desc, intl } = this.props
+        const changeViewPath = getSiblingDesc(desc.id, 'changeView').path
         if (hasPermission(desc.id, 'add')) {
             // Try to prepare the data.
             let preparedData

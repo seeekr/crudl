@@ -31,7 +31,7 @@ import Login from './containers/Login'
 import Logout from './containers/Logout'
 import Dashboard from './containers/Dashboard'
 import PageNotFound from './containers/PageNotFound'
-import IntermediateView from './containers/IntermediateView'
+import createViewLoader from './containers/ViewLoader'
 
 // Connectors
 import RESTConnector from './connectors/RESTConnector'
@@ -200,27 +200,65 @@ function createViewDescIndex() {
     Object.keys(admin.views).forEach((groupName) => {
         const group = admin.views[groupName]
         if (group.listView) {
-            viewDescIndex[group.listView.id] = group.listView
+            viewDescIndex[group.listView.id] = {
+                type: 'listView',
+                desc: group.listView,
+                changeView: group.changeView,
+                addView: group.addView,
+            }
         }
         if (group.addView) {
-            viewDescIndex[group.addView.id] = group.addView
+            viewDescIndex[group.addView.id] = {
+                type: 'addView',
+                desc: group.addView,
+                changeView: group.changeView,
+                listView: group.listView,
+            }
         }
         if (group.changeView) {
-            viewDescIndex[group.changeView.id] = group.changeView
+            viewDescIndex[group.changeView.id] = {
+                type: 'changeView',
+                desc: group.changeView,
+                addView: group.addView,
+                listView: group.listView,
+            }
             if (group.changeView.tabs) {
                 group.changeView.tabs.forEach((tab) => {
-                    viewDescIndex[tab.id] = tab
+                    viewDescIndex[tab.id] = {
+                        type: 'tabView',
+                        desc: tab,
+                        parentView: group.changeView,
+                    }
                 })
             }
         }
     })
 }
 
-export function getViewDesc(viewId) {
+function getViewIndexEntry(viewId, defaultValue = {}) {
     if (!viewDescIndex) {
         createViewDescIndex()
     }
-    return viewDescIndex[viewId]
+    return viewDescIndex[viewId] || defaultValue
+}
+
+export function getViewDesc(viewId) {
+    return getViewIndexEntry(viewId).desc
+}
+
+export function getViewType(viewId) {
+    return getViewIndexEntry(viewId).type
+}
+
+export function getSiblingDesc(viewId, sibling, defaultValue = {}) {
+    if (sibling !== 'addView' && sibling !== 'changeView' && sibling !== 'listView') {
+        throw new Error(`Wrong sibling name '${sibling}'`)
+    }
+    return getViewIndexEntry(viewId)[sibling] || defaultValue
+}
+
+export function getParentDesc(viewId) {
+    return getViewIndexEntry(viewId).parentView
 }
 
 /**
@@ -344,12 +382,7 @@ function crudlRouter() {
         root.childRoutes.push({
             path: listView.path,
             onEnter: authenticate(setActiveView(listView.id)),
-            component: wrapComponent(ListView, {
-                desc: listView,
-                changeViewPath: changeView.path,
-                addViewPath: addView && addView.path,
-                canAdd: () => hasPermission(addView.id, 'add'),
-                canView: () => hasPermission(changeView.id, 'get'),
+            component: wrapComponent(createViewLoader(listView.id), {
                 breadcrumbs: [appCrumb, listViewCrumb],
             }),
         })
@@ -359,10 +392,7 @@ function crudlRouter() {
             root.childRoutes.push({
                 path: addView.path,
                 onEnter: authenticate(setActiveView(addView.id)),
-                component: wrapComponent(AddView, {
-                    desc: addView,
-                    changeViewPath: changeView.path,
-                    defaultReturnPath: listView.path,
+                component: wrapComponent(createViewLoader(addView.id), {
                     breadcrumbs: [appCrumb, listViewCrumb, addViewCrumb],
                 }),
             })
@@ -372,10 +402,7 @@ function crudlRouter() {
         root.childRoutes.push({
             path: changeView.path,
             onEnter: authenticate(setActiveView(changeView.id)),
-            component: wrapComponent(ChangeView, {
-                desc: changeView,
-                defaultReturnPath: listView.path,
-                appTitle: admin.title,
+            component: wrapComponent(createViewLoader(changeView.id), {
                 breadcrumbs: [appCrumb, listViewCrumb, changeViewCrumb],
             }),
         })
