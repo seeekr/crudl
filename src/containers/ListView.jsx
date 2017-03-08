@@ -533,7 +533,6 @@ function mapStateToProps(state) {
     return {
         filtersVisible: state.frontend.filters.visible,
         cache: state.core.cache.listView,
-        permissions: state.core.permissions,
     }
 }
 
