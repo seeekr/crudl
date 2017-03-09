@@ -1,6 +1,7 @@
 import set from 'lodash/set'
+import get from 'lodash/get'
 import cloneDeep from 'lodash/cloneDeep'
-
+import { LOCATION_CHANGE } from 'react-router-redux'
 import { types } from '../actions/core'
 
 /**
@@ -67,6 +68,12 @@ function coreReducer(state = initialState, action) {
             return t('permissions', action.permissions)
         case types.VIEW_CALLS_SET_STATE:
             return t('viewCalls.state', action.state)
+        case LOCATION_CHANGE:
+            // Clear the viewCalls state when a call is aborted
+            if (get(action.state, 'callInProgress')) {
+                return t('viewCalls.state', initialState.viewCalls.state)
+            }
+            return state
         default:
             return state
     }

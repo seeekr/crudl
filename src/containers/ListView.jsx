@@ -163,11 +163,13 @@ export class ListView extends React.Component {
     }
 
     handleEnterAddView() {
-        this.props.viewCalls.enterView(resolvePath(getSiblingDesc(this.props.desc.id, 'addView').path))
+        this.props.router.push(resolvePath(getSiblingDesc(this.props.desc.id, 'addView').path))
+        // this.props.viewCalls.enterView(resolvePath(getSiblingDesc(this.props.desc.id, 'addView').path))
     }
 
     handleEnterChangeView(item) {
-        this.props.viewCalls.enterView(resolvePath(getSiblingDesc(this.props.desc.id, 'changeView').path, item))
+        this.props.router.push(resolvePath(getSiblingDesc(this.props.desc.id, 'changeView').path, item))
+        // this.props.viewCalls.enterView(resolvePath(getSiblingDesc(this.props.desc.id, 'changeView').path, item))
     }
 
     handleFilters(data) {
