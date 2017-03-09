@@ -1,6 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import isArray from 'lodash/isArray'
+import last from 'lodash/last'
 import { autobind } from 'core-decorators'
 
 import { getViewType, getViewDesc } from '../Crudl'
@@ -8,16 +8,6 @@ import { getViewType, getViewDesc } from '../Crudl'
 import AddView from './AddView'
 import ChangeView from './ChangeView'
 import ListView from './ListView'
-
-function head(array = [], defaultValue = {}) {
-    let h
-
-    if (isArray(array)) {
-        h = array[array.length - 1]
-    }
-
-    return h || defaultValue
-}
 
 function getComponent(viewId) {
     switch (getViewType(viewId)) {
@@ -37,26 +27,21 @@ function createViewLoader(defaultViewId) {
     class ViewLoader extends React.Component {
 
         static propTypes = {
-            callstate: React.PropTypes.shape({
-                hasReturned: React.PropTypes.bool,
-                returnValue: React.PropTypes.any,
-                storedData: React.PropTypes.any,
-                callstack: React.PropTypes.array,
-            }).isRequired,
+            trace: React.PropTypes.array.isRequired, // eslint-disable-line
         }
 
         render() {
-            const { callstack } = this.props.callstate
-            const Component = getComponent(head(callstack).viewId || defaultViewId)
-            const desc = getViewDesc(head(callstack).viewId || defaultViewId)
-
+            const { trace } = this.props
+            const viewId = last(trace) ? last(trace).to : defaultViewId
+            const Component = getComponent(viewId)
+            const desc = getViewDesc(viewId)
             return (
                 React.createElement(Component, { ...this.props, desc })
             )
         }
     }
     return connect(state => ({
-        callstate: state.core.viewCalls.state,
+        trace: state.core.transitions.trace,
     }))(ViewLoader)
 }
 
