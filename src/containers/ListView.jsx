@@ -14,7 +14,7 @@ import Pagination from '../components/Pagination'
 import ActiveFilters from './ActiveFilters'
 import Filters from './Filters'
 import Search from './Search'
-import { listViewShape, breadcrumbsShape, viewCallsShape } from '../PropTypes'
+import { listViewShape, breadcrumbsShape, transitionStateShape } from '../PropTypes'
 import { toggleFilters, showFilters, hideFilters, showModalConfirm } from '../actions/frontend'
 import { cache } from '../actions/core'
 import { setFilters } from '../actions/filters'
@@ -22,7 +22,7 @@ import { errorMessage } from '../actions/messages'
 import { getInitialSorting, queryStringToSorting, sortingToQueryString, updateSorting } from '../utils/listViewSorting'
 import withPropsWatch from '../utils/withPropsWatch'
 import permMessages from '../messages/permissions'
-import withViewCalls from '../utils/withViewCalls'
+import withTransitions from '../utils/withTransitions'
 import BulkActions from '../components/BulkActions'
 import asPromise from '../utils/asPromise'
 
@@ -68,7 +68,9 @@ export class ListView extends React.Component {
         router: routerShape.isRequired,
         intl: intlShape.isRequired,
         breadcrumbs: breadcrumbsShape.isRequired,
-        viewCalls: viewCallsShape.isRequired,
+        transitionState: transitionStateShape.isRequired,
+        transitionEnter: React.PropTypes.func.isRequired,
+        transitionLeave: React.PropTypes.func.isRequired,
     };
 
     constructor() {
@@ -164,12 +166,10 @@ export class ListView extends React.Component {
 
     handleEnterAddView() {
         this.props.router.push(resolvePath(getSiblingDesc(this.props.desc.id, 'addView').path))
-        // this.props.viewCalls.enterView(resolvePath(getSiblingDesc(this.props.desc.id, 'addView').path))
     }
 
     handleEnterChangeView(item) {
         this.props.router.push(resolvePath(getSiblingDesc(this.props.desc.id, 'changeView').path, item))
-        // this.props.viewCalls.enterView(resolvePath(getSiblingDesc(this.props.desc.id, 'changeView').path, item))
     }
 
     handleFilters(data) {
@@ -274,7 +274,7 @@ export class ListView extends React.Component {
     }
 
     doApplyBulkAction(actionName) {
-        const { desc, viewCalls, breadcrumbs } = this.props
+        const { desc, transitionEnter, breadcrumbs } = this.props
         const bulkAction = desc.bulkActions[actionName]
         // The selected items as an array
         const selectedItems = Object.keys(this.state.selection).map(key => this.state.selection[key])
@@ -282,16 +282,16 @@ export class ListView extends React.Component {
         if (bulkAction.before) {
             asPromise(bulkAction.before(req(), selectedItems))
             .then(result =>
-                viewCalls.enterView(
-                    resolvePath('intermediate-page'),
-                    { // storedData
-                        actionName,
-                        selectedItems,
-                    },
+                transitionEnter(
+                    desc.intermediateView.id,
                     { // params for the intermediate page view
                         breadcrumbs,
                         title: bulkAction.description || actionName,
                         result,
+                    },
+                    { // storedData
+                        actionName,
+                        selectedItems,
                     },
                 ),
             )
@@ -299,9 +299,9 @@ export class ListView extends React.Component {
     }
 
     list(props, requestedPage, combineResults = (prev, next) => next) {
-        if (props.viewCalls.hasReturned) {
+        if (props.transitionState.hasReturned) {
             console.log('Has returned!');
-            const { returnValue, storedData } = props.viewCalls
+            const { returnValue, storedData } = props.transitionState
             if (returnValue.proceed) {
                 const bulkAction = props.desc.bulkActions[storedData.actionName]
                 asPromise(bulkAction.action(req(), storedData.selectedItems))
@@ -538,4 +538,4 @@ function mapStateToProps(state) {
     }
 }
 
-export default connect(mapStateToProps)(withRouter(injectIntl(withViewCalls(withPropsWatch(ListView)))))
+export default connect(mapStateToProps)(withRouter(injectIntl(withTransitions(withPropsWatch(ListView)))))

@@ -2,15 +2,17 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { autobind } from 'core-decorators'
 
-import withViewCalls from '../utils/withViewCalls'
+import withTransitions from '../utils/withTransitions'
 import Header from '../components/Header'
-import { viewCallsShape } from '../PropTypes'
+import { transitionStateShape } from '../PropTypes'
 
 @autobind
 class IntermediateView extends React.Component {
 
     static propTypes = {
-        viewCalls: viewCallsShape.isRequired,
+        transitionState: transitionStateShape.isRequired,
+        transitionEnter: React.PropTypes.func.isRequired,
+        transitionLeave: React.PropTypes.func.isRequired,
     }
 
     state = {
@@ -19,15 +21,15 @@ class IntermediateView extends React.Component {
     }
 
     handleProceed() {
-        this.props.viewCalls.leaveView({ proceed: true, returnValue: this.state.returnValue })
+        this.props.transitionLeave({ proceed: true, returnValue: this.state.returnValue })
     }
 
     handleCancel() {
-        this.props.viewCalls.leaveView({ proceed: false })
+        this.props.transitionLeave({ proceed: false })
     }
 
     render() {
-        const { viewCalls: { params } } = this.props
+        const { transitionState: { params } } = this.props
         return (
             <main id="viewport">
                 <Header breadcrumbs={params.breadcrumbs} >
@@ -63,4 +65,4 @@ class IntermediateView extends React.Component {
     }
 }
 
-export default connect()(withViewCalls(IntermediateView))
+export default connect()(withTransitions(IntermediateView))

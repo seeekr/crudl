@@ -69,15 +69,6 @@ export const authShape = React.PropTypes.shape({
     info: React.PropTypes.object,
 })
 
-export const viewCallsShape = React.PropTypes.shape({
-    enterView: React.PropTypes.func.isRequired,
-    leaveView: React.PropTypes.func.isRequired,
-    switchToView: React.PropTypes.func.isRequired,
-    hasReturned: React.PropTypes.bool.isRequired,
-    returnValue: React.PropTypes.any,
-    storedData: React.PropTypes.any,
-})
-
 export const transitionStateShape = React.PropTypes.shape({
     hasReturned: React.PropTypes.bool.isRequired,
     returnValue: React.PropTypes.any,

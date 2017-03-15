@@ -3,24 +3,7 @@ import { connect } from 'react-redux'
 import last from 'lodash/last'
 import { autobind } from 'core-decorators'
 
-import { getViewType, getViewDesc } from '../Crudl'
-
-import AddView from './AddView'
-import ChangeView from './ChangeView'
-import ListView from './ListView'
-
-function getComponent(viewId) {
-    switch (getViewType(viewId)) {
-        case 'addView':
-            return AddView
-        case 'changeView':
-            return ChangeView
-        case 'listView':
-            return ListView
-        default:
-            throw new Error(`Couldn't find a Component for a view with the id ${viewId}`)
-    }
-}
+import { getViewComponent, getViewDesc } from '../Crudl'
 
 function createViewLoader(defaultViewId) {
     @autobind
@@ -34,7 +17,7 @@ function createViewLoader(defaultViewId) {
             const { trace } = this.props
             const lastTrace = last(trace)
             const viewId = lastTrace ? lastTrace.to : defaultViewId
-            const Component = getComponent(viewId)
+            const Component = getViewComponent(viewId)
             const desc = getViewDesc(viewId)
             return (
                 React.createElement(Component, { ...this.props, desc })

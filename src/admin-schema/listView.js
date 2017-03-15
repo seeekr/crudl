@@ -20,6 +20,7 @@ const listView = Joi.object().provideId().keys({
     permissions: definePermissions('list'),
     id: Joi.string(),
     bulkActions,
+    intermediateView: Joi.object().default({}).provideId(),
 
     // before/after optional
     before: stringOrReactProperty(''),

@@ -27,6 +27,8 @@ import App from './containers/App'
 import ChangeView from './containers/ChangeView'
 import ListView from './containers/ListView'
 import AddView from './containers/AddView'
+import IntermediateView from './containers/IntermediateView'
+import TabView from './containers/TabView'
 import Login from './containers/Login'
 import Logout from './containers/Logout'
 import Dashboard from './containers/Dashboard'
@@ -201,15 +203,20 @@ function createViewDescIndex() {
         const group = admin.views[groupName]
         if (group.listView) {
             viewDescIndex[group.listView.id] = {
-                type: 'listView',
+                component: ListView,
                 desc: group.listView,
                 changeView: group.changeView,
                 addView: group.addView,
             }
+            viewDescIndex[group.listView.intermediateView.id] = {
+                component: IntermediateView,
+                desc: group.listView.intermediateView,
+                parentView: group.listView.id,
+            }
         }
         if (group.addView) {
             viewDescIndex[group.addView.id] = {
-                type: 'addView',
+                component: AddView,
                 desc: group.addView,
                 changeView: group.changeView,
                 listView: group.listView,
@@ -217,7 +224,7 @@ function createViewDescIndex() {
         }
         if (group.changeView) {
             viewDescIndex[group.changeView.id] = {
-                type: 'changeView',
+                component: ChangeView,
                 desc: group.changeView,
                 addView: group.addView,
                 listView: group.listView,
@@ -225,7 +232,7 @@ function createViewDescIndex() {
             if (group.changeView.tabs) {
                 group.changeView.tabs.forEach((tab) => {
                     viewDescIndex[tab.id] = {
-                        type: 'tabView',
+                        component: TabView,
                         desc: tab,
                         parentView: group.changeView,
                     }
@@ -246,8 +253,8 @@ export function getViewDesc(viewId) {
     return getViewIndexEntry(viewId).desc
 }
 
-export function getViewType(viewId) {
-    return getViewIndexEntry(viewId).type
+export function getViewComponent(viewId) {
+    return getViewIndexEntry(viewId).component
 }
 
 export function getSiblingDesc(viewId, sibling, defaultValue = {}) {
