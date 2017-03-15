@@ -5,8 +5,7 @@ import { routerShape, locationShape } from 'react-router/lib/PropTypes'
 import { parsePath } from 'history'
 import { autobind } from 'core-decorators'
 
-import { pathShape } from '../PropTypes'
-import { resolvePath } from '../Crudl'
+import { resolvePath, getSiblingDesc } from '../Crudl'
 import { viewCalls } from '../actions/core'
 
 function withViewCalls(Component) {
@@ -18,7 +17,6 @@ function withViewCalls(Component) {
         static propTypes = {
             router: routerShape.isRequired,
             location: locationShape.isRequired,
-            defaultReturnPath: pathShape,
             dispatch: React.PropTypes.func.isRequired,
             callstate: React.PropTypes.shape({
                 hasReturned: React.PropTypes.bool,
@@ -26,9 +24,12 @@ function withViewCalls(Component) {
                 storedData: React.PropTypes.any,
                 callstate: React.PropTypes.array,
             }).isRequired,
+            desc: React.PropTypes.shape({
+                id: React.PropTypes.string.isRequired,
+            }).isRequired,
         }
 
-        enterView(path, data, params, fromRelation = false) {
+        enterView(path, data, params) {
             const { location, router, dispatch, callstate } = this.props
             const { pathname, search, hash } = location
             const nextLocation = parsePath(path)
@@ -43,7 +44,6 @@ function withViewCalls(Component) {
                         returnLocation: { pathname, search, hash },
                         storedData: data,
                         params,
-                        fromRelation,
                     },
                 ],
                 callInProgress: true,
@@ -65,9 +65,10 @@ function withViewCalls(Component) {
         }
 
         leaveView(returnValue) {
-            const { router, defaultReturnPath, dispatch, callstate, location } = this.props
+            const { router, dispatch, callstate, location, desc } = this.props
             const callstack = callstate.callstack
             const head = callstack[callstack.length - 1]
+            const defaultReturnPath = getSiblingDesc(desc.id, 'listView').path
 
             // Obtain the return location
             let returnLocation
@@ -111,17 +112,15 @@ function withViewCalls(Component) {
 
         render() {
             const callstate = this.props.callstate
-            const { enterView, leaveView, enterRelation, switchToView } = this
+            const { enterView, leaveView, switchToView } = this
             const callInProgress = get(this.props.location.state, 'callInProgress') && callstate.callInProgress
 
-            let fromRelation = false
             let params = {}
             let hasReturned = false
             let returnValue
             let storedData
 
             if (callInProgress) {
-                fromRelation = get(callstate.callstack[callstate.callstack.length - 1], 'fromRelation', fromRelation)
                 params = get(callstate.callstack[callstate.callstack.length - 1], 'params', params)
                 hasReturned = callstate.hasReturned
                 returnValue = callstate.returnValue
@@ -133,10 +132,8 @@ function withViewCalls(Component) {
                     {...this.props}
                     viewCalls={{
                         enterView,
-                        enterRelation,
                         leaveView,
                         switchToView,
-                        fromRelation,
                         hasReturned,
                         storedData,
                         returnValue,

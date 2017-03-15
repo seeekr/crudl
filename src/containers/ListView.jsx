@@ -6,7 +6,7 @@ import { locationShape, routerShape } from 'react-router/lib/PropTypes'
 import { injectIntl, intlShape } from 'react-intl'
 import { autobind } from 'core-decorators'
 
-import { resolvePath, req, hasPermission } from '../Crudl'
+import { resolvePath, req, hasPermission, getSiblingDesc } from '../Crudl'
 import Header from '../components/Header'
 import ListViewTableHead from '../components/ListViewTableHead'
 import ListViewTableItem from '../components/ListViewTableItem'
@@ -14,7 +14,7 @@ import Pagination from '../components/Pagination'
 import ActiveFilters from './ActiveFilters'
 import Filters from './Filters'
 import Search from './Search'
-import { pathShape, listViewShape, breadcrumbsShape, viewCallsShape } from '../PropTypes'
+import { listViewShape, breadcrumbsShape, viewCallsShape } from '../PropTypes'
 import { toggleFilters, showFilters, hideFilters, showModalConfirm } from '../actions/frontend'
 import { cache } from '../actions/core'
 import { setFilters } from '../actions/filters'
@@ -61,10 +61,6 @@ export class ListView extends React.Component {
 
     static propTypes = {
         desc: listViewShape.isRequired,
-        changeViewPath: pathShape.isRequired,
-        addViewPath: pathShape,
-        canAdd: React.PropTypes.func.isRequired,
-        canView: React.PropTypes.func.isRequired,
         watch: React.PropTypes.func.isRequired,
         dispatch: React.PropTypes.func.isRequired,
         filtersVisible: React.PropTypes.bool.isRequired,
@@ -137,7 +133,7 @@ export class ListView extends React.Component {
     }
 
     getItemId(index) {
-        return resolvePath(this.props.changeViewPath, this.state.results[index])
+        return resolvePath(getSiblingDesc(this.props.desc.id, 'changeView').path, this.state.results[index])
     }
 
     showFilters() {
@@ -167,11 +163,13 @@ export class ListView extends React.Component {
     }
 
     handleEnterAddView() {
-        this.props.viewCalls.enterView(resolvePath(this.props.addViewPath))
+        this.props.router.push(resolvePath(getSiblingDesc(this.props.desc.id, 'addView').path))
+        // this.props.viewCalls.enterView(resolvePath(getSiblingDesc(this.props.desc.id, 'addView').path))
     }
 
     handleEnterChangeView(item) {
-        this.props.viewCalls.enterView(resolvePath(this.props.changeViewPath, item))
+        this.props.router.push(resolvePath(getSiblingDesc(this.props.desc.id, 'changeView').path, item))
+        // this.props.viewCalls.enterView(resolvePath(getSiblingDesc(this.props.desc.id, 'changeView').path, item))
     }
 
     handleFilters(data) {
@@ -365,20 +363,22 @@ export class ListView extends React.Component {
     }
 
     render() {
-        const { desc, addViewPath, filtersVisible, canAdd, canView, breadcrumbs } = this.props
+        const { desc, filtersVisible, breadcrumbs } = this.props
         const filters = this.getFilters()
         const searchQueries = this.getSearchQueries()
         const searched = searchQueries.search !== undefined
         const filtered = Object.keys(filters).length > 0
         const sorting = getSorting(this.props)
         const nSelected = Object.keys(this.state.selection).length
+        const addViewDesc = getSiblingDesc(desc.id, 'addView')
+        const changeViewDesc = getSiblingDesc(desc.id, 'changeView')
         return (
             <main id="viewport">
                 <Header breadcrumbs={breadcrumbs} {...this.props}>
                     <div id="header-toolbar" className="toolbar">
                         <div className="tools">
                             <ul role="group" className="buttons">
-                                {addViewPath && canAdd() &&
+                                {addViewDesc.id && hasPermission(addViewDesc.id, 'add') &&
                                     <li className="display-when-fixed">
                                         <button
                                             aria-label="Add"
@@ -406,7 +406,7 @@ export class ListView extends React.Component {
                     <div className="title">
                         <h2>{desc.title}</h2>
                         <ul role="group" className="buttons object-tools">
-                            {addViewPath && canAdd() &&
+                            {addViewDesc.id && hasPermission(addViewDesc.id, 'add') &&
                                 <li>
                                     <button
                                         aria-label="Add"
@@ -486,7 +486,10 @@ export class ListView extends React.Component {
                                                 key={index}
                                                 fields={desc.fields}
                                                 data={item}
-                                                onClick={canView() ? this.handleEnterChangeView : undefined}
+                                                onClick={hasPermission(changeViewDesc.id, 'get')
+                                                    ? this.handleEnterChangeView
+                                                    : undefined
+                                                }
                                                 selectEnabled={!!desc.bulkActions}
                                                 onSelectChange={this.handleSelectItemChange}
                                                 selected={!!this.state.selection[this.getItemId(index)]}
@@ -532,7 +535,6 @@ function mapStateToProps(state) {
     return {
         filtersVisible: state.frontend.filters.visible,
         cache: state.core.cache.listView,
-        permissions: state.core.permissions,
     }
 }
 

@@ -29,15 +29,17 @@ module.exports = {
         'no-console': [2, {
             "allow": ["warn", "error"]
         }],
-        "func-names": 0,
-        "react/jsx-closing-bracket-location": [1, {
+        'func-names': 0,
+        'react/jsx-closing-bracket-location': [1, {
           "nonEmpty": "props-aligned", // Align the bracket with the last prop
           "selfClosing": "props-aligned" // Align the bracket with the opening tag
         }],
-        "react/jsx-filename-extension": [1, {
+        'react/jsx-filename-extension': [1, {
             "extensions": [".js", ".jsx"]
         }],
-        "no-prototype-builtins": 0,
-        "jsx-a11y/no-static-element-interactions": 0,
+        'react/forbid-prop-types': 0,
+        'no-prototype-builtins': 0,
+        'jsx-a11y/no-static-element-interactions': 0,
+        'import/no-named-as-default': 0,
     }
 };
