@@ -114,6 +114,7 @@ class AddView extends React.Component {
     @blocksUI
     handleSave(data, nextStep = BACK_TO_LIST_VIEW) {
         const { dispatch, desc, intl, router } = this.props
+        const listViewPath = getSiblingDesc(desc.id, 'listView').path
         const changeViewPath = getSiblingDesc(desc.id, 'changeView').path
         if (hasPermission(desc.id, 'add')) {
             // Try to prepare the data.
@@ -132,11 +133,13 @@ class AddView extends React.Component {
 
                 switch (nextStep) {
                     case BACK_TO_LIST_VIEW:
-                    case BACK_TO_RELATION:
-                        this.props.transitionLeave(response.data)
+                        router.push(resolvePath(listViewPath))
                         break
                     case CONTINUE_EDITING:
-                        router.push(resolvePath(getSiblingDesc(desc.id, 'changeView').path, result))
+                        router.push(resolvePath(changeViewPath, result))
+                        break
+                    case BACK_TO_RELATION:
+                        this.props.transitionLeave(response.data)
                         break
                     case ADD_ANOTHER:
                         dispatch(reset(desc.id))
