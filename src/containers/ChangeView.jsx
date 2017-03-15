@@ -8,7 +8,7 @@ import { autobind } from 'core-decorators'
 
 import getValidator from '../utils/getValidator'
 import hasUnsavedChanges from '../utils/hasUnsavedChanges'
-import { req, resolvePath, hasPermission } from '../Crudl'
+import { req, resolvePath, hasPermission, getSiblingDesc } from '../Crudl'
 import ViewportLoading from '../components/ViewportLoading'
 import Header from '../components/Header'
 import TabPanel from '../components/TabPanel'
@@ -18,12 +18,12 @@ import TabView from './TabView'
 import { successMessage, errorMessage } from '../actions/messages'
 import { cache } from '../actions/core'
 import { showModalConfirm } from '../actions/frontend'
-import { changeViewShape, breadcrumbsShape, viewCallsShape } from '../PropTypes'
+import { changeViewShape, breadcrumbsShape, transitionStateShape } from '../PropTypes'
 import messages from '../messages/changeView'
 import permMessages from '../messages/permissions'
 import withPropsWatch from '../utils/withPropsWatch'
 import getFieldDesc from '../utils/getFieldDesc'
-import withViewCalls from '../utils/withViewCalls'
+import withTransitions from '../utils/withTransitions'
 import blocksUI from '../decorators/blocksUI'
 import normalize from '../utils/normalize'
 import denormalize from '../utils/denormalize'
@@ -41,7 +41,9 @@ export class ChangeView extends React.Component {
         route: React.PropTypes.object.isRequired,
         forms: React.PropTypes.object.isRequired,
         breadcrumbs: breadcrumbsShape.isRequired,
-        viewCalls: viewCallsShape.isRequired,
+        transitionState: transitionStateShape.isRequired,
+        transitionEnter: React.PropTypes.func.isRequired,
+        transitionLeave: React.PropTypes.func.isRequired,
     }
 
     constructor() {
@@ -57,18 +59,20 @@ export class ChangeView extends React.Component {
 
     componentWillMount() {
         this.props.watch('location.search', this.switchTab)
-        this.createForm()
-        this.createTabs()
+        this.props.watch('desc', (props) => {
+            this.createForm(props)
+            this.createTabs(props)
+            this.doGet(props)
+        })
     }
 
     componentDidMount() {
-        this.doGet()
         this.props.router.setRouteLeaveHook(this.props.route, this.routerWillLeave)
     }
 
-    createForm() {
+    createForm(props) {
         // Create the Form Container
-        const { desc, dispatch, intl, viewCalls } = this.props
+        const { desc, dispatch, intl, transitionState } = props
         const formSpec = {
             form: desc.id,
             validate: getValidator(desc),
@@ -76,13 +80,13 @@ export class ChangeView extends React.Component {
             enableReinitialize: true,
         }
         const formProps = {
-            desc: this.props.desc,
+            desc,
             onSave: data => this.handleSave(data, false),
             onSaveAndContinue: data => this.handleSave(data, true),
             onSubmitFail: () => { dispatch(errorMessage(intl.formatMessage(messages.validationError))) },
             onCancel: this.handleCancel,
             onDelete: desc.actions.delete ? this.handleDelete : undefined,
-            fromRelation: viewCalls.params.fromRelation,
+            fromRelation: transitionState.params.fromRelation,
             labels: {
                 save: intl.formatMessage(messages.save),
                 saveAndBack: intl.formatMessage(messages.saveAndBack),
@@ -96,14 +100,14 @@ export class ChangeView extends React.Component {
         this.changeViewForm = React.createElement(reduxForm(formSpec)(ChangeViewForm), formProps)
     }
 
-    createTabs() {
-        const { desc } = this.props
+    createTabs(props) {
+        const { desc } = props
         // Create relation views
         this.tabViews = []
         if (desc.tabs) {
             desc.tabs.forEach((tab) => {
                 this.tabViews.push(
-                    React.createElement(TabView, { desc: tab })
+                    React.createElement(TabView, { desc: tab }),
                 )
             })
         }
@@ -139,8 +143,8 @@ export class ChangeView extends React.Component {
     }
 
     @blocksUI
-    doGet() {
-        const { desc, intl, dispatch } = this.props
+    doGet(props) {
+        const { desc, intl, dispatch, transitionState } = props
         if (hasPermission(desc.id, 'get')) {
             this.setState({ ready: false })
             return desc.actions.get(req())
@@ -149,7 +153,7 @@ export class ChangeView extends React.Component {
                     this.setState({ values, ready: true })
 
                     // Did we return from a relation view?
-                    const { hasReturned, storedData, returnValue } = this.props.viewCalls
+                    const { hasReturned, storedData, returnValue } = transitionState
                     if (hasReturned) {
                         const { fieldName, relation } = storedData
                         const fieldDesc = getFieldDesc(desc, fieldName)
@@ -182,7 +186,7 @@ export class ChangeView extends React.Component {
                 dispatch(cache.clearListView())
                 dispatch(successMessage(intl.formatMessage(messages.saveSuccess, { item: desc.title })))
                 if (!stay) {
-                    this.props.viewCalls.leaveView(res.data)
+                    this.props.transitionLeave(res.data)
                 } else {
                     this.setState({ values })
                 }
@@ -198,7 +202,7 @@ export class ChangeView extends React.Component {
     }
 
     handleCancel() {
-        this.props.viewCalls.leaveView()
+        this.props.transitionLeave()
     }
 
     handleDelete(data) {
@@ -213,31 +217,33 @@ export class ChangeView extends React.Component {
 
     @blocksUI
     doDelete(data) {
-        const { dispatch, intl, desc } = this.props
+        const { dispatch, intl, desc, router } = this.props
+
         if (hasPermission(desc.id, 'delete')) {
             return desc.actions.delete(req(data)).then(() => {
                 dispatch(cache.clearListView())
                 dispatch(successMessage(intl.formatMessage(messages.deleteSuccess, { item: desc.title })))
                 this.forceLeave = true
-                this.props.viewCalls.leaveView()
+                router.push(resolvePath(getSiblingDesc(desc.id, 'listView').path))
             })
         }
+
         dispatch(errorMessage(intl.formatMessage(permMessages.deleteNotPermitted)))
         return undefined
     }
 
     enterAddRelation(fieldDesc) {
-        this.props.viewCalls.enterView(resolvePath(fieldDesc.add.path), {
-            fieldName: fieldDesc.name,
-            relation: 'add',
-        }, { fromRelation: true })
+        this.props.transitionEnter(fieldDesc.add.viewId,
+            { fromRelation: true, ...fieldDesc.edit.viewParams() }, // params
+            { fieldName: fieldDesc.name, relation: 'add' }, // storedData
+        )
     }
 
     enterEditRelation(fieldDesc) {
-        this.props.viewCalls.enterView(resolvePath(fieldDesc.edit.path), {
-            fieldName: fieldDesc.name,
-            relation: 'edit',
-        }, { fromRelation: true })
+        this.props.transitionEnter(fieldDesc.edit.viewId,
+            { fromRelation: true, ...fieldDesc.edit.viewParams() }, // params
+            { fieldName: fieldDesc.name, relation: 'edit' }, // storedData
+        )
     }
 
     switchTab(props) {
@@ -316,4 +322,4 @@ function mapStateToProps(state) {
     }
 }
 
-export default connect(mapStateToProps)(withRouter(injectIntl(withPropsWatch(withViewCalls(ChangeView)))))
+export default connect(mapStateToProps)(withRouter(withTransitions(injectIntl(withPropsWatch(ChangeView)))))

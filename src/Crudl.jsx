@@ -84,10 +84,10 @@ let admin = {}
 let store = null
 let viewDescIndex
 const contextData = {}
+let pathParams = {}
 export const connectors = {}
 export const options = {}
 export const auth = {}
-export const path = { name: undefined }
 export const context = createContext(contextData)
 
 
@@ -129,8 +129,8 @@ function exposeStateInfo({ getState }) {
   }
 }
 
-function exposePath(nextState) {
-    Object.assign(path, nextState.params, { name: nextState.location.pathname })
+function exposePathParams(nextState) {
+    pathParams = nextState.params
 }
 
 
@@ -261,6 +261,17 @@ export function getParentDesc(viewId) {
     return getViewIndexEntry(viewId).parentView
 }
 
+export function getViewParams() {
+    const state = store.getState()
+    const trace = state.core.transitions.trace
+    const traceParams = get(trace, trace.length - 1, {}).params
+    return traceParams || pathParams
+}
+
+export function getViewParam(paramName, defaultValue) {
+    return get(getViewParams(), paramName, defaultValue)
+}
+
 /**
 * Checks permission for a given action on the given view
 */
@@ -367,8 +378,8 @@ function crudlRouter() {
             component: wrapComponent(Dashboard, { admin, breadcrumbs: [appCrumb] }),
             onEnter: authenticate(clearActiveView),
         },
-        onEnter: exposePath,
-        onChange: (prevState, nextState) => exposePath(nextState),
+        onEnter: exposePathParams,
+        onChange: (prevState, nextState) => exposePathParams(nextState),
     }
 
     // add routes for resources and for collections

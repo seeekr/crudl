@@ -26,12 +26,14 @@ const field = Joi.object().unknown(true).keys({
     after: stringOrReactProperty(''),
     // Relations optional
     add: Joi.object().keys({
-        path: stringProperty().required(),
-        returnValue: Joi.func(),
+        viewId: stringProperty().required(),
+        viewParams: Joi.func().default(() => ({})),
+        returnValue: Joi.func().default(() => undefined),
     }),
     edit: Joi.object().keys({
-        path: stringProperty().required(),
-        returnValue: Joi.func(),
+        viewId: stringProperty().required(),
+        viewParams: Joi.func().default(() => ({})),
+        returnValue: Joi.func().default(() => undefined),
     }),
     // Async part of the descriptor: a function returning an object or a promise
     lazy: Joi.func().default(() => ({})),

@@ -78,6 +78,14 @@ export const viewCallsShape = React.PropTypes.shape({
     storedData: React.PropTypes.any,
 })
 
+export const transitionStateShape = React.PropTypes.shape({
+    hasReturned: React.PropTypes.bool.isRequired,
+    returnValue: React.PropTypes.any,
+    storedData: React.PropTypes.any,
+    params: React.PropTypes.object.isRequired,
+})
+
+
 export const baseFieldPropTypes = {
     // From redux
     dispatch: React.PropTypes.func,
@@ -109,12 +117,14 @@ export const baseFieldPropTypes = {
     before: React.PropTypes.node.isRequired,
     after: React.PropTypes.node.isRequired,
     add: React.PropTypes.shape({
-        path: React.PropTypes.string.isRequired,
-        returnValue: React.PropTypes.func,
+        viewId: React.PropTypes.string.isRequired,
+        viewParams: React.PropTypes.func.isRequired,
+        returnValue: React.PropTypes.func.isRequired,
     }),
     edit: React.PropTypes.shape({
-        path: React.PropTypes.string.isRequired,
-        returnValue: React.PropTypes.func,
+        viewId: React.PropTypes.string.isRequired,
+        viewParams: React.PropTypes.func.isRequired,
+        returnValue: React.PropTypes.func.isRequired,
     }),
     // Async part of the descriptor: a function returning an object or a promise
     lazy: React.PropTypes.func.isRequired,

@@ -27,12 +27,13 @@ function createViewLoader(defaultViewId) {
     class ViewLoader extends React.Component {
 
         static propTypes = {
-            trace: React.PropTypes.array.isRequired, // eslint-disable-line
+            trace: React.PropTypes.array.isRequired,
         }
 
         render() {
             const { trace } = this.props
-            const viewId = last(trace) ? last(trace).to : defaultViewId
+            const lastTrace = last(trace)
+            const viewId = lastTrace ? lastTrace.to : defaultViewId
             const Component = getComponent(viewId)
             const desc = getViewDesc(viewId)
             return (

@@ -16,11 +16,11 @@ import AddViewForm from '../forms/AddViewForm'
 import { successMessage, errorMessage } from '../actions/messages'
 import { cache } from '../actions/core'
 import { showModalConfirm } from '../actions/frontend'
-import { addViewShape, breadcrumbsShape, viewCallsShape } from '../PropTypes'
+import { addViewShape, breadcrumbsShape, transitionStateShape } from '../PropTypes'
 import messages from '../messages/addView'
 import permMessages from '../messages/permissions'
 import getFieldDesc from '../utils/getFieldDesc'
-import withViewCalls from '../utils/withViewCalls'
+import withTransitions from '../utils/withTransitions'
 import blocksUI from '../decorators/blocksUI'
 import denormalize from '../utils/denormalize'
 
@@ -40,7 +40,9 @@ class AddView extends React.Component {
         route: React.PropTypes.object.isRequired,
         forms: React.PropTypes.object.isRequired,
         breadcrumbs: breadcrumbsShape.isRequired,
-        viewCalls: viewCallsShape.isRequired,
+        transitionState: transitionStateShape.isRequired,
+        transitionEnter: React.PropTypes.func.isRequired,
+        transitionLeave: React.PropTypes.func.isRequired,
     }
 
     constructor() {
@@ -50,7 +52,7 @@ class AddView extends React.Component {
 
     componentWillMount() {
         // Create the Form Container
-        const { desc, dispatch, intl, viewCalls } = this.props
+        const { desc, dispatch, intl, transitionState } = this.props
         const formSpec = {
             form: desc.id,
             fields: getFieldNames(desc),
@@ -61,7 +63,7 @@ class AddView extends React.Component {
         }
         const formProps = {
             desc: this.props.desc,
-            onSave: data => this.handleSave(data, viewCalls.params.fromRelation ? BACK_TO_RELATION : BACK_TO_LIST_VIEW),
+            onSave: data => this.handleSave(data, transitionState.inProgress ? BACK_TO_RELATION : BACK_TO_LIST_VIEW),
             onSaveAndContinue: data => this.handleSave(data, CONTINUE_EDITING),
             onSaveAndAddAnother: data => this.handleSave(data, ADD_ANOTHER),
             onCancel: this.handleCancel,
@@ -75,7 +77,7 @@ class AddView extends React.Component {
             },
             onAdd: this.enterAddRelation,
             onEdit: this.enterEditRelation,
-            fromRelation: viewCalls.params.fromRelation,
+            fromRelation: transitionState.inProgress,
         }
         this.addViewForm = React.createElement(reduxForm(formSpec)(AddViewForm), formProps)
     }
@@ -83,8 +85,8 @@ class AddView extends React.Component {
     componentDidMount() {
         this.props.router.setRouteLeaveHook(this.props.route, this.routerWillLeave)
         // Did we returne from a relation view?
-        const { dispatch, desc, viewCalls } = this.props
-        const { hasReturned, storedData, returnValue } = viewCalls
+        const { dispatch, desc, transitionState } = this.props
+        const { hasReturned, storedData, returnValue } = transitionState
         if (hasReturned) {
             const { fieldName, relation } = storedData
             const fieldDesc = getFieldDesc(desc, fieldName)
@@ -111,7 +113,7 @@ class AddView extends React.Component {
 
     @blocksUI
     handleSave(data, nextStep = BACK_TO_LIST_VIEW) {
-        const { dispatch, desc, intl } = this.props
+        const { dispatch, desc, intl, router } = this.props
         const changeViewPath = getSiblingDesc(desc.id, 'changeView').path
         if (hasPermission(desc.id, 'add')) {
             // Try to prepare the data.
@@ -131,16 +133,16 @@ class AddView extends React.Component {
                 switch (nextStep) {
                     case BACK_TO_LIST_VIEW:
                     case BACK_TO_RELATION:
-                        this.props.viewCalls.leaveView(response.data)
+                        this.props.transitionLeave(response.data)
                         break
                     case CONTINUE_EDITING:
-                        this.props.viewCalls.switchToView(resolvePath(changeViewPath, result))
+                        router.push(resolvePath(getSiblingDesc(desc.id, 'changeView').path, result))
                         break
                     case ADD_ANOTHER:
                         dispatch(reset(desc.id))
                         break
                     default:
-                        this.props.viewCalls.leaveView()
+                        throw Error('Not implemented!')
                 }
             })
         }
@@ -149,7 +151,7 @@ class AddView extends React.Component {
     }
 
     handleCancel() {
-        this.props.viewCalls.leaveView()
+        this.props.transitionLeave()
     }
 
     doLeave(nextState) {
@@ -160,17 +162,17 @@ class AddView extends React.Component {
     }
 
     enterAddRelation(fieldDesc) {
-        this.props.viewCalls.enterView(resolvePath(fieldDesc.add.path), {
-            fieldName: fieldDesc.name,
-            relation: 'add',
-        }, { fromRelation: true })
+        this.props.transitionEnter(fieldDesc.add.viewId,
+            { fromRelation: true, ...fieldDesc.edit.viewParams() }, // params
+            { fieldName: fieldDesc.name, relation: 'add' }, // storedData
+        )
     }
 
     enterEditRelation(fieldDesc) {
-        this.props.viewCalls.enterView(resolvePath(fieldDesc.edit.path), {
-            fieldName: fieldDesc.name,
-            relation: 'edit',
-        }, { fromRelation: true })
+        this.props.transitionEnter(fieldDesc.edit.viewId,
+            { fromRelation: true, ...fieldDesc.edit.viewParams() }, // params
+            { fieldName: fieldDesc.name, relation: 'edit' }, // storedData
+        )
     }
 
     render() {
@@ -203,4 +205,4 @@ function mapStateToProps(state) {
     }
 }
 
-export default connect(mapStateToProps)(withRouter(injectIntl(withViewCalls(AddView))))
+export default connect(mapStateToProps)(withRouter(injectIntl(withTransitions(AddView))))

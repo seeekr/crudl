@@ -20,7 +20,7 @@ function withTransitions(Component) {
             }).isRequired,
         }
 
-        enter(to, params, storedData) {
+        enter(to, params = {}, storedData) {
             const { dispatch, desc } = this.props
 
             const transition = {
@@ -46,6 +46,7 @@ function withTransitions(Component) {
                     hasReturned: true,
                 }
                 dispatch(transitions.go(transition))
+                return
             }
 
             throw new Error(`Cannot leave the view ${desc.id}. There hasn't been a preceeding transition.`)
@@ -54,13 +55,19 @@ function withTransitions(Component) {
         render() {
             const { desc, trace, storedData } = this.props
             const lastTransition = last(trace)
-            const transitionState = {}
+
+            // initial transition state
+            const transitionState = {
+                inProgress: false,
+                hasReturned: false,
+                params: {},
+            }
 
             if (lastTransition) {
-                transitionState.hasReturned = lastTransition.hasReturned
-                transitionState.returnValue = lastTransition.returnValue
-                transitionState.params = lastTransition.params
-                transitionState.storedData = storedData[desc.id]
+                Object.assign(transitionState, lastTransition, {
+                    storedData: storedData[desc.id],
+                    inProgress: true,
+                })
             }
 
             return (
