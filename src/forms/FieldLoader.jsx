@@ -125,6 +125,8 @@ class FieldLoader extends React.Component {
             ...this.props.desc,
             // Dynamicaly obtained props
             ...this.state,
+            // Override the field id
+            id: `${this.props.formName}/${this.props.desc.id}`,
         }
     }
 
