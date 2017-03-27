@@ -52,9 +52,9 @@ class FieldSet extends React.Component {
         const fields = asArray(onChange.in).map(name => props.fields[name])
 
         // Set the props
-        asPromise(asFunc(onChange.setProps), ...fields)
-        .then((props) => {
-            this.setState(props)
+        Promise.methode(asFunc(onChange.setProps))(...fields)
+        .then((newProps) => {
+            this.setState(newProps)
         })
         .catch(e => console.error(`In 'onChange.setProps' of ${props.desc.id}:`, e))
     }

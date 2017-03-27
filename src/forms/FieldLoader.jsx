@@ -84,12 +84,12 @@ class FieldLoader extends React.Component {
         const fields = asArray(onChange.in).map(name => props.fields[name])
 
         // Set the props
-        asPromise(asFunc(onChange.setProps), ...fields)
+        Promise.method(asFunc(onChange.setProps))(...fields)
         .then(newProps => this.setState(newProps))
         .catch(e => console.error(`In 'onChange.setProps' of ${props.desc.id}:`, e))
 
         // Set the value
-        asPromise(asFunc(onChange.setValue), ...fields)
+        Promise.method(asFunc(onChange.setValue))(...fields)
         .then((newValue) => {
             if (typeof newValue !== 'undefined') {
                 props.dispatch(autofill(props.formName, props.desc.name, newValue))
@@ -98,7 +98,7 @@ class FieldLoader extends React.Component {
         .catch(e => console.error(`In 'onChange.setValue' of ${props.desc.id}:`, e))
 
         // Set the initialValue
-        asPromise(asFunc(onChange.setInitialValue), ...fields)
+        Promise.method(asFunc(onChange.setInitialValue))(...fields)
         .then((initialValue) => {
             if (typeof initialValue !== 'undefined' && !props.fields[props.desc.name].initialValue) {
                 if (!props.meta.visited || props.meta.autofilled) {
