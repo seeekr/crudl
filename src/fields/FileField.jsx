@@ -3,7 +3,6 @@ import { autobind } from 'core-decorators'
 
 import baseField from './base/baseField'
 import { baseFieldPropTypes } from '../PropTypes'
-import asPromise from '../utils/asPromise'
 import { errorMessage } from '../actions/messages'
 
 /**
@@ -80,7 +79,7 @@ class FileField extends React.Component {
             const data = event.target.result
 
             // Pass the file and the data to the onSelect function
-            asPromise(onSelect(file, data))
+            Promise.resolve(onSelect(file, data))
 
             .then((result) => {
                 input.onChange(result)

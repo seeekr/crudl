@@ -5,7 +5,6 @@ import { reduxForm } from 'redux-form'
 import getFieldNames from '../utils/getFieldNames'
 import getInitialValues from '../utils/getInitialValues'
 import getValidator from '../utils/getValidator'
-import asPromise from '../utils/asPromise'
 import timeoutPromise from '../utils/timeoutPromise'
 import { setActiveFilters } from '../actions/filters'
 import { calculateSidebarDimensions } from '../utils/frontend'
@@ -94,7 +93,7 @@ export class Filters extends React.Component {
             const value = props.filters[name]
             if (this.registeredFields[name]) {
                 return timeoutPromise(
-                    asPromise(this.registeredFields[name].callbacks.getDisplayValue(value)),
+                    Promise.resolve(this.registeredFields[name].callbacks.getDisplayValue(value)),
                     2000,
                     value // default to value when time is out
                 )

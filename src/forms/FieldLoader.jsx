@@ -6,7 +6,6 @@ import classNames from 'classnames'
 
 import asFunc from '../utils/asFunc'
 import asArray from '../utils/asArray'
-import asPromise from '../utils/asPromise'
 import { fieldShape, formFieldsShape, baseFieldPropTypes } from '../PropTypes'
 import formFields from '../selectors/formFields'
 import fieldComponents from '../fields'
@@ -75,7 +74,7 @@ class FieldLoader extends React.Component {
         }
 
         // Extend the descriptor asynchronously
-        const descPromise = asPromise(this.props.desc.lazy())
+        const descPromise = Promise.resolve(this.props.desc.lazy())
         descPromise.then(asyncDesc => this.setState(asyncDesc))
     }
 
