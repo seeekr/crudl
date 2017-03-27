@@ -17,6 +17,8 @@ import InlineItemForm from '../forms/InlineItemForm'
 import messages from '../messages/inlinesView'
 import permMessages from '../messages/permissions'
 import { tabShape } from '../PropTypes'
+import normalize from '../utils/normalize'
+import denormalize from '../utils/denormalize'
 
 function createForm(desc, index, mapStateToProps) {
     const formSpec = {

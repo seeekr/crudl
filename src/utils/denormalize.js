@@ -1,7 +1,7 @@
 import getAllFields from './getAllFields'
 
 /*
-* @desc add or change view descriptor
+* @desc add, change or tab view descriptor
 * @data data from the frontend
 */
 export default function denormalize(desc, data) {

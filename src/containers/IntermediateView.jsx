@@ -6,6 +6,12 @@ import withTransitions from '../utils/withTransitions'
 import Header from '../components/Header'
 import { transitionStateShape } from '../PropTypes'
 
+const defaultParams = {
+    title: '',
+    result: '',
+    type: 'proceedOrCancel', // Other available options  'goBack', 'empty'
+}
+
 @autobind
 class IntermediateView extends React.Component {
 
@@ -28,6 +34,11 @@ class IntermediateView extends React.Component {
         this.props.transitionLeave({ proceed: false })
     }
 
+    handleSubmit(returnValue) {
+        console.log('Submitting...');
+        this.props.transitionLeave({ proceed: false, returnValue })
+    }
+
     render() {
         const { transitionState: { params } } = this.props
         return (
@@ -38,7 +49,11 @@ class IntermediateView extends React.Component {
                     </div>
                 </Header>
                 <div id="viewport-content">
-                    {params.result}
+                    {typeof params.result === 'function' ?
+                        React.createElement(params.result, { onSubmit: this.handleSubmit })
+                        :
+                        params.result
+                    }
                     <div id="viewport-footer">
                         <ul role="group" className="buttons">
                             <li><button

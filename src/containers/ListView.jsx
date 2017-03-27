@@ -87,7 +87,7 @@ export class ListView extends React.Component {
     };
 
     componentWillMount() {
-        this.props.watch('location.search', this.list)
+        this.props.watch('location.search', this.reload)
     }
 
     componentDidMount() {
@@ -266,52 +266,85 @@ export class ListView extends React.Component {
                 labelConfirm: desc.bulkActions[action].modalConfirm.labelConfirm,
                 labelCancel: desc.bulkActions[action].modalConfirm.labelCancel,
                 modalType: desc.bulkActions[action].modalConfirm.modalType,
-                onConfirm: () => this.doApplyBulkAction(action),
+                onConfirm: () => this.bulkActionBefore(action),
             }))
         } else {
-            this.doApplyBulkAction(action)
+            this.bulkActionBefore(action)
         }
     }
 
-    doApplyBulkAction(actionName) {
+    bulkActionBefore(actionName) {
         const { desc, transitionEnter, breadcrumbs } = this.props
         const bulkAction = desc.bulkActions[actionName]
         // The selected items as an array
         const selectedItems = Object.keys(this.state.selection).map(key => this.state.selection[key])
 
-        if (bulkAction.before) {
-            asPromise(bulkAction.before(req(), selectedItems))
-            .then(result =>
+        asPromise(bulkAction.before(req(), selectedItems))
+        .then((result) => {
+            if (typeof result !== 'undefined') {
                 transitionEnter(
                     desc.intermediateView.id,
                     { // params for the intermediate page view
                         breadcrumbs,
-                        title: bulkAction.description || actionName,
-                        result,
+                        ...result,
                     },
                     { // storedData
                         actionName,
                         selectedItems,
                     },
-                ),
-            )
-        }
+                )
+            } else {
+                this.bulkActionExecute(actionName, selectedItems).then(() => this.reload())
+            }
+        })
     }
 
-    list(props, requestedPage, combineResults = (prev, next) => next) {
-        if (props.transitionState.hasReturned) {
-            console.log('Has returned!');
-            const { returnValue, storedData } = props.transitionState
-            if (returnValue.proceed) {
-                const bulkAction = props.desc.bulkActions[storedData.actionName]
-                asPromise(bulkAction.action(req(), storedData.selectedItems))
-                .then(() => {
-                    console.log(`Action ${storedData.actionName} completed!`);
-                })
+    bulkActionExecute(actionName, selectedItems) {
+        const { desc } = this.props
+        const bulkAction = desc.bulkActions[actionName]
+        return asPromise(bulkAction.action(req(), selectedItems))
+        .then(result => this.bulkActionAfter(actionName, result))
+    }
+
+    bulkActionAfter(actionName, actionResult) {
+        const { desc, transitionEnter, breadcrumbs } = this.props
+        const bulkAction = desc.bulkActions[actionName]
+        // The selected items as an array
+
+        asPromise(bulkAction.after(req(), actionResult))
+        .then((result) => {
+            if (typeof result !== 'undefined') {
+                transitionEnter(
+                    desc.intermediateView.id,
+                    { // params for the intermediate page view
+                        breadcrumbs,
+                        ...result,
+                    },
+                    { // stored Data
+                    },
+                )
             } else {
-                console.log('Action canceled');
+                console.log('>>> Reloading...');
+                this.reload()
+            }
+        })
+    }
+
+    reload(newProps) {
+        const props = newProps || this.props
+        if (props.transitionState.hasReturned) {
+            const { returnValue, storedData } = props.transitionState
+            console.log('XXX', returnValue, storedData);
+            if (returnValue.proceed) {
+                props.dispatch(cache.clearListView())
+                this.bulkActionExecute(storedData.actionName, storedData.selectedItems).then(this.list)
             }
         }
+        this.list(props)
+    }
+
+    list(newProps, requestedPage, combineResults = (prev, next) => next) {
+        const props = newProps || this.props
         if (hasPermission(props.desc.id, 'list')) {
             let page = requestedPage
             if (!page && props.cache.key === getCacheKey(props)) {
