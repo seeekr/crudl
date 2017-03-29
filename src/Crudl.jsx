@@ -27,7 +27,6 @@ import App from './containers/App'
 import ChangeView from './containers/ChangeView'
 import ListView from './containers/ListView'
 import AddView from './containers/AddView'
-import IntermediateView from './containers/IntermediateView'
 import TabView from './containers/TabView'
 import Login from './containers/Login'
 import Logout from './containers/Logout'
@@ -207,11 +206,6 @@ function createViewDescIndex() {
                 desc: group.listView,
                 changeView: group.changeView,
                 addView: group.addView,
-            }
-            viewDescIndex[group.listView.intermediateView.id] = {
-                component: IntermediateView,
-                desc: group.listView.intermediateView,
-                parentView: group.listView.id,
             }
         }
         if (group.addView) {

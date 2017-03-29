@@ -1,0 +1,61 @@
+// bottombar
+// ----------------------------------------------------------------------------
+
+#bottombar {
+    position: fixed;
+    z-index: 910;
+    transition: bottom 2*$transition-speed $transition-cubic-bezier;
+    bottom: -100vh;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background: transparentize($text-color, .6);
+}
+
+#bottombar {
+    [role=listbox] {
+        background-color: $color-2-100;
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        margin-top: 20vh;
+        padding: 2rem;
+    }
+}
+
+#bottombar {
+    > header {
+        position: fixed;
+        z-index: 800;
+        padding: 12px 20px;
+        width: 100%;
+        height: 48px;
+        color: $text-color;
+        @extend .font-family-medium;
+        background: $color-2-25;
+        button {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 48px;
+            height: 48px;
+            @include button-style($text-color, transparent, transparent);
+            &:hover {
+                @include button-style(#fff, transparent, transparent);
+            }
+        }
+    }
+}
+
+// Sidebar open modifications
+// ----------------------------------------------------------------------------
+
+.app-bottombar-open {
+    #bottombar {
+        display: block;
+        bottom: 0;
+        transform: translate(0, 0);
+    }
+}

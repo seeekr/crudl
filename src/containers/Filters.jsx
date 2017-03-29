@@ -1,6 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { reduxForm } from 'redux-form'
+import { autobind } from 'core-decorators'
 
 import getFieldNames from '../utils/getFieldNames'
 import getInitialValues from '../utils/getInitialValues'
@@ -14,6 +15,7 @@ import withPropsWatch from '../utils/withPropsWatch'
 import { filtersShape } from '../PropTypes'
 
 
+@autobind
 export class Filters extends React.Component {
 
     static propTypes = {
@@ -28,8 +30,6 @@ export class Filters extends React.Component {
     constructor() {
         super()
         this.registeredFields = {}
-        this.handleRegisterFilterField = this.handleRegisterFilterField.bind(this)
-        this.onResize = this.onResize.bind(this)
     }
 
     componentWillMount() {
@@ -61,7 +61,6 @@ export class Filters extends React.Component {
 
     componentDidMount() {
         // Calculate sidebar dimensions (filters overflow) and register resize listener
-        const isFilters = document.getElementById('sidebar')
         calculateSidebarDimensions()
         window.addEventListener('resize', this.onResize)
     }

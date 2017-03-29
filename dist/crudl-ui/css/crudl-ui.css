@@ -408,7 +408,7 @@ body {
 .font-family-medium, #viewport-content .loading-indicator > div + span, button,
 [role=button],
 input[type=submit],
-input[type=reset], .fieldset-container-header h3, .fieldset-container-group-header h2, input, textarea, select, .selected-items div.selected-item, .autocomplete.results-true .results .result, .listbox .label, .listbox .options .option, #sidebar > header, .active-filters [role=option], [role=tablist] li, ol.pagination li, #viewport-header h2, #app.logout .login-again {
+input[type=reset], .fieldset-container-header h3, .fieldset-container-group-header h2, input, textarea, select, .selected-items div.selected-item, .autocomplete.results-true .results .result, .listbox .label, .listbox .options .option, #sidebar > header, .active-filters [role=option], [role=tablist] li, ol.pagination li, #bottombar > header, #viewport-header h2, #app.logout .login-again {
   font-family: "Roboto-Medium", Arial, sans-serif;
   font-weight: normal;
 }
@@ -4170,6 +4170,63 @@ ol.pagination li.current, ol.pagination li.current:hover {
   color: #fff;
   border: #CC293C;
   background: #CC293C;
+}
+
+#bottombar {
+  position: fixed;
+  z-index: 910;
+  transition: bottom 0.3s cubic-bezier(0.2, 0.3, 0.25, 0.9);
+  bottom: -100vh;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background: rgba(35, 36, 36, 0.4);
+}
+
+#bottombar [role=listbox] {
+  background-color: #ccedf0;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin-top: 20vh;
+  padding: 2rem;
+}
+
+#bottombar > header {
+  position: fixed;
+  z-index: 800;
+  padding: 12px 20px;
+  width: 100%;
+  height: 48px;
+  color: #232424;
+  background: #edf9fa;
+}
+
+#bottombar > header button {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 48px;
+  height: 48px;
+  transition: all 0.15s cubic-bezier(0.2, 0.3, 0.25, 0.9);
+  color: #232424;
+  border: transparent;
+  background: transparent;
+}
+
+#bottombar > header button:hover {
+  transition: all 0.15s cubic-bezier(0.2, 0.3, 0.25, 0.9);
+  color: #fff;
+  border: transparent;
+  background: transparent;
+}
+
+.app-bottombar-open #bottombar {
+  display: block;
+  bottom: 0;
+  transform: translate(0, 0);
 }
 
 @media screen and (orientation: landscape) {

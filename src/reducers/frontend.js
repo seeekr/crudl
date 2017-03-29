@@ -20,6 +20,9 @@ const initialState = {
         message: 'The requested page could not be found.',
     },
     blockUI: false,
+    bottomBar: {
+        visible: false,
+    },
 }
 
 /**
@@ -59,6 +62,12 @@ export default function (state = initialState, action) {
             return t('blockUI', true)
         case types.HIDE_BLOCK_OVERLAY:
             return t('blockUI', false)
+        case types.SHOW_BOTTOMBAR:
+            return t('bottomBar.visible', true)
+        case types.HIDE_BOTTOMBAR:
+            return t('bottomBar.visible', false)
+        case types.TOGGLE_BOTTOMBAR:
+            return t('bottomBar.visible', !state.bottomBar.visible)
         default:
             return state
     }

@@ -15,7 +15,14 @@ import ActiveFilters from './ActiveFilters'
 import Filters from './Filters'
 import Search from './Search'
 import { listViewShape, breadcrumbsShape, transitionStateShape } from '../PropTypes'
-import { toggleFilters, showFilters, hideFilters, showModalConfirm } from '../actions/frontend'
+import {
+    toggleFilters,
+    showFilters,
+    hideFilters,
+    showModalConfirm,
+    showBottomBar,
+    hideBottomBar,
+} from '../actions/frontend'
 import { cache } from '../actions/core'
 import { setFilters } from '../actions/filters'
 import { errorMessage } from '../actions/messages'
@@ -24,6 +31,7 @@ import withPropsWatch from '../utils/withPropsWatch'
 import permMessages from '../messages/permissions'
 import withTransitions from '../utils/withTransitions'
 import BulkActions from '../components/BulkActions'
+import BottomBar from '../components/BottomBar'
 
 function getPath(props) {
     return props.location.pathname + props.location.search
@@ -83,6 +91,8 @@ export class ListView extends React.Component {
         loading: false,
         selection: {},
         actionsEnabled: false, // Prevents action re-execution on page releoad
+        overlayVisible: false,
+        overlayComponent: undefined,
     };
 
     componentWillMount() {
@@ -273,7 +283,7 @@ export class ListView extends React.Component {
     }
 
     bulkActionBefore(actionName) {
-        const { desc, transitionEnter, breadcrumbs } = this.props
+        const { desc, transitionEnter, breadcrumbs, dispatch } = this.props
         const bulkAction = desc.bulkActions[actionName]
         // The selected items as an array
         const selectedItems = Object.keys(this.state.selection).map(key => this.state.selection[key])
@@ -281,17 +291,11 @@ export class ListView extends React.Component {
         Promise.resolve(bulkAction.before(req(), selectedItems))
         .then((result) => {
             if (typeof result !== 'undefined') {
-                transitionEnter(
-                    desc.intermediateView.id,
-                    { // params for the intermediate page view
-                        breadcrumbs,
-                        ...result,
-                    },
-                    { // storedData
-                        actionName,
-                        selectedItems,
-                    },
-                )
+                dispatch(showBottomBar())
+                this.setState({
+                    overlayVisible: true,
+                    overlayComponent: result,
+                })
             } else {
                 this.bulkActionExecute(actionName, selectedItems).then(() => this.reload())
             }
@@ -312,20 +316,7 @@ export class ListView extends React.Component {
 
         Promise.resolve(bulkAction.after(req(), actionResult))
         .then((result) => {
-            if (typeof result !== 'undefined') {
-                transitionEnter(
-                    desc.intermediateView.id,
-                    { // params for the intermediate page view
-                        breadcrumbs,
-                        ...result,
-                    },
-                    { // stored Data
-                    },
-                )
-            } else {
-                console.log('>>> Reloading...');
-                this.reload()
-            }
+            // TODO
         })
     }
 
@@ -451,6 +442,9 @@ export class ListView extends React.Component {
                         </ul>
                     </div>
                 </Header>
+                <BottomBar expanded={this.state.overlayVisible}>
+                    {this.state.overlayComponent && React.createElement(this.state.overlayComponent)}
+                </BottomBar>
                 {desc.search || desc.filters ?
                     <aside id="sidebar" role="group">
                         <header>

@@ -11,6 +11,9 @@ export const types = {
     PAGE_NOT_FOUND_MESSAGE: 'frontend.pageNotFoundMessage',
     SHOW_BLOCK_OVERLAY: 'frontend.showBlockOverlay',
     HIDE_BLOCK_OVERLAY: 'frontend.hideBlockOverlay',
+    SHOW_BOTTOMBAR: 'frontend.showBottomBar',
+    HIDE_BOTTOMBAR: 'frontend.hideBottomBar',
+    TOGGLE_BOTTOMBAR: 'frontend.toggleBottomBar',
 }
 
 export function showNavigation() {
@@ -78,5 +81,23 @@ export function showBlockOverlay() {
 export function hideBlockOverlay() {
     return {
         type: types.HIDE_BLOCK_OVERLAY,
+    }
+}
+
+export function showBottomBar() {
+    return {
+        type: types.SHOW_BOTTOMBAR,
+    }
+}
+
+export function hideBottomBar() {
+    return {
+        type: types.HIDE_BOTTOMBAR,
+    }
+}
+
+export function toggleBottomBar() {
+    return {
+        type: types.TOGGLE_BOTTOMBAR,
     }
 }
