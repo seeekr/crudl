@@ -24,7 +24,6 @@ import withPropsWatch from '../utils/withPropsWatch'
 import permMessages from '../messages/permissions'
 import withTransitions from '../utils/withTransitions'
 import BulkActions from '../components/BulkActions'
-import asPromise from '../utils/asPromise'
 
 function getPath(props) {
     return props.location.pathname + props.location.search
@@ -279,7 +278,7 @@ export class ListView extends React.Component {
         // The selected items as an array
         const selectedItems = Object.keys(this.state.selection).map(key => this.state.selection[key])
 
-        asPromise(bulkAction.before(req(), selectedItems))
+        Promise.resolve(bulkAction.before(req(), selectedItems))
         .then((result) => {
             if (typeof result !== 'undefined') {
                 transitionEnter(
@@ -302,7 +301,7 @@ export class ListView extends React.Component {
     bulkActionExecute(actionName, selectedItems) {
         const { desc } = this.props
         const bulkAction = desc.bulkActions[actionName]
-        return asPromise(bulkAction.action(req(), selectedItems))
+        return Promise.resolve(bulkAction.action(req(), selectedItems))
         .then(result => this.bulkActionAfter(actionName, result))
     }
 
@@ -311,7 +310,7 @@ export class ListView extends React.Component {
         const bulkAction = desc.bulkActions[actionName]
         // The selected items as an array
 
-        asPromise(bulkAction.after(req(), actionResult))
+        Promise.resolve(bulkAction.after(req(), actionResult))
         .then((result) => {
             if (typeof result !== 'undefined') {
                 transitionEnter(
