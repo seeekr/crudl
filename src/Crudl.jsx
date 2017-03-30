@@ -33,6 +33,7 @@ import Logout from './containers/Logout'
 import Dashboard from './containers/Dashboard'
 import PageNotFound from './containers/PageNotFound'
 import createViewLoader from './containers/ViewLoader'
+import SimpleView from './containers/SimpleView'
 
 // Connectors
 import RESTConnector from './connectors/RESTConnector'
@@ -47,6 +48,7 @@ import frontendConnector from './connectors/frontendConnector'
 // Misc Actions
 import { activeView as activeViewActions } from './actions/core'
 import { pageNotFoundMessage } from './actions/frontend'
+import * as messages from './actions/messages'
 
 // Misc Reducers
 import frontendReducer from './reducers/frontend'
@@ -64,8 +66,8 @@ import PermissionError from './errors/PermissionError'
 import wrapComponent from './utils/wrapComponent'
 import validateAdmin from './utils/validateAdmin'
 import Request from './connectors/Request'
-
 import baseField from './fields/base/baseField'
+import simpleViewSchema from './admin-schema/simpleView'
 
 import DevTools from './containers/DevTools'
 
@@ -95,10 +97,33 @@ export const context = createContext(contextData)
 export { baseField }
 export { ValidationError, AuthorizationError, NotFoundError, PermissionError }
 
+export function setStore(newStore) {
+    store = newStore
+}
+
+export function getStore() {
+    if (!store) {
+        throw new Error(`Cannot get store (store is ${store}). Forgot to call setStore()?`)
+    }
+    return store
+}
+
 export function log(...args) {
     if (typeof window.console !== 'undefined') {
         window.console.log(...args)
     }
+}
+
+export function errorMessage(msg) {
+    getStore().dispatch(messages.errorMessage(msg))
+}
+
+export function successMessage(msg) {
+    getStore().dispatch(messages.successMessage(msg))
+}
+
+export function infoMessage(msg) {
+    getStore().dispatch(messages.infoMessage(msg))
 }
 
 export function resolvePath(pathname = '', item) {
@@ -114,6 +139,15 @@ export function req(data) {
         data,
         headers: store.getState().core.auth.requestHeaders,
     })
+}
+
+export function createForm(desc) {
+    const validationResult = simpleViewSchema.validate(desc)
+
+    if (validationResult.error) {
+        throw new Error(`In createForm(${desc.id}): ${validationResult.error}`)
+    }
+    return <SimpleView desc={validationResult.value} />
 }
 
 // Redux Middleware function
@@ -179,14 +213,6 @@ function crudlReducer() {
             return initial
         }),
     )(reducer)
-}
-
-export function setStore(newStore) {
-    store = newStore
-}
-
-export function getStore() {
-    return store
 }
 
 export function createStore() {

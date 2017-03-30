@@ -3,38 +3,38 @@
 
 #bottombar {
     position: fixed;
-    z-index: 910;
-    transition: bottom 2*$transition-speed $transition-cubic-bezier;
+    z-index: 890;
     bottom: -100vh;
     left: 0;
     width: 100%;
     height: 100vh;
     background: transparentize($text-color, .6);
+    transition: bottom 2*$transition-speed $transition-cubic-bezier;
 }
 
 #bottombar {
-    [role=listbox] {
+    #bottombar-container {
         background-color: $color-2-100;
         position: absolute;
-        top: 0;
         left: 0;
         right: 0;
         bottom: 0;
-        margin-top: 20vh;
-        padding: 2rem;
+        height: 60vh;
+        padding: 20px;
+        overflow: scroll;
     }
 }
 
 #bottombar {
     > header {
-        position: fixed;
-        z-index: 800;
+        position: absolute;
         padding: 12px 20px;
         width: 100%;
+        bottom: 60vh;
         height: 48px;
         color: $text-color;
         @extend .font-family-medium;
-        background: $color-2-25;
+        background: $color-2-400;
         button {
             position: absolute;
             top: 0;

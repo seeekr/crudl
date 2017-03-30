@@ -4174,34 +4174,34 @@ ol.pagination li.current, ol.pagination li.current:hover {
 
 #bottombar {
   position: fixed;
-  z-index: 910;
-  transition: bottom 0.3s cubic-bezier(0.2, 0.3, 0.25, 0.9);
+  z-index: 890;
   bottom: -100vh;
   left: 0;
   width: 100%;
   height: 100vh;
   background: rgba(35, 36, 36, 0.4);
+  transition: bottom 0.3s cubic-bezier(0.2, 0.3, 0.25, 0.9);
 }
 
-#bottombar [role=listbox] {
+#bottombar #bottombar-container {
   background-color: #ccedf0;
   position: absolute;
-  top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  margin-top: 20vh;
-  padding: 2rem;
+  height: 60vh;
+  padding: 20px;
+  overflow: scroll;
 }
 
 #bottombar > header {
-  position: fixed;
-  z-index: 800;
+  position: absolute;
   padding: 12px 20px;
   width: 100%;
+  bottom: 60vh;
   height: 48px;
   color: #232424;
-  background: #edf9fa;
+  background: #33b6c2;
 }
 
 #bottombar > header button {

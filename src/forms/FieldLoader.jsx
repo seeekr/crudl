@@ -24,7 +24,7 @@ function fieldClassName(Component) {
 class FieldLoader extends React.Component {
 
     static propTypes = {
-        desc: fieldShape,
+        desc: fieldShape.isRequired,
         input: baseFieldPropTypes.input,
         meta: baseFieldPropTypes.meta,
         onAdd: baseFieldPropTypes.onAdd,
