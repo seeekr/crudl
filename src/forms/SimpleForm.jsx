@@ -20,20 +20,12 @@ const SimpleForm = ({ desc, submitting, handleSubmit }) => (
             <div role="group" className="buttons">
                 <button
                     type="button"
-                    className="action-clear boundless"
-                    tabIndex={submitting ? '-1' : '0'}
-                    aria-disabled={submitting}
-                    disabled={submitting}
-                    onClick={() => desc.onCancel()}
-                    >Clear</button>
-                <button
-                    type="button"
                     className="action-apply boundless"
                     tabIndex={submitting ? '-1' : '0'}
                     aria-disabled={submitting}
                     disabled={submitting}
                     onClick={handleSubmit(desc.onSubmit)}
-                    >Apply</button>
+                    >Submit</button>
             </div>
         </div>
     </form>
