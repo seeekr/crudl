@@ -1,5 +1,6 @@
 import React from 'react'
 import get from 'lodash/get'
+import isEqual from 'lodash/isEqual'
 import { connect } from 'react-redux'
 import { withRouter } from 'react-router'
 import { locationShape, routerShape } from 'react-router/lib/PropTypes'
@@ -345,6 +346,13 @@ export class ListView extends React.Component {
         })
     }
 
+    /**
+    * This method does all the heavy lifting:
+    * It checks permissions, uses a cached value if applicable, creates an
+    * appropriate request object, executes the list action, combines the results
+    * with previous results (in case the pagination requires that), clears a
+    * selection if results have changed in any way, and finally sets the filters.
+    */
     list(newProps, requestedPage, combineResults = (prev, next) => next) {
         const props = newProps || this.props
         if (hasPermission(props.desc.id, 'list')) {
@@ -353,7 +361,7 @@ export class ListView extends React.Component {
                 props.dispatch(setFilters(this.getFilters(props)))
                 this.setState(props.cache.state)
             } else {
-                this.setState({ loading: true, selection: {} })
+                this.setState({ loading: true })
 
                 // Collect filters (filters and search queries)
                 let filters = this.getSearchQueries(props)
@@ -382,6 +390,11 @@ export class ListView extends React.Component {
                         loading: false,
                         results,
                         pagination,
+                    }
+                    // Clear selection if results changed
+                    const someSelected = Object.keys(this.state.selection).length > 0
+                    if (someSelected && results.some((item, index) => !isEqual(item, this.state.results[index]))) {
+                        state.selection = {}
                     }
                     props.dispatch(cache.setListView({ key: getCacheKey(props), state }))
                     props.dispatch(setFilters(filters))
