@@ -107,16 +107,8 @@ export const baseFieldPropTypes = {
     ]),
     before: React.PropTypes.node.isRequired,
     after: React.PropTypes.node.isRequired,
-    add: React.PropTypes.shape({
-        viewId: React.PropTypes.string.isRequired,
-        viewParams: React.PropTypes.func.isRequired,
-        returnValue: React.PropTypes.func.isRequired,
-    }),
-    edit: React.PropTypes.shape({
-        viewId: React.PropTypes.string.isRequired,
-        viewParams: React.PropTypes.func.isRequired,
-        returnValue: React.PropTypes.func.isRequired,
-    }),
+    add: React.PropTypes.object,
+    edit: React.PropTypes.object,
     // Async part of the descriptor: a function returning an object or a promise
     lazy: React.PropTypes.func.isRequired,
 }

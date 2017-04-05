@@ -68,6 +68,7 @@ const overlayInitialState = {
     overlayContent: undefined,
     overlayCancel: () => undefined,
     overlayProceed: () => undefined,
+    overlayTitle: undefined,
 }
 
 @autobind
@@ -381,7 +382,7 @@ export class ListView extends React.Component {
                     .withFilters(filters)
 
                 // Do the action
-                this.props.desc.actions.list(request)
+                Promise.resolve(this.props.desc.actions.list(request))
                 .then((res) => {
                     const normalized = props.desc.normalize(res.data)
                     const pagination = res.pagination

@@ -23,7 +23,7 @@ const messages = defineMessages({
     },
     addSuccess: {
         id: 'addView.add.success',
-        defaultMessage: 'Succesfully created {title}.',
+        defaultMessage: '{title} was succesfully created.',
     },
     validationError: {
         id: 'addView.add.failed',

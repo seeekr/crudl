@@ -2,7 +2,7 @@ import { Joi } from './base'
 
 import field from './field'
 
-const simpleForm = Joi.object().keys({
+const simpleView = Joi.object().keys({
     // Required
     fields: Joi.array().items(field).required(),
     onSubmit: Joi.func().required(),
@@ -13,4 +13,4 @@ const simpleForm = Joi.object().keys({
     denormalize: Joi.func().default(data => data),
 })
 
-export default simpleForm
+export default simpleView

@@ -269,6 +269,13 @@ function getViewIndexEntry(viewId, defaultValue = {}) {
     return viewDescIndex[viewId] || defaultValue
 }
 
+export function setViewIndexEntry(viewDesc, extras) {
+    viewDescIndex[viewDesc.id] = {
+        ...extras,
+        desc: viewDesc,
+    }
+}
+
 export function getViewDesc(viewId) {
     return getViewIndexEntry(viewId).desc
 }
@@ -304,6 +311,10 @@ export function getViewParam(paramName, defaultValue) {
 */
 export function hasPermission(viewId, actionName) {
     const desc = getViewDesc(viewId)
+    if (!desc) {
+        console.warn(`Couldn't find a view index entry for ${viewId}!`);
+        return false
+    }
     const state = store.getState()
     const permissions = Object.assign({}, desc.permissions, state.core.permissions[viewId])
     return typeof permissions[actionName] === 'undefined' || permissions[actionName]

@@ -6,27 +6,43 @@ import { injectIntl, intlShape } from 'react-intl'
 import { routerShape, locationShape } from 'react-router/lib/PropTypes'
 import { autobind } from 'core-decorators'
 
-import getValidator from '../utils/getValidator'
-import hasUnsavedChanges from '../utils/hasUnsavedChanges'
-import { req, resolvePath, hasPermission, getSiblingDesc } from '../Crudl'
+import { req, resolvePath, hasPermission, getSiblingDesc, setViewIndexEntry } from '../Crudl'
+
+import TabView from './TabView'
+import AddRelation from './AddRelation'
+import EditRelation from './EditRelation'
+import ChangeViewForm from '../forms/ChangeViewForm'
+import { changeViewShape, breadcrumbsShape } from '../PropTypes'
+
 import ViewportLoading from '../components/ViewportLoading'
 import Header from '../components/Header'
 import TabPanel from '../components/TabPanel'
 import TabList from '../components/TabList'
-import ChangeViewForm from '../forms/ChangeViewForm'
-import TabView from './TabView'
+import BottomBar from '../components/BottomBar'
+
+import { showModalConfirm, showBottomBar, hideBottomBar } from '../actions/frontend'
 import { successMessage, errorMessage } from '../actions/messages'
 import { cache } from '../actions/core'
-import { showModalConfirm } from '../actions/frontend'
-import { changeViewShape, breadcrumbsShape, transitionStateShape } from '../PropTypes'
+
 import messages from '../messages/changeView'
 import permMessages from '../messages/permissions'
+
 import withPropsWatch from '../utils/withPropsWatch'
 import getFieldDesc from '../utils/getFieldDesc'
 import withTransitions from '../utils/withTransitions'
-import blocksUI from '../decorators/blocksUI'
 import normalize from '../utils/normalize'
 import denormalize from '../utils/denormalize'
+import getValidator from '../utils/getValidator'
+import hasUnsavedChanges from '../utils/hasUnsavedChanges'
+
+import blocksUI from '../decorators/blocksUI'
+
+const overlayInitialState = {
+    overlayVisible: false,
+    overlayContent: undefined,
+    overlayCancel: () => undefined,
+    overlayTitle: undefined,
+}
 
 @autobind
 export class ChangeView extends React.Component {
@@ -41,8 +57,6 @@ export class ChangeView extends React.Component {
         route: React.PropTypes.object.isRequired,
         forms: React.PropTypes.object.isRequired,
         breadcrumbs: breadcrumbsShape.isRequired,
-        transitionState: transitionStateShape.isRequired,
-        transitionEnter: React.PropTypes.func.isRequired,
         transitionLeave: React.PropTypes.func.isRequired,
     }
 
@@ -55,6 +69,7 @@ export class ChangeView extends React.Component {
         selectedTab: 0,
         ready: false,
         values: {},
+        ...overlayInitialState,
     };
 
     componentWillMount() {
@@ -147,7 +162,7 @@ export class ChangeView extends React.Component {
         const { desc, intl, dispatch, transitionState } = props
         if (hasPermission(desc.id, 'get')) {
             this.setState({ ready: false })
-            return desc.actions.get(req())
+            return Promise.resolve(desc.actions.get(req()))
                 .then((response) => {
                     const values = normalize(desc, response.data)
                     this.setState({ values, ready: true })
@@ -180,7 +195,7 @@ export class ChangeView extends React.Component {
             } catch (error) {
                 return Promise.reject(new SubmissionError(error))
             }
-            return desc.actions.save(req(preparedData))
+            return Promise.resolve(desc.actions.save(req(preparedData)))
             .then((res) => {
                 const values = normalize(desc, res.data)
                 dispatch(cache.clearListView())
@@ -220,7 +235,7 @@ export class ChangeView extends React.Component {
         const { dispatch, intl, desc, router } = this.props
 
         if (hasPermission(desc.id, 'delete')) {
-            return desc.actions.delete(req(data)).then(() => {
+            return Promise.resolve(desc.actions.delete(req(data))).then(() => {
                 dispatch(cache.clearListView())
                 dispatch(successMessage(intl.formatMessage(messages.deleteSuccess, { item: desc.title })))
                 this.forceLeave = true
@@ -232,18 +247,33 @@ export class ChangeView extends React.Component {
         return undefined
     }
 
+    openRelation(viewDesc, Component) {
+        // Add the relation descriptor to the index
+        setViewIndexEntry(viewDesc)
+        // Show an overlay
+        return this.showOverlay((resolve, reject) => (
+            <Component
+                desc={viewDesc}
+                onSave={resolve}
+                onCancel={reject}
+                />
+        ))
+        .catch(() => undefined)
+    }
+
     enterAddRelation(fieldDesc) {
-        this.props.transitionEnter(fieldDesc.add.viewId,
-            { fromRelation: true, ...fieldDesc.edit.viewParams() }, // params
-            { fieldName: fieldDesc.name, relation: 'add' }, // storedData
-        )
+        this.openRelation(fieldDesc.add, AddRelation)
+        .then((result) => {
+            if (!result) {
+                console.warn(`The add relation of ${fieldDesc.add} returned ${result}. A field value was expected`);
+                return
+            }
+            this.props.dispatch(change(this.props.desc.id, fieldDesc.name, result))
+        })
     }
 
     enterEditRelation(fieldDesc) {
-        this.props.transitionEnter(fieldDesc.edit.viewId,
-            { fromRelation: true, ...fieldDesc.edit.viewParams() }, // params
-            { fieldName: fieldDesc.name, relation: 'edit' }, // storedData
-        )
+        this.openRelation(fieldDesc.edit, EditRelation)
     }
 
     switchTab(props) {
@@ -260,6 +290,28 @@ export class ChangeView extends React.Component {
             pathname: this.props.location.pathname,
             query: { tab: index || undefined },
         })
+    }
+
+    /**
+    * Returns a promise which resolves if the user decides to proceed and rejects otherwise.
+    * The overlay will be closed afterwards.
+    */
+    showOverlay(createComponent, overlayTitle) {
+        this.props.dispatch(showBottomBar())
+        return new Promise((resolve, reject) => {
+            this.setState({
+                overlayContent: createComponent(resolve, reject),
+                overlayTitle,
+                overlayVisible: true,
+                overlayCancel: () => reject(),
+            })
+        })
+        .finally(this.closeOverlay)
+    }
+
+    closeOverlay() {
+        this.props.dispatch(hideBottomBar())
+        this.setState(overlayInitialState)
     }
 
     render() {
@@ -307,6 +359,13 @@ export class ChangeView extends React.Component {
                                 ))}
                             </div>
                         }
+                        <BottomBar
+                            open={this.state.overlayVisible}
+                            onClose={this.state.overlayCancel}
+                            title={this.state.overlayTitle}
+                            >
+                            {this.state.overlayContent}
+                        </BottomBar>
                     </div>
                     :
                     intl.formatMessage(permMessages.viewNotPermitted)

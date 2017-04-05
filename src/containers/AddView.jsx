@@ -125,7 +125,7 @@ class AddView extends React.Component {
                 throw Promise.reject(new SubmissionError(error))
             }
 
-            return this.props.desc.actions.add(req(preparedData))
+            return Promise.resolve(this.props.desc.actions.add(req(preparedData)))
             .then((response) => {
                 const result = response.data
                 dispatch(cache.clearListView())
