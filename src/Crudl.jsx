@@ -46,7 +46,7 @@ import frontendConnector from './connectors/frontendConnector'
 
 // Misc Actions
 import { activeView as activeViewActions } from './actions/core'
-import { pageNotFoundMessage } from './actions/frontend'
+import { pageNotFoundMessage, hideBottomBar } from './actions/frontend'
 import * as messages from './actions/messages'
 
 // Misc Reducers
@@ -388,6 +388,15 @@ function setActiveView(id, wrappedFunc) {
     }
 }
 
+function clearFrontendState(wrappedFunc) {
+    return (nextState, replace) => {
+        store.dispatch(hideBottomBar());
+        if (wrappedFunc) {
+           wrappedFunc.call(this, nextState, replace)
+       }
+    }
+}
+
 function clearActiveView() {
     store.dispatch(activeViewActions.clear())
 }
@@ -417,7 +426,7 @@ function crudlRouter() {
         // Collection (ListView)
         root.childRoutes.push({
             path: listView.path,
-            onEnter: authenticate(setActiveView(listView.id)),
+            onEnter: authenticate(clearFrontendState(setActiveView(listView.id))),
             component: wrapComponent(ListView, {
                 desc: listView,
                 breadcrumbs: [appCrumb, listViewCrumb],
@@ -428,7 +437,7 @@ function crudlRouter() {
         if (addView) {
             root.childRoutes.push({
                 path: addView.path,
-                onEnter: authenticate(setActiveView(addView.id)),
+                onEnter: authenticate(clearFrontendState(setActiveView(addView.id))),
                 component: wrapComponent(AddView, {
                     desc: addView,
                     breadcrumbs: [appCrumb, listViewCrumb, addViewCrumb],
@@ -439,7 +448,7 @@ function crudlRouter() {
         // Change existing resource (ChangeView)
         root.childRoutes.push({
             path: changeView.path,
-            onEnter: authenticate(setActiveView(changeView.id)),
+            onEnter: authenticate(clearFrontendState(setActiveView(changeView.id))),
             component: wrapComponent(ChangeView, {
                 desc: changeView,
                 breadcrumbs: [appCrumb, listViewCrumb, changeViewCrumb],
