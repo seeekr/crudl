@@ -13,10 +13,6 @@ const messages = defineMessages({
         id: 'changeView.button.saveAndContinue',
         defaultMessage: 'Save and continue editing',
     },
-    saveAndBack: {
-        id: 'changeView.button.saveAndBack',
-        defaultMessage: 'Save and back',
-    },
     cancel: {
         id: 'changeView.button.cancel',
         defaultMessage: 'Cancel',

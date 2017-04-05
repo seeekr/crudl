@@ -11,6 +11,11 @@ export const types = {
     PAGE_NOT_FOUND_MESSAGE: 'frontend.pageNotFoundMessage',
     SHOW_BLOCK_OVERLAY: 'frontend.showBlockOverlay',
     HIDE_BLOCK_OVERLAY: 'frontend.hideBlockOverlay',
+    SHOW_BOTTOMBAR: 'frontend.showBottomBar',
+    HIDE_BOTTOMBAR: 'frontend.hideBottomBar',
+    TOGGLE_BOTTOMBAR: 'frontend.toggleBottomBar',
+    RELOAD_FIELD: 'frontend.reloadField',
+    FIELD_RELOADED: 'frontend.fieldReloaded',
 }
 
 export function showNavigation() {
@@ -78,5 +83,37 @@ export function showBlockOverlay() {
 export function hideBlockOverlay() {
     return {
         type: types.HIDE_BLOCK_OVERLAY,
+    }
+}
+
+export function showBottomBar() {
+    return {
+        type: types.SHOW_BOTTOMBAR,
+    }
+}
+
+export function hideBottomBar() {
+    return {
+        type: types.HIDE_BOTTOMBAR,
+    }
+}
+
+export function toggleBottomBar() {
+    return {
+        type: types.TOGGLE_BOTTOMBAR,
+    }
+}
+
+export function reloadField(fieldId) {
+    return {
+        type: types.RELOAD_FIELD,
+        fieldId,
+    }
+}
+
+export function fieldReloaded(fieldId) {
+    return {
+        type: types.FIELD_RELOADED,
+        fieldId,
     }
 }

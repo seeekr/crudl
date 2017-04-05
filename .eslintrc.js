@@ -25,7 +25,11 @@ module.exports = {
         'semi': [0],
         'react/jsx-indent': [2, 4],
         'react/jsx-indent-props': [2, 4],
-        'max-len': [2, 121],
+        'max-len': [2, {
+            'code': 121,
+            'ignoreStrings': true,
+            'ignoreTemplateLiterals': true
+        }],
         'no-console': [2, {
             "allow": ["warn", "error"]
         }],

@@ -5,28 +5,43 @@ import { withRouter } from 'react-router'
 import { injectIntl, intlShape } from 'react-intl'
 import { routerShape, locationShape } from 'react-router/lib/PropTypes'
 import { autobind } from 'core-decorators'
+import get from 'lodash/get'
 
-import getValidator from '../utils/getValidator'
-import hasUnsavedChanges from '../utils/hasUnsavedChanges'
-import { req, resolvePath, hasPermission, getSiblingDesc } from '../Crudl'
+import { req, resolvePath, hasPermission, getSiblingDesc, setViewIndexEntry } from '../Crudl'
+
+import TabView from './TabView'
+import AddRelation from './AddRelation'
+import EditRelation from './EditRelation'
+import ChangeViewForm from '../forms/ChangeViewForm'
+import { changeViewShape, breadcrumbsShape } from '../PropTypes'
+
 import ViewportLoading from '../components/ViewportLoading'
 import Header from '../components/Header'
 import TabPanel from '../components/TabPanel'
 import TabList from '../components/TabList'
-import ChangeViewForm from '../forms/ChangeViewForm'
-import TabView from './TabView'
+import BottomBar from '../components/BottomBar'
+
+import { showModalConfirm, showBottomBar, hideBottomBar, reloadField } from '../actions/frontend'
 import { successMessage, errorMessage } from '../actions/messages'
 import { cache } from '../actions/core'
-import { showModalConfirm } from '../actions/frontend'
-import { changeViewShape, breadcrumbsShape, transitionStateShape } from '../PropTypes'
+
 import messages from '../messages/changeView'
 import permMessages from '../messages/permissions'
+
 import withPropsWatch from '../utils/withPropsWatch'
-import getFieldDesc from '../utils/getFieldDesc'
-import withTransitions from '../utils/withTransitions'
-import blocksUI from '../decorators/blocksUI'
 import normalize from '../utils/normalize'
 import denormalize from '../utils/denormalize'
+import getValidator from '../utils/getValidator'
+import hasUnsavedChanges from '../utils/hasUnsavedChanges'
+
+import blocksUI from '../decorators/blocksUI'
+
+const overlayInitialState = {
+    overlayVisible: false,
+    overlayContent: undefined,
+    overlayCancel: () => undefined,
+    overlayTitle: undefined,
+}
 
 @autobind
 export class ChangeView extends React.Component {
@@ -41,9 +56,6 @@ export class ChangeView extends React.Component {
         route: React.PropTypes.object.isRequired,
         forms: React.PropTypes.object.isRequired,
         breadcrumbs: breadcrumbsShape.isRequired,
-        transitionState: transitionStateShape.isRequired,
-        transitionEnter: React.PropTypes.func.isRequired,
-        transitionLeave: React.PropTypes.func.isRequired,
     }
 
     constructor() {
@@ -55,6 +67,7 @@ export class ChangeView extends React.Component {
         selectedTab: 0,
         ready: false,
         values: {},
+        ...overlayInitialState,
     };
 
     componentWillMount() {
@@ -70,9 +83,10 @@ export class ChangeView extends React.Component {
         this.props.router.setRouteLeaveHook(this.props.route, this.routerWillLeave)
     }
 
-    createForm(props) {
+    createForm(newProps) {
+        const props = newProps || this.props
         // Create the Form Container
-        const { desc, dispatch, intl, transitionState } = props
+        const { desc, dispatch, intl } = props
         const formSpec = {
             form: desc.id,
             validate: getValidator(desc),
@@ -84,18 +98,14 @@ export class ChangeView extends React.Component {
             onSave: data => this.handleSave(data, false),
             onSaveAndContinue: data => this.handleSave(data, true),
             onSubmitFail: () => { dispatch(errorMessage(intl.formatMessage(messages.validationError))) },
-            onCancel: this.handleCancel,
             onDelete: desc.actions.delete ? this.handleDelete : undefined,
-            fromRelation: transitionState.params.fromRelation,
             labels: {
                 save: intl.formatMessage(messages.save),
-                saveAndBack: intl.formatMessage(messages.saveAndBack),
                 saveAndContinue: intl.formatMessage(messages.saveAndContinue),
                 delete: intl.formatMessage(messages.delete),
-                cancel: intl.formatMessage(messages.cancel),
             },
-            onAdd: this.enterAddRelation,
-            onEdit: this.enterEditRelation,
+            onAdd: this.openAddRelation,
+            onEdit: this.openEditRelation,
         }
         this.changeViewForm = React.createElement(reduxForm(formSpec)(ChangeViewForm), formProps)
     }
@@ -144,24 +154,14 @@ export class ChangeView extends React.Component {
 
     @blocksUI
     doGet(props) {
-        const { desc, intl, dispatch, transitionState } = props
+        const { desc, intl, dispatch } = props
         if (hasPermission(desc.id, 'get')) {
             this.setState({ ready: false })
-            return desc.actions.get(req())
-                .then((response) => {
-                    const values = normalize(desc, response.data)
-                    this.setState({ values, ready: true })
-
-                    // Did we return from a relation view?
-                    const { hasReturned, storedData, returnValue } = transitionState
-                    if (hasReturned) {
-                        const { fieldName, relation } = storedData
-                        const fieldDesc = getFieldDesc(desc, fieldName)
-                        if (returnValue && fieldDesc[relation].returnValue) {
-                            dispatch(change(desc.id, fieldName, fieldDesc[relation].returnValue(returnValue)))
-                        }
-                    }
-                })
+            return Promise.resolve(desc.actions.get(req()))
+            .then((response) => {
+                const values = normalize(desc, response.data)
+                this.setState({ values, ready: true })
+            })
         }
         dispatch(errorMessage(intl.formatMessage(permMessages.viewNotPermitted)))
         this.setState({ ready: true, values: {} })
@@ -170,7 +170,7 @@ export class ChangeView extends React.Component {
 
     @blocksUI
     handleSave(data, stay = false) {
-        const { dispatch, desc, intl } = this.props
+        const { dispatch, desc, intl, router, location } = this.props
         let preparedData
 
         if (hasPermission(desc.id, 'save')) {
@@ -180,13 +180,15 @@ export class ChangeView extends React.Component {
             } catch (error) {
                 return Promise.reject(new SubmissionError(error))
             }
-            return desc.actions.save(req(preparedData))
+            return Promise.resolve(desc.actions.save(req(preparedData)))
             .then((res) => {
                 const values = normalize(desc, res.data)
                 dispatch(cache.clearListView())
                 dispatch(successMessage(intl.formatMessage(messages.saveSuccess, { item: desc.title })))
                 if (!stay) {
-                    this.props.transitionLeave(res.data)
+                    const returnPath = get(location.state, 'returnPath')
+                    const listViewPath = resolvePath(getSiblingDesc(desc.id, 'listView').path)
+                    router.push(returnPath || listViewPath)
                 } else {
                     this.setState({ values })
                 }
@@ -201,10 +203,6 @@ export class ChangeView extends React.Component {
         return undefined
     }
 
-    handleCancel() {
-        this.props.transitionLeave()
-    }
-
     handleDelete(data) {
         const { dispatch, intl, desc } = this.props
         dispatch(showModalConfirm({
@@ -217,14 +215,16 @@ export class ChangeView extends React.Component {
 
     @blocksUI
     doDelete(data) {
-        const { dispatch, intl, desc, router } = this.props
+        const { dispatch, intl, desc, router, location } = this.props
 
         if (hasPermission(desc.id, 'delete')) {
-            return desc.actions.delete(req(data)).then(() => {
+            return Promise.resolve(desc.actions.delete(req(data))).then(() => {
                 dispatch(cache.clearListView())
                 dispatch(successMessage(intl.formatMessage(messages.deleteSuccess, { item: desc.title })))
                 this.forceLeave = true
-                router.push(resolvePath(getSiblingDesc(desc.id, 'listView').path))
+                const returnPath = get(location.state, 'returnPath')
+                const listViewPath = resolvePath(getSiblingDesc(desc.id, 'listView').path)
+                router.push(returnPath || listViewPath)
             })
         }
 
@@ -232,18 +232,58 @@ export class ChangeView extends React.Component {
         return undefined
     }
 
-    enterAddRelation(fieldDesc) {
-        this.props.transitionEnter(fieldDesc.add.viewId,
-            { fromRelation: true, ...fieldDesc.edit.viewParams() }, // params
-            { fieldName: fieldDesc.name, relation: 'add' }, // storedData
-        )
+    closeOverlay() {
+        this.props.dispatch(hideBottomBar())
+        this.setState(overlayInitialState)
     }
 
-    enterEditRelation(fieldDesc) {
-        this.props.transitionEnter(fieldDesc.edit.viewId,
-            { fromRelation: true, ...fieldDesc.edit.viewParams() }, // params
-            { fieldName: fieldDesc.name, relation: 'edit' }, // storedData
-        )
+    /**
+    * Returns a promise which resolves if the user decides to proceed and rejects otherwise.
+    * The overlay will be closed afterwards.
+    */
+    showOverlay(createComponent, overlayTitle) {
+        this.props.dispatch(showBottomBar())
+        return new Promise((resolve, reject) => {
+            this.setState({
+                overlayContent: createComponent(resolve, reject),
+                overlayTitle,
+                overlayVisible: true,
+                overlayCancel: () => reject(),
+            })
+        })
+        .finally(this.closeOverlay)
+    }
+
+    openRelation(viewDesc, Component) {
+        // Add the relation descriptor to the index
+        setViewIndexEntry(viewDesc)
+        // Show an overlay
+        return this.showOverlay((resolve, reject) => (
+            <Component
+                desc={viewDesc}
+                onSave={resolve}
+                onCancel={reject}
+                />
+        ))
+    }
+
+    openAddRelation(fieldDesc) {
+        this.openRelation(fieldDesc.add, AddRelation)
+        .then((result) => {
+            if (!result) {
+                console.warn(`The add relation of ${fieldDesc.add} returned ${result}. A field value was expected`);
+                return
+            }
+            this.props.dispatch(change(this.props.desc.id, fieldDesc.name, result))
+            this.props.dispatch(reloadField(fieldDesc.id))
+        })
+        .catch(() => undefined)
+    }
+
+    openEditRelation(fieldDesc) {
+        this.openRelation(fieldDesc.edit, EditRelation)
+        .then(() => this.props.dispatch(reloadField(fieldDesc.id)))
+        .catch(() => undefined)
     }
 
     switchTab(props) {
@@ -307,6 +347,13 @@ export class ChangeView extends React.Component {
                                 ))}
                             </div>
                         }
+                        <BottomBar
+                            open={this.state.overlayVisible}
+                            onClose={this.state.overlayCancel}
+                            title={this.state.overlayTitle}
+                            >
+                            {this.state.overlayContent}
+                        </BottomBar>
                     </div>
                     :
                     intl.formatMessage(permMessages.viewNotPermitted)
@@ -322,4 +369,4 @@ function mapStateToProps(state) {
     }
 }
 
-export default connect(mapStateToProps)(withRouter(withTransitions(injectIntl(withPropsWatch(ChangeView)))))
+export default connect(mapStateToProps)(withRouter(injectIntl(withPropsWatch(ChangeView))))

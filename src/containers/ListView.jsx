@@ -1,5 +1,6 @@
 import React from 'react'
 import get from 'lodash/get'
+import isEqual from 'lodash/isEqual'
 import { connect } from 'react-redux'
 import { withRouter } from 'react-router'
 import { locationShape, routerShape } from 'react-router/lib/PropTypes'
@@ -14,16 +15,23 @@ import Pagination from '../components/Pagination'
 import ActiveFilters from './ActiveFilters'
 import Filters from './Filters'
 import Search from './Search'
-import { listViewShape, breadcrumbsShape, transitionStateShape } from '../PropTypes'
-import { toggleFilters, showFilters, hideFilters, showModalConfirm } from '../actions/frontend'
+import { listViewShape, breadcrumbsShape } from '../PropTypes'
+import {
+    toggleFilters,
+    showFilters,
+    hideFilters,
+    showModalConfirm,
+    showBottomBar,
+    hideBottomBar,
+} from '../actions/frontend'
 import { cache } from '../actions/core'
 import { setFilters } from '../actions/filters'
 import { errorMessage } from '../actions/messages'
 import { getInitialSorting, queryStringToSorting, sortingToQueryString, updateSorting } from '../utils/listViewSorting'
 import withPropsWatch from '../utils/withPropsWatch'
 import permMessages from '../messages/permissions'
-import withTransitions from '../utils/withTransitions'
 import BulkActions from '../components/BulkActions'
+import BottomBar from '../components/BottomBar'
 
 function getPath(props) {
     return props.location.pathname + props.location.search
@@ -55,6 +63,14 @@ function clearData(obj) {
     return newObj
 }
 
+const overlayInitialState = {
+    overlayVisible: false,
+    overlayContent: undefined,
+    overlayCancel: () => undefined,
+    overlayProceed: () => undefined,
+    overlayTitle: undefined,
+}
+
 @autobind
 export class ListView extends React.Component {
 
@@ -67,9 +83,6 @@ export class ListView extends React.Component {
         router: routerShape.isRequired,
         intl: intlShape.isRequired,
         breadcrumbs: breadcrumbsShape.isRequired,
-        transitionState: transitionStateShape.isRequired,
-        transitionEnter: React.PropTypes.func.isRequired,
-        transitionLeave: React.PropTypes.func.isRequired,
     };
 
     constructor() {
@@ -83,10 +96,11 @@ export class ListView extends React.Component {
         loading: false,
         selection: {},
         actionsEnabled: false, // Prevents action re-execution on page releoad
+        ...overlayInitialState,
     };
 
     componentWillMount() {
-        this.props.watch('location.search', this.reload)
+        this.props.watch('location.search', this.list)
     }
 
     componentDidMount() {
@@ -145,6 +159,29 @@ export class ListView extends React.Component {
         this.props.dispatch(hideFilters())
     }
 
+    /**
+    * Returns a promise which resolves if the user decides to proceed and rejects otherwise.
+    * The overlay will be closed afterwards.
+    */
+    showOverlay(overlayContent, overlayTitle) {
+        this.props.dispatch(showBottomBar())
+        return new Promise((resolve, reject) => {
+            this.setState({
+                overlayContent,
+                overlayTitle,
+                overlayVisible: true,
+                overlayProceed: result => resolve(result),
+                overlayCancel: () => reject(),
+            })
+        })
+        .finally(this.closeOverlay)
+    }
+
+    closeOverlay() {
+        this.props.dispatch(hideBottomBar())
+        this.setState(overlayInitialState)
+    }
+
     handleRequestPage(page, combineResults, serialize = false) {
         if (page) {
             if (serialize) {
@@ -164,11 +201,23 @@ export class ListView extends React.Component {
     }
 
     handleEnterAddView() {
-        this.props.router.push(resolvePath(getSiblingDesc(this.props.desc.id, 'addView').path))
+        const { desc, router, location } = this.props
+        router.push({
+            pathname: resolvePath(getSiblingDesc(desc.id, 'addView').path),
+            state: {
+                returnPath: location.pathname + location.search,
+            },
+        })
     }
 
     handleEnterChangeView(item) {
-        this.props.router.push(resolvePath(getSiblingDesc(this.props.desc.id, 'changeView').path, item))
+        const { desc, router, location } = this.props
+        router.push({
+            pathname: resolvePath(getSiblingDesc(desc.id, 'changeView').path, item),
+            state: {
+                returnPath: location.pathname + location.search,
+            },
+        })
     }
 
     handleFilters(data) {
@@ -258,6 +307,14 @@ export class ListView extends React.Component {
 
     handleApplyBulkAction(action) {
         const { dispatch, desc } = this.props
+
+        // The execution chain of a bulk action
+        const actionChain = () => this.bulkActionBefore(action)     // Before hook
+            .then(result => this.bulkActionExecute(action, result)) // Action itself
+            .then(result => this.bulkActionAfter(action, result))   // After hook
+            .catch(e => e && dispatch(errorMessage(`${e}`)))
+            .finally(this.reload)
+
         // Show modal dialog if required
         if (desc.bulkActions[action].modalConfirm) {
             dispatch(showModalConfirm({
@@ -265,83 +322,50 @@ export class ListView extends React.Component {
                 labelConfirm: desc.bulkActions[action].modalConfirm.labelConfirm,
                 labelCancel: desc.bulkActions[action].modalConfirm.labelCancel,
                 modalType: desc.bulkActions[action].modalConfirm.modalType,
-                onConfirm: () => this.bulkActionBefore(action),
+                onConfirm: actionChain,
             }))
         } else {
-            this.bulkActionBefore(action)
+            actionChain()
         }
     }
 
     bulkActionBefore(actionName) {
-        const { desc, transitionEnter, breadcrumbs } = this.props
-        const bulkAction = desc.bulkActions[actionName]
+        const bulkAction = this.props.desc.bulkActions[actionName]
         // The selected items as an array
         const selectedItems = Object.keys(this.state.selection).map(key => this.state.selection[key])
 
-        Promise.resolve(bulkAction.before(req(), selectedItems))
+        return Promise.resolve(bulkAction.before(selectedItems))
         .then((result) => {
             if (typeof result !== 'undefined') {
-                transitionEnter(
-                    desc.intermediateView.id,
-                    { // params for the intermediate page view
-                        breadcrumbs,
-                        ...result,
-                    },
-                    { // storedData
-                        actionName,
-                        selectedItems,
-                    },
-                )
-            } else {
-                this.bulkActionExecute(actionName, selectedItems).then(() => this.reload())
+                return this.showOverlay(result, bulkAction.description)
             }
+            return selectedItems
         })
     }
 
     bulkActionExecute(actionName, selectedItems) {
-        const { desc } = this.props
-        const bulkAction = desc.bulkActions[actionName]
-        return Promise.resolve(bulkAction.action(req(), selectedItems))
-        .then(result => this.bulkActionAfter(actionName, result))
+        const bulkAction = this.props.desc.bulkActions[actionName]
+        return Promise.resolve(bulkAction.action(selectedItems))
     }
 
     bulkActionAfter(actionName, actionResult) {
-        const { desc, transitionEnter, breadcrumbs } = this.props
-        const bulkAction = desc.bulkActions[actionName]
-        // The selected items as an array
-
-        Promise.resolve(bulkAction.after(req(), actionResult))
+        const bulkAction = this.props.desc.bulkActions[actionName]
+        return Promise.resolve(bulkAction.after(actionResult))
         .then((result) => {
             if (typeof result !== 'undefined') {
-                transitionEnter(
-                    desc.intermediateView.id,
-                    { // params for the intermediate page view
-                        breadcrumbs,
-                        ...result,
-                    },
-                    { // stored Data
-                    },
-                )
-            } else {
-                console.log('>>> Reloading...');
-                this.reload()
+                return this.showOverlay(result, bulkAction.description)
             }
+            return result
         })
     }
 
-    reload(newProps) {
-        const props = newProps || this.props
-        if (props.transitionState.hasReturned) {
-            const { returnValue, storedData } = props.transitionState
-            console.log('XXX', returnValue, storedData);
-            if (returnValue.proceed) {
-                props.dispatch(cache.clearListView())
-                this.bulkActionExecute(storedData.actionName, storedData.selectedItems).then(this.list)
-            }
-        }
-        this.list(props)
-    }
-
+    /**
+    * This method does all the heavy lifting:
+    * It checks permissions, uses a cached value if applicable, creates an
+    * appropriate request object, executes the list action, combines the results
+    * with previous results (in case the pagination requires that), clears a
+    * selection if results have changed in any way, and finally sets the filters.
+    */
     list(newProps, requestedPage, combineResults = (prev, next) => next) {
         const props = newProps || this.props
         if (hasPermission(props.desc.id, 'list')) {
@@ -350,7 +374,7 @@ export class ListView extends React.Component {
                 props.dispatch(setFilters(this.getFilters(props)))
                 this.setState(props.cache.state)
             } else {
-                this.setState({ loading: true, selection: {} })
+                this.setState({ loading: true })
 
                 // Collect filters (filters and search queries)
                 let filters = this.getSearchQueries(props)
@@ -370,7 +394,7 @@ export class ListView extends React.Component {
                     .withFilters(filters)
 
                 // Do the action
-                this.props.desc.actions.list(request)
+                Promise.resolve(this.props.desc.actions.list(request))
                 .then((res) => {
                     const normalized = props.desc.normalize(res.data)
                     const pagination = res.pagination
@@ -379,6 +403,11 @@ export class ListView extends React.Component {
                         loading: false,
                         results,
                         pagination,
+                    }
+                    // Clear selection if results changed
+                    const someSelected = Object.keys(this.state.selection).length > 0
+                    if (someSelected && results.some((item, index) => !isEqual(item, this.state.results[index]))) {
+                        state.selection = {}
                     }
                     props.dispatch(cache.setListView({ key: getCacheKey(props), state }))
                     props.dispatch(setFilters(filters))
@@ -392,6 +421,14 @@ export class ListView extends React.Component {
         } else {
             props.dispatch(errorMessage(this.props.intl.formatMessage(permMessages.viewNotPermitted)))
         }
+    }
+
+    /**
+    * Discard the cache and reload the list view
+    */
+    reload() {
+        this.props.dispatch(cache.clearListView())
+        this.list()
     }
 
     render() {
@@ -451,6 +488,16 @@ export class ListView extends React.Component {
                         </ul>
                     </div>
                 </Header>
+                <BottomBar
+                    open={this.state.overlayVisible}
+                    onClose={this.state.overlayCancel}
+                    title={this.state.overlayTitle}
+                    >
+                    {this.state.overlayContent && React.createElement(this.state.overlayContent, {
+                        onCancel: this.state.overlayCancel,
+                        onProceed: this.state.overlayProceed,
+                    })}
+                </BottomBar>
                 {desc.search || desc.filters ?
                     <aside id="sidebar" role="group">
                         <header>
@@ -570,4 +617,4 @@ function mapStateToProps(state) {
     }
 }
 
-export default connect(mapStateToProps)(withRouter(injectIntl(withTransitions(withPropsWatch(ListView)))))
+export default connect(mapStateToProps)(withRouter(injectIntl(withPropsWatch(ListView))))

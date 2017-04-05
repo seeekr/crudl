@@ -16,6 +16,9 @@ class App extends React.Component {
     static propTypes = {
         admin: adminShape,
         loggedIn: React.PropTypes.bool.isRequired,
+        navigationVisible: React.PropTypes.bool.isRequired,
+        filtersVisible: React.PropTypes.bool.isRequired,
+        bottomBarVisible: React.PropTypes.bool.isRequired,
     };
 
     constructor() {
@@ -62,11 +65,13 @@ class App extends React.Component {
     }
 
     updateAppClassList() {
+        const { navigationVisible, filtersVisible, bottomBarVisible } = this.props
         const appClassList = document.getElementById('app').classList
         const isNavigation = document.getElementById('navigation')
         const isFilters = document.getElementById('sidebar')
-        isNavigation && this.props.navigationVisible ? appClassList.add('navigation-open') : appClassList.remove('navigation-open')
-        isFilters && this.props.filtersVisible ? appClassList.add('app-aside-open') : appClassList.remove('app-aside-open')
+        isNavigation && navigationVisible ? appClassList.add('navigation-open') : appClassList.remove('navigation-open')
+        isFilters && filtersVisible ? appClassList.add('app-aside-open') : appClassList.remove('app-aside-open')
+        bottomBarVisible ? appClassList.add('app-bottombar-open') : appClassList.remove('app-bottombar-open')
     }
 
     handleLogout() {
@@ -107,6 +112,7 @@ function mapStateToProps(state) {
         loggedIn: state.core.auth.loggedIn,
         navigationVisible: state.frontend.navigation.visible,
         filtersVisible: state.frontend.filters.visible,
+        bottomBarVisible: state.frontend.bottomBar.visible,
     }
 }
 

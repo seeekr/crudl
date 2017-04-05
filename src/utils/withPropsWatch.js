@@ -42,8 +42,8 @@ function withPropsWatch(Component) {
                 initialValue: undefined,
                 // Invoke check immediately?
                 checkNow: false,
-                // used to decide wheter the prop value has changed
-                hasChanged: (nextValue, lastValue) => !isEqual(nextValue, lastValue),
+                // used to decide when to invoke the callback
+                watchCondition: (nextValue, lastValue) => !isEqual(nextValue, lastValue),
             }, options)
 
             // Chain callbacks if there are some already
@@ -61,14 +61,18 @@ function withPropsWatch(Component) {
         }
 
         unwatch(propPath) {
-            delete this.watchedProps[propPath]
+            if (propPath) {
+                delete this.watchedProps[propPath]
+            } else {
+                this.watchedProps = {}
+            }
         }
 
         checkWatchedProp(props, propPath) {
             const { lastValue, callback, options } = this.watchedProps[propPath]
             const nextValue = get(props, propPath, undefined)
 
-            if (options.hasChanged(nextValue, lastValue)) {
+            if (options.watchCondition(nextValue, lastValue)) {
                 this.watchedProps[propPath].lastValue = nextValue
                 callback(props)
             }
@@ -76,12 +80,18 @@ function withPropsWatch(Component) {
 
         checkAllWatchedProps(props) {
             Object.getOwnPropertyNames(this.watchedProps).forEach(
-                propPath => this.checkWatchedProp(props, propPath)
+                propPath => this.checkWatchedProp(props, propPath),
             )
         }
 
         render() {
-            return <Component {...this.props} watch={this.watch} unwatch={this.unwatch} />
+            return (
+                <Component
+                    {...this.props}
+                    watch={this.watch}
+                    unwatch={this.unwatch}
+                    />
+            )
         }
     }
 }

@@ -13,17 +13,13 @@ const messages = defineMessages({
         id: 'addView.button.saveAndAddAnother',
         defaultMessage: 'Save and add another',
     },
-    saveAndBack: {
-        id: 'addView.button.saveAndBack',
-        defaultMessage: 'Save and back',
-    },
     cancel: {
         id: 'addView.button.cancel',
         defaultMessage: 'Cancel',
     },
     addSuccess: {
         id: 'addView.add.success',
-        defaultMessage: 'Succesfully created {title}.',
+        defaultMessage: '{title} was succesfully created.',
     },
     validationError: {
         id: 'addView.add.failed',

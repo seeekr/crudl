@@ -123,7 +123,7 @@ const sassOptions = {
 const autoprefixerOptions = {
     browsers: ['last 2 versions'],
 };
-const sassSrcFiles = './static/crudl-ui/scss/crudl-ui.scss';
+const sassSrcFiles = './static/crudl-ui/scss/**/*.scss';
 
 // Watch sass files ...
 function sassWatch() {

@@ -30,10 +30,6 @@ export const initialState = {
             callInProgress: false,
         },
     },
-    transitions: {
-        storedData: {}, // { view1: data1, view2: data2, ... }
-        trace: [],      // [<T1>, <T2>], where T = { from, to, params, returnValue }
-    },
 }
 
 /**
@@ -71,22 +67,6 @@ function coreReducer(state = initialState, action) {
             return t('permissions', action.permissions)
         case types.VIEW_CALLS_SET_STATE:
             return t('viewCalls.state', action.state)
-        case types.TRANSITIONS_GO:
-            if (action.transition.storedData) {
-                return transit(
-                    t('transitions.trace', [...state.transitions.trace, action.transition]),
-                    `transitions.storedData.${action.transition.from}`,
-                    action.transition.storedData,
-                )
-            }
-            return t('transitions.trace', [...state.transitions.trace, action.transition])
-        case LOCATION_CHANGE:
-            return t('transitions', initialState.transitions)
-            // // Clear the viewCalls state when a call is aborted
-            // if (get(action.state, 'callInProgress')) {
-            //     return t('viewCalls.state', initialState.viewCalls.state)
-            // }
-            // return state
         default:
             return state
     }

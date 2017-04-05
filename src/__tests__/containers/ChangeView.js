@@ -105,7 +105,6 @@ const props = {
     breadcrumbs: [],
     viewCalls: {
         hasReturned: false,
-        fromRelation: false,
         enterView: jest.fn,
         enterRelation: jest.fn,
         leaveView: jest.fn,

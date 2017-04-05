@@ -1,4 +1,4 @@
-import { Joi, stringProperty, stringOrReactProperty, booleanProperty } from './base'
+import { Joi, stringProperty, stringOrReactProperty, booleanProperty, defineActions, definePermissions } from './base'
 
 import onChange from './onChange'
 
@@ -25,16 +25,37 @@ const field = Joi.object().unknown(true).keys({
     before: stringOrReactProperty(''),
     after: stringOrReactProperty(''),
     // Relations optional
-    add: Joi.object().keys({
-        viewId: stringProperty().required(),
-        viewParams: Joi.func().default(() => ({})),
-        returnValue: Joi.func().default(() => undefined),
-    }),
-    edit: Joi.object().keys({
-        viewId: stringProperty().required(),
-        viewParams: Joi.func().default(() => ({})),
-        returnValue: Joi.func().default(() => undefined),
-    }),
+    add: Joi.formView().provideId().keys({
+        // Required
+        title: Joi.string().required(),
+        actions: defineActions(['add']).required(),
+
+        // Either fields or fieldsets but not both
+        fields: Joi.array().items(Joi.lazy(() => require('./field').default)),
+        fieldsets: Joi.array().items(Joi.lazy(() => require('./fieldset').default)),
+
+        // Optional
+        validate: Joi.func().default(() => undefined),
+        denormalize: Joi.func().default(data => data),
+        permissions: definePermissions('add'),
+        id: Joi.string(),
+    }).xor('fields', 'fieldsets'),
+    edit: Joi.formView().provideId().keys({
+        // Required
+        title: Joi.string().required(),
+        actions: defineActions(['get', 'save']).required(),
+
+        // Either fields or fieldsets but not both
+        fields: Joi.array().items(Joi.lazy(() => require('./field').default)),
+        fieldsets: Joi.array().items(Joi.lazy(() => require('./fieldset').default)),
+
+        // Optional
+        validate: Joi.func().default(() => undefined),
+        normalize: Joi.func().default(data => data),
+        denormalize: Joi.func().default(data => data),
+        permissions: definePermissions('get', 'save'),
+        id: Joi.string(),
+    }).xor('fields', 'fieldsets'),
     // Async part of the descriptor: a function returning an object or a promise
     lazy: Joi.func().default(() => ({})),
 })

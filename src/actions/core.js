@@ -7,17 +7,12 @@ export const types = {
     ACTIVE_VIEW_SET: 'core.activeView.set',
     ACTIVE_VIEW_CLEAR: 'core.activeView.clear',
     SET_PERMISSIONS: 'core.permissions.setPermissions',
-    VIEW_CALLS_SET_STATE: 'core.viewCalls.setState',
-    TRANSITIONS_GO: 'core.transitions.go',
-    TRANSITIONS_GO_BACK: 'core.transitions.goBack',
 }
 
 export const auth = {}
 export const cache = {}
 export const activeView = {}
 export const permissions = {}
-export const viewCalls = {}
-export const transitions = {}
 
 // Auth
 auth.login = function login(authObject) {
@@ -66,21 +61,5 @@ permissions.setPermissions = function setPermissions(perms) {
     return {
         type: types.SET_PERMISSIONS,
         permissions: perms,
-    }
-}
-
-// View calls
-viewCalls.setState = function setState(state) {
-    return {
-        type: types.VIEW_CALLS_SET_STATE,
-        state,
-    }
-}
-
-// Transitions
-transitions.go = function go(transition) {
-    return {
-        type: types.TRANSITIONS_GO,
-        transition,
     }
 }
