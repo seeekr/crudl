@@ -3,6 +3,7 @@ import React from 'react'
 import { autofill } from 'redux-form'
 import { connect } from 'react-redux'
 import classNames from 'classnames'
+import { autobind } from 'core-decorators'
 
 import asFunc from '../utils/asFunc'
 import asArray from '../utils/asArray'
@@ -10,6 +11,7 @@ import { fieldShape, formFieldsShape, baseFieldPropTypes } from '../PropTypes'
 import formFields from '../selectors/formFields'
 import fieldComponents from '../fields'
 import withPropsWatch from '../utils/withPropsWatch'
+import { fieldReloaded } from '../actions/frontend'
 
 function fieldClassName(Component) {
     let name
@@ -21,6 +23,7 @@ function fieldClassName(Component) {
     return `type-${name}`
 }
 
+@autobind
 class FieldLoader extends React.Component {
 
     static propTypes = {
@@ -34,6 +37,8 @@ class FieldLoader extends React.Component {
         formName: React.PropTypes.string,
         fields: formFieldsShape,
         watch: React.PropTypes.func.isRequired,
+        unwatch: React.PropTypes.func.isRequired,
+        reload: React.PropTypes.bool,
     };
 
     static defaultProps = {
@@ -48,7 +53,14 @@ class FieldLoader extends React.Component {
     state = {};
 
     componentWillMount() {
-        const { desc, watch, onAdd, onEdit } = this.props
+        this.init()
+    }
+
+    init() {
+        const { desc, watch, unwatch, onAdd, onEdit, dispatch } = this.props
+
+        // Unwatch all props (relevant when reloading)
+        unwatch()
 
         // Transform onAdd and onEdit by partial application of the desc argument
         this.onAdd = onAdd && (() => onAdd(desc))
@@ -76,6 +88,13 @@ class FieldLoader extends React.Component {
         // Extend the descriptor asynchronously
         const descPromise = Promise.resolve(this.props.desc.lazy())
         descPromise.then(asyncDesc => this.setState(asyncDesc))
+
+        watch('reload', (props) => {
+            if (props.reload) {
+                dispatch(fieldReloaded(desc.id))
+                this.init()
+            }
+        })
     }
 
     handleOnChange(onChange, props) {
@@ -153,6 +172,7 @@ class FieldLoader extends React.Component {
 function mapStateToProps(state, ownProps) {
     return {
         fields: formFields(ownProps.formName)(state),
+        reload: state.frontend.reload[ownProps.desc.id],
     }
 }
 

@@ -23,6 +23,7 @@ const initialState = {
     bottomBar: {
         visible: false,
     },
+    reload: {},
 }
 
 /**
@@ -68,6 +69,10 @@ export default function (state = initialState, action) {
             return t('bottomBar.visible', false)
         case types.TOGGLE_BOTTOMBAR:
             return t('bottomBar.visible', !state.bottomBar.visible)
+        case types.RELOAD_FIELD:
+            return t('reload', Object.assign({}, state.reload, { [action.fieldId]: true }))
+        case types.FIELD_RELOADED:
+            return t('reload', Object.assign({}, state.reload, { [action.fieldId]: false }))
         default:
             return state
     }

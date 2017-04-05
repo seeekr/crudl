@@ -14,6 +14,8 @@ export const types = {
     SHOW_BOTTOMBAR: 'frontend.showBottomBar',
     HIDE_BOTTOMBAR: 'frontend.hideBottomBar',
     TOGGLE_BOTTOMBAR: 'frontend.toggleBottomBar',
+    RELOAD_FIELD: 'frontend.reloadField',
+    FIELD_RELOADED: 'frontend.fieldReloaded',
 }
 
 export function showNavigation() {
@@ -99,5 +101,19 @@ export function hideBottomBar() {
 export function toggleBottomBar() {
     return {
         type: types.TOGGLE_BOTTOMBAR,
+    }
+}
+
+export function reloadField(fieldId) {
+    return {
+        type: types.RELOAD_FIELD,
+        fieldId,
+    }
+}
+
+export function fieldReloaded(fieldId) {
+    return {
+        type: types.FIELD_RELOADED,
+        fieldId,
     }
 }
