@@ -27,24 +27,14 @@ const AddViewForm = props => (
         <div id="viewport-footer">
             {hasPermission(props.desc.id, 'add') &&
                 <ul role="group" className="buttons">
-                    {props.fromRelation &&
-                        <li><button
-                            type="button"
-                            className="action-cancel"
-                            tabIndex="0"
-                            aria-label={props.labels.cancel}
-                            onClick={props.onCancel}
-                            >{props.labels.cancel}</button>
-                        </li>
-                    }
                     <li className="opposite"><button
                         type="button"
                         className="action-save"
                         tabIndex="0"
-                        aria-label={props.fromRelation ? props.labels.saveAndBack : props.labels.save}
+                        aria-label={props.labels.save}
                         aria-disabled="false"
                         onClick={props.handleSubmit(props.onSave)}
-                        >{props.fromRelation ? props.labels.saveAndBack : props.labels.save}</button>
+                        >{props.labels.save}</button>
                     </li>
                     <li className="opposite"><button
                         type="button"
@@ -76,14 +66,12 @@ AddViewForm.propTypes = {
     onSaveAndContinue: React.PropTypes.func.isRequired,
     onSaveAndAddAnother: React.PropTypes.func.isRequired,
     onCancel: React.PropTypes.func.isRequired,
-    fromRelation: React.PropTypes.bool,
     form: React.PropTypes.string.isRequired,
     anyTouched: React.PropTypes.bool.isRequired,
     handleSubmit: React.PropTypes.func.isRequired,
     error: React.PropTypes.node,
     labels: React.PropTypes.shape({
         save: React.PropTypes.string.isRequired,
-        saveAndBack: React.PropTypes.string.isRequired,
         saveAndContinue: React.PropTypes.string.isRequired,
         saveAndAddAnother: React.PropTypes.string.isRequired,
         cancel: React.PropTypes.string.isRequired,

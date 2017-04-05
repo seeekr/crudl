@@ -15,7 +15,6 @@ import permMessages from '../messages/permissions'
 import blocksUI from '../decorators/blocksUI'
 import denormalize from '../utils/denormalize'
 import normalize from '../utils/normalize'
-import withPropsWatch from '../utils/withPropsWatch'
 
 @autobind
 class EditRelation extends React.Component {
@@ -25,7 +24,7 @@ class EditRelation extends React.Component {
         intl: intlShape.isRequired,
         dispatch: React.PropTypes.func.isRequired,
         onSave: React.PropTypes.func.isRequired,
-        watch: React.PropTypes.func.isRequired,
+        onCancel: React.PropTypes.func.isRequired,
     }
 
     state = {
@@ -34,16 +33,13 @@ class EditRelation extends React.Component {
     }
 
     componentWillMount() {
-        this.props.watch('desc', (props) => {
-            this.createForm(props)
-            this.doGet(props)
-        })
+        this.createForm()
+        this.doGet()
     }
 
-    createForm(newProps) {
-        const props = newProps || this.props
+    createForm() {
         // Create the Form Container
-        const { desc, onCancel } = props
+        const { desc, onCancel } = this.props
         const formSpec = {
             form: desc.id,
             fields: getFieldNames(desc),
@@ -118,4 +114,4 @@ class EditRelation extends React.Component {
     }
 }
 
-export default connect()(injectIntl(withPropsWatch(EditRelation)))
+export default connect()(injectIntl(EditRelation))

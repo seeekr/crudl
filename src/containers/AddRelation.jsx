@@ -26,10 +26,6 @@ class AddRelation extends React.Component {
         onCancel: React.PropTypes.func.isRequired,
     }
 
-    state = {
-        a: 1,
-    }
-
     componentWillMount() {
         // Create the Form Container
         const { desc, onCancel } = this.props

@@ -2,7 +2,6 @@ import React from 'react'
 
 import FieldSet from './FieldSet'
 import { createFieldSetId } from '../utils/frontend'
-import { addViewShape } from '../PropTypes'
 import { hasPermission } from '../Crudl'
 
 const AddRelationForm = ({ anyTouched, desc, form, error, handleSubmit, onSave, onCancel, labels }) => (

@@ -69,14 +69,6 @@ export const authShape = React.PropTypes.shape({
     info: React.PropTypes.object,
 })
 
-export const transitionStateShape = React.PropTypes.shape({
-    hasReturned: React.PropTypes.bool.isRequired,
-    returnValue: React.PropTypes.any,
-    storedData: React.PropTypes.any,
-    params: React.PropTypes.object.isRequired,
-})
-
-
 export const baseFieldPropTypes = {
     // From redux
     dispatch: React.PropTypes.func,

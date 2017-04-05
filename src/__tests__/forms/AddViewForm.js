@@ -31,7 +31,6 @@ const props = {
     },
     labels: {
         save: 'Save',
-        saveAndBack: 'Save and back',
         saveAndContinue: 'Save and Continue',
         saveAndAddAnother: 'Save and add another',
     },

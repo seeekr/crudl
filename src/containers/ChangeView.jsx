@@ -28,8 +28,6 @@ import messages from '../messages/changeView'
 import permMessages from '../messages/permissions'
 
 import withPropsWatch from '../utils/withPropsWatch'
-import getFieldDesc from '../utils/getFieldDesc'
-import withTransitions from '../utils/withTransitions'
 import normalize from '../utils/normalize'
 import denormalize from '../utils/denormalize'
 import getValidator from '../utils/getValidator'
@@ -57,7 +55,6 @@ export class ChangeView extends React.Component {
         route: React.PropTypes.object.isRequired,
         forms: React.PropTypes.object.isRequired,
         breadcrumbs: breadcrumbsShape.isRequired,
-        transitionLeave: React.PropTypes.func.isRequired,
     }
 
     constructor() {
@@ -88,7 +85,7 @@ export class ChangeView extends React.Component {
     createForm(newProps) {
         const props = newProps || this.props
         // Create the Form Container
-        const { desc, dispatch, intl, transitionState } = props
+        const { desc, dispatch, intl } = props
         const formSpec = {
             form: desc.id,
             validate: getValidator(desc),
@@ -102,10 +99,8 @@ export class ChangeView extends React.Component {
             onSubmitFail: () => { dispatch(errorMessage(intl.formatMessage(messages.validationError))) },
             onCancel: this.handleCancel,
             onDelete: desc.actions.delete ? this.handleDelete : undefined,
-            fromRelation: transitionState.params.fromRelation,
             labels: {
                 save: intl.formatMessage(messages.save),
-                saveAndBack: intl.formatMessage(messages.saveAndBack),
                 saveAndContinue: intl.formatMessage(messages.saveAndContinue),
                 delete: intl.formatMessage(messages.delete),
                 cancel: intl.formatMessage(messages.cancel),
@@ -160,24 +155,14 @@ export class ChangeView extends React.Component {
 
     @blocksUI
     doGet(props) {
-        const { desc, intl, dispatch, transitionState } = props
+        const { desc, intl, dispatch } = props
         if (hasPermission(desc.id, 'get')) {
             this.setState({ ready: false })
             return Promise.resolve(desc.actions.get(req()))
-                .then((response) => {
-                    const values = normalize(desc, response.data)
-                    this.setState({ values, ready: true })
-
-                    // Did we return from a relation view?
-                    const { hasReturned, storedData, returnValue } = transitionState
-                    if (hasReturned) {
-                        const { fieldName, relation } = storedData
-                        const fieldDesc = getFieldDesc(desc, fieldName)
-                        if (returnValue && fieldDesc[relation].returnValue) {
-                            dispatch(change(desc.id, fieldName, fieldDesc[relation].returnValue(returnValue)))
-                        }
-                    }
-                })
+            .then((response) => {
+                const values = normalize(desc, response.data)
+                this.setState({ values, ready: true })
+            })
         }
         dispatch(errorMessage(intl.formatMessage(permMessages.viewNotPermitted)))
         this.setState({ ready: true, values: {} })
@@ -186,7 +171,7 @@ export class ChangeView extends React.Component {
 
     @blocksUI
     handleSave(data, stay = false) {
-        const { dispatch, desc, intl } = this.props
+        const { dispatch, desc, intl, router } = this.props
         let preparedData
 
         if (hasPermission(desc.id, 'save')) {
@@ -202,7 +187,7 @@ export class ChangeView extends React.Component {
                 dispatch(cache.clearListView())
                 dispatch(successMessage(intl.formatMessage(messages.saveSuccess, { item: desc.title })))
                 if (!stay) {
-                    this.props.transitionLeave(res.data)
+                    router.push(resolvePath(getSiblingDesc(desc.id, 'listView').path))
                 } else {
                     this.setState({ values })
                 }
@@ -218,7 +203,8 @@ export class ChangeView extends React.Component {
     }
 
     handleCancel() {
-        this.props.transitionLeave()
+        const { router, desc } = this.props
+        router.push(resolvePath(getSiblingDesc(desc.id, 'listView').path))
     }
 
     handleDelete(data) {
@@ -385,4 +371,4 @@ function mapStateToProps(state) {
     }
 }
 
-export default connect(mapStateToProps)(withRouter(withTransitions(injectIntl(withPropsWatch(ChangeView)))))
+export default connect(mapStateToProps)(withRouter(injectIntl(withPropsWatch(ChangeView))))

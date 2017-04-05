@@ -32,7 +32,6 @@ import Login from './containers/Login'
 import Logout from './containers/Logout'
 import Dashboard from './containers/Dashboard'
 import PageNotFound from './containers/PageNotFound'
-import createViewLoader from './containers/ViewLoader'
 import SimpleView from './containers/SimpleView'
 
 // Connectors
@@ -87,11 +86,11 @@ let admin = {}
 let store = null
 let viewDescIndex
 const contextData = {}
-let pathParams = {}
 export const connectors = {}
 export const options = {}
 export const auth = {}
 export const context = createContext(contextData)
+export const path = {}
 
 
 export { baseField }
@@ -165,9 +164,8 @@ function exposeStateInfo({ getState }) {
 }
 
 function exposePathParams(nextState) {
-    pathParams = nextState.params
+    Object.assign(path, nextState.params)
 }
-
 
 function crudlStore(reducer) {
     const storage = compose(
@@ -295,17 +293,6 @@ export function getParentDesc(viewId) {
     return getViewIndexEntry(viewId).parentView
 }
 
-export function getViewParams() {
-    const state = store.getState()
-    const trace = state.core.transitions.trace
-    const traceParams = get(trace, trace.length - 1, {}).params
-    return traceParams || pathParams
-}
-
-export function getViewParam(paramName, defaultValue) {
-    return get(getViewParams(), paramName, defaultValue)
-}
-
 /**
 * Checks permission for a given action on the given view
 */
@@ -431,7 +418,8 @@ function crudlRouter() {
         root.childRoutes.push({
             path: listView.path,
             onEnter: authenticate(setActiveView(listView.id)),
-            component: wrapComponent(createViewLoader(listView.id), {
+            component: wrapComponent(ListView, {
+                desc: listView,
                 breadcrumbs: [appCrumb, listViewCrumb],
             }),
         })
@@ -441,7 +429,8 @@ function crudlRouter() {
             root.childRoutes.push({
                 path: addView.path,
                 onEnter: authenticate(setActiveView(addView.id)),
-                component: wrapComponent(createViewLoader(addView.id), {
+                component: wrapComponent(AddView, {
+                    desc: addView,
                     breadcrumbs: [appCrumb, listViewCrumb, addViewCrumb],
                 }),
             })
@@ -451,7 +440,8 @@ function crudlRouter() {
         root.childRoutes.push({
             path: changeView.path,
             onEnter: authenticate(setActiveView(changeView.id)),
-            component: wrapComponent(createViewLoader(changeView.id), {
+            component: wrapComponent(ChangeView, {
+                desc: changeView,
                 breadcrumbs: [appCrumb, listViewCrumb, changeViewCrumb],
             }),
         })

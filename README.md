@@ -580,7 +580,6 @@ admin.messages = {
     'changeView.button.delete': 'Löschen',
     'changeView.button.saveAndContinue': 'Speichern und weiter bearbeiten',
     'changeView.button.save': 'Speichern',
-    'changeView.button.saveAndBack': 'Speichern und zurück',
     'modal.labelCancel.default': 'Abbrechen',
     'login.button': 'Anmelden',
     'logout.affirmation': 'Tchüß!',
@@ -605,10 +604,6 @@ This ist the complete list of all message IDs:
   {
     "id": "addView.button.saveAndAddAnother",
     "defaultMessage": "Save and add another"
-  },
-  {
-    "id": "addView.button.saveAndBack",
-    "defaultMessage": "Save and back"
   },
   {
     "id": "addView.add.success",
@@ -637,10 +632,6 @@ This ist the complete list of all message IDs:
   {
     "id": "changeView.button.saveAndContinue",
     "defaultMessage": "Save and continue editing"
-  },
-  {
-    "id": "changeView.button.saveAndBack",
-    "defaultMessage": "Save and back"
   },
   {
     "id": "changeView.modal.unsavedChanges.message",

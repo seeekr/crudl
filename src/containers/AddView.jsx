@@ -6,28 +6,48 @@ import { injectIntl, intlShape } from 'react-intl'
 import { routerShape } from 'react-router/lib/PropTypes'
 import { autobind } from 'core-decorators'
 
+// Containers
+import AddRelation from './AddRelation'
+import EditRelation from './EditRelation'
+
+// Forms
+import AddViewForm from '../forms/AddViewForm'
+
+// Components
+import BottomBar from '../components/BottomBar'
+import Header from '../components/Header'
+
+// Actions
+import { successMessage, errorMessage } from '../actions/messages'
+import { cache } from '../actions/core'
+import { showModalConfirm, showBottomBar, hideBottomBar, reloadField } from '../actions/frontend'
+
+// Messages
+import messages from '../messages/addView'
+import permMessages from '../messages/permissions'
+
+// Utils
+import denormalize from '../utils/denormalize'
 import getFieldNames from '../utils/getFieldNames'
 import getValidator from '../utils/getValidator'
 import getInitialValues from '../utils/getInitialValues'
 import hasUnsavedChanges from '../utils/hasUnsavedChanges'
-import { resolvePath, req, hasPermission, getSiblingDesc } from '../Crudl'
-import Header from '../components/Header'
-import AddViewForm from '../forms/AddViewForm'
-import { successMessage, errorMessage } from '../actions/messages'
-import { cache } from '../actions/core'
-import { showModalConfirm } from '../actions/frontend'
-import { addViewShape, breadcrumbsShape, transitionStateShape } from '../PropTypes'
-import messages from '../messages/addView'
-import permMessages from '../messages/permissions'
-import getFieldDesc from '../utils/getFieldDesc'
-import withTransitions from '../utils/withTransitions'
+
+// Misc
+import { resolvePath, req, hasPermission, getSiblingDesc, setViewIndexEntry } from '../Crudl'
+import { addViewShape, breadcrumbsShape } from '../PropTypes'
 import blocksUI from '../decorators/blocksUI'
-import denormalize from '../utils/denormalize'
 
 const BACK_TO_LIST_VIEW = 0
 const ADD_ANOTHER = 1
 const CONTINUE_EDITING = 2
-const BACK_TO_RELATION = 3
+
+const overlayInitialState = {
+    overlayVisible: false,
+    overlayContent: undefined,
+    overlayCancel: () => undefined,
+    overlayTitle: undefined,
+}
 
 @autobind
 class AddView extends React.Component {
@@ -40,9 +60,6 @@ class AddView extends React.Component {
         route: React.PropTypes.object.isRequired,
         forms: React.PropTypes.object.isRequired,
         breadcrumbs: breadcrumbsShape.isRequired,
-        transitionState: transitionStateShape.isRequired,
-        transitionEnter: React.PropTypes.func.isRequired,
-        transitionLeave: React.PropTypes.func.isRequired,
     }
 
     constructor() {
@@ -50,9 +67,13 @@ class AddView extends React.Component {
         this.forceLeave = false
     }
 
+    state = {
+        ...overlayInitialState,
+    }
+
     componentWillMount() {
         // Create the Form Container
-        const { desc, dispatch, intl, transitionState } = this.props
+        const { desc, dispatch, intl } = this.props
         const formSpec = {
             form: desc.id,
             fields: getFieldNames(desc),
@@ -63,37 +84,25 @@ class AddView extends React.Component {
         }
         const formProps = {
             desc: this.props.desc,
-            onSave: data => this.handleSave(data, transitionState.inProgress ? BACK_TO_RELATION : BACK_TO_LIST_VIEW),
+            onSave: data => this.handleSave(data, BACK_TO_LIST_VIEW),
             onSaveAndContinue: data => this.handleSave(data, CONTINUE_EDITING),
             onSaveAndAddAnother: data => this.handleSave(data, ADD_ANOTHER),
             onCancel: this.handleCancel,
             onSubmitFail: () => dispatch(errorMessage(intl.formatMessage(messages.validationError))),
             labels: {
                 save: intl.formatMessage(messages.save),
-                saveAndBack: intl.formatMessage(messages.saveAndBack),
                 saveAndContinue: intl.formatMessage(messages.saveAndContinue),
                 saveAndAddAnother: intl.formatMessage(messages.saveAndAddAnother),
                 cancel: intl.formatMessage(messages.cancel),
             },
-            onAdd: this.enterAddRelation,
-            onEdit: this.enterEditRelation,
-            fromRelation: transitionState.inProgress,
+            onAdd: this.openAddRelation,
+            onEdit: this.openEditRelation,
         }
         this.addViewForm = React.createElement(reduxForm(formSpec)(AddViewForm), formProps)
     }
 
     componentDidMount() {
         this.props.router.setRouteLeaveHook(this.props.route, this.routerWillLeave)
-        // Did we returne from a relation view?
-        const { dispatch, desc, transitionState } = this.props
-        const { hasReturned, storedData, returnValue } = transitionState
-        if (hasReturned) {
-            const { fieldName, relation } = storedData
-            const fieldDesc = getFieldDesc(desc, fieldName)
-            if (returnValue && fieldDesc[relation].returnValue) {
-                dispatch(change(desc.id, fieldName, fieldDesc[relation].returnValue(returnValue)))
-            }
-        }
     }
 
     routerWillLeave(nextState) {
@@ -109,6 +118,60 @@ class AddView extends React.Component {
             return false
         }
         return true
+    }
+
+    closeOverlay() {
+        this.props.dispatch(hideBottomBar())
+        this.setState(overlayInitialState)
+    }
+
+    /**
+    * Returns a promise which resolves if the user decides to proceed and rejects otherwise.
+    * The overlay will be closed afterwards.
+    */
+    showOverlay(createComponent, overlayTitle) {
+        this.props.dispatch(showBottomBar())
+        return new Promise((resolve, reject) => {
+            this.setState({
+                overlayContent: createComponent(resolve, reject),
+                overlayTitle,
+                overlayVisible: true,
+                overlayCancel: () => reject(),
+            })
+        })
+        .finally(this.closeOverlay)
+    }
+
+    openRelation(viewDesc, Component) {
+        // Add the relation descriptor to the index
+        setViewIndexEntry(viewDesc)
+        // Show an overlay
+        return this.showOverlay((resolve, reject) => (
+            <Component
+                desc={viewDesc}
+                onSave={resolve}
+                onCancel={reject}
+                />
+        ))
+    }
+
+    openAddRelation(fieldDesc) {
+        this.openRelation(fieldDesc.add, AddRelation)
+        .then((result) => {
+            if (!result) {
+                console.warn(`The add relation of ${fieldDesc.add} returned ${result}. A field value was expected`);
+                return
+            }
+            this.props.dispatch(change(this.props.desc.id, fieldDesc.name, result))
+            this.props.dispatch(reloadField(fieldDesc.id))
+        })
+        .catch(() => undefined)
+    }
+
+    openEditRelation(fieldDesc) {
+        this.openRelation(fieldDesc.edit, EditRelation)
+        .then(() => this.props.dispatch(reloadField(fieldDesc.id)))
+        .catch(() => undefined)
     }
 
     @blocksUI
@@ -138,9 +201,6 @@ class AddView extends React.Component {
                     case CONTINUE_EDITING:
                         router.push(resolvePath(changeViewPath, result))
                         break
-                    case BACK_TO_RELATION:
-                        this.props.transitionLeave(response.data)
-                        break
                     case ADD_ANOTHER:
                         dispatch(reset(desc.id))
                         break
@@ -154,7 +214,8 @@ class AddView extends React.Component {
     }
 
     handleCancel() {
-        this.props.transitionLeave()
+        const { router, desc } = this.props
+        router.push(resolvePath(getSiblingDesc(desc.id, 'listView').path))
     }
 
     doLeave(nextState) {
@@ -162,20 +223,6 @@ class AddView extends React.Component {
             this.forceLeave = true
             this.props.router.push(nextState)
         }
-    }
-
-    enterAddRelation(fieldDesc) {
-        this.props.transitionEnter(fieldDesc.add.viewId,
-            { fromRelation: true, ...fieldDesc.edit.viewParams() }, // params
-            { fieldName: fieldDesc.name, relation: 'add' }, // storedData
-        )
-    }
-
-    enterEditRelation(fieldDesc) {
-        this.props.transitionEnter(fieldDesc.edit.viewId,
-            { fromRelation: true, ...fieldDesc.edit.viewParams() }, // params
-            { fieldName: fieldDesc.name, relation: 'edit' }, // storedData
-        )
     }
 
     render() {
@@ -197,6 +244,13 @@ class AddView extends React.Component {
                         intl.formatMessage(permMessages.addNotPermitted)
                     }
                 </div>
+                <BottomBar
+                    open={this.state.overlayVisible}
+                    onClose={this.state.overlayCancel}
+                    title={this.state.overlayTitle}
+                    >
+                    {this.state.overlayContent}
+                </BottomBar>
             </main>
         )
     }
@@ -208,4 +262,4 @@ function mapStateToProps(state) {
     }
 }
 
-export default connect(mapStateToProps)(withRouter(injectIntl(withTransitions(AddView))))
+export default connect(mapStateToProps)(withRouter(injectIntl(AddView)))
