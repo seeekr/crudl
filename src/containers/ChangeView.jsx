@@ -20,7 +20,7 @@ import TabPanel from '../components/TabPanel'
 import TabList from '../components/TabList'
 import BottomBar from '../components/BottomBar'
 
-import { showModalConfirm, showBottomBar, hideBottomBar } from '../actions/frontend'
+import { showModalConfirm, showBottomBar, hideBottomBar, reloadField } from '../actions/frontend'
 import { successMessage, errorMessage } from '../actions/messages'
 import { cache } from '../actions/core'
 
@@ -85,7 +85,8 @@ export class ChangeView extends React.Component {
         this.props.router.setRouteLeaveHook(this.props.route, this.routerWillLeave)
     }
 
-    createForm(props) {
+    createForm(newProps) {
+        const props = newProps || this.props
         // Create the Form Container
         const { desc, dispatch, intl, transitionState } = props
         const formSpec = {
@@ -109,8 +110,8 @@ export class ChangeView extends React.Component {
                 delete: intl.formatMessage(messages.delete),
                 cancel: intl.formatMessage(messages.cancel),
             },
-            onAdd: this.enterAddRelation,
-            onEdit: this.enterEditRelation,
+            onAdd: this.openAddRelation,
+            onEdit: this.openEditRelation,
         }
         this.changeViewForm = React.createElement(reduxForm(formSpec)(ChangeViewForm), formProps)
     }
@@ -247,49 +248,9 @@ export class ChangeView extends React.Component {
         return undefined
     }
 
-    openRelation(viewDesc, Component) {
-        // Add the relation descriptor to the index
-        setViewIndexEntry(viewDesc)
-        // Show an overlay
-        return this.showOverlay((resolve, reject) => (
-            <Component
-                desc={viewDesc}
-                onSave={resolve}
-                onCancel={reject}
-                />
-        ))
-        .catch(() => undefined)
-    }
-
-    enterAddRelation(fieldDesc) {
-        this.openRelation(fieldDesc.add, AddRelation)
-        .then((result) => {
-            if (!result) {
-                console.warn(`The add relation of ${fieldDesc.add} returned ${result}. A field value was expected`);
-                return
-            }
-            this.props.dispatch(change(this.props.desc.id, fieldDesc.name, result))
-        })
-    }
-
-    enterEditRelation(fieldDesc) {
-        this.openRelation(fieldDesc.edit, EditRelation)
-    }
-
-    switchTab(props) {
-        const tab = props.location.query.tab
-        if (tab) {
-            this.setState({ selectedTab: parseInt(tab, 10) })
-        } else {
-            this.setState({ selectedTab: 0 })
-        }
-    }
-
-    handleSelectTab(index) {
-        this.props.router.push({
-            pathname: this.props.location.pathname,
-            query: { tab: index || undefined },
-        })
+    closeOverlay() {
+        this.props.dispatch(hideBottomBar())
+        this.setState(overlayInitialState)
     }
 
     /**
@@ -309,9 +270,52 @@ export class ChangeView extends React.Component {
         .finally(this.closeOverlay)
     }
 
-    closeOverlay() {
-        this.props.dispatch(hideBottomBar())
-        this.setState(overlayInitialState)
+    openRelation(viewDesc, Component) {
+        // Add the relation descriptor to the index
+        setViewIndexEntry(viewDesc)
+        // Show an overlay
+        return this.showOverlay((resolve, reject) => (
+            <Component
+                desc={viewDesc}
+                onSave={resolve}
+                onCancel={reject}
+                />
+        ))
+    }
+
+    openAddRelation(fieldDesc) {
+        this.openRelation(fieldDesc.add, AddRelation)
+        .then((result) => {
+            if (!result) {
+                console.warn(`The add relation of ${fieldDesc.add} returned ${result}. A field value was expected`);
+                return
+            }
+            this.props.dispatch(change(this.props.desc.id, fieldDesc.name, result))
+            this.props.dispatch(reloadField(fieldDesc.id))
+        })
+        .catch(() => undefined)
+    }
+
+    openEditRelation(fieldDesc) {
+        this.openRelation(fieldDesc.edit, EditRelation)
+        .then(() => this.props.dispatch(reloadField(fieldDesc.id)))
+        .catch(() => undefined)
+    }
+
+    switchTab(props) {
+        const tab = props.location.query.tab
+        if (tab) {
+            this.setState({ selectedTab: parseInt(tab, 10) })
+        } else {
+            this.setState({ selectedTab: 0 })
+        }
+    }
+
+    handleSelectTab(index) {
+        this.props.router.push({
+            pathname: this.props.location.pathname,
+            query: { tab: index || undefined },
+        })
     }
 
     render() {
