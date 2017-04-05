@@ -68,7 +68,6 @@ const ChangeViewForm = props => (
 ChangeViewForm.propTypes = {
     desc: changeViewShape.isRequired,
     onDelete: React.PropTypes.func,
-    onCancel: React.PropTypes.func.isRequired,
     onSave: React.PropTypes.func.isRequired,
     onSaveAndContinue: React.PropTypes.func.isRequired,
     form: React.PropTypes.string.isRequired,
@@ -79,7 +78,6 @@ ChangeViewForm.propTypes = {
         save: React.PropTypes.string.isRequired,
         saveAndContinue: React.PropTypes.string.isRequired,
         delete: React.PropTypes.string.isRequired,
-        cancel: React.PropTypes.string.isRequired,
     }).isRequired,
     onAdd: React.PropTypes.func.isRequired,
     onEdit: React.PropTypes.func.isRequired,

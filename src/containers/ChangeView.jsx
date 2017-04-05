@@ -5,6 +5,7 @@ import { withRouter } from 'react-router'
 import { injectIntl, intlShape } from 'react-intl'
 import { routerShape, locationShape } from 'react-router/lib/PropTypes'
 import { autobind } from 'core-decorators'
+import get from 'lodash/get'
 
 import { req, resolvePath, hasPermission, getSiblingDesc, setViewIndexEntry } from '../Crudl'
 
@@ -97,13 +98,11 @@ export class ChangeView extends React.Component {
             onSave: data => this.handleSave(data, false),
             onSaveAndContinue: data => this.handleSave(data, true),
             onSubmitFail: () => { dispatch(errorMessage(intl.formatMessage(messages.validationError))) },
-            onCancel: this.handleCancel,
             onDelete: desc.actions.delete ? this.handleDelete : undefined,
             labels: {
                 save: intl.formatMessage(messages.save),
                 saveAndContinue: intl.formatMessage(messages.saveAndContinue),
                 delete: intl.formatMessage(messages.delete),
-                cancel: intl.formatMessage(messages.cancel),
             },
             onAdd: this.openAddRelation,
             onEdit: this.openEditRelation,
@@ -171,7 +170,7 @@ export class ChangeView extends React.Component {
 
     @blocksUI
     handleSave(data, stay = false) {
-        const { dispatch, desc, intl, router } = this.props
+        const { dispatch, desc, intl, router, location } = this.props
         let preparedData
 
         if (hasPermission(desc.id, 'save')) {
@@ -187,7 +186,9 @@ export class ChangeView extends React.Component {
                 dispatch(cache.clearListView())
                 dispatch(successMessage(intl.formatMessage(messages.saveSuccess, { item: desc.title })))
                 if (!stay) {
-                    router.push(resolvePath(getSiblingDesc(desc.id, 'listView').path))
+                    const returnPath = get(location.state, 'returnPath')
+                    const listViewPath = resolvePath(getSiblingDesc(desc.id, 'listView').path)
+                    router.push(returnPath || listViewPath)
                 } else {
                     this.setState({ values })
                 }
@@ -202,11 +203,6 @@ export class ChangeView extends React.Component {
         return undefined
     }
 
-    handleCancel() {
-        const { router, desc } = this.props
-        router.push(resolvePath(getSiblingDesc(desc.id, 'listView').path))
-    }
-
     handleDelete(data) {
         const { dispatch, intl, desc } = this.props
         dispatch(showModalConfirm({
@@ -219,14 +215,16 @@ export class ChangeView extends React.Component {
 
     @blocksUI
     doDelete(data) {
-        const { dispatch, intl, desc, router } = this.props
+        const { dispatch, intl, desc, router, location } = this.props
 
         if (hasPermission(desc.id, 'delete')) {
             return Promise.resolve(desc.actions.delete(req(data))).then(() => {
                 dispatch(cache.clearListView())
                 dispatch(successMessage(intl.formatMessage(messages.deleteSuccess, { item: desc.title })))
                 this.forceLeave = true
-                router.push(resolvePath(getSiblingDesc(desc.id, 'listView').path))
+                const returnPath = get(location.state, 'returnPath')
+                const listViewPath = resolvePath(getSiblingDesc(desc.id, 'listView').path)
+                router.push(returnPath || listViewPath)
             })
         }
 

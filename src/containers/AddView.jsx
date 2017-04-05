@@ -3,8 +3,9 @@ import { connect } from 'react-redux'
 import { reduxForm, reset, SubmissionError, change } from 'redux-form'
 import { withRouter } from 'react-router'
 import { injectIntl, intlShape } from 'react-intl'
-import { routerShape } from 'react-router/lib/PropTypes'
+import { routerShape, locationShape } from 'react-router/lib/PropTypes'
 import { autobind } from 'core-decorators'
+import get from 'lodash/get'
 
 // Containers
 import AddRelation from './AddRelation'
@@ -57,6 +58,7 @@ class AddView extends React.Component {
         intl: intlShape.isRequired,
         dispatch: React.PropTypes.func.isRequired,
         router: routerShape.isRequired,
+        location: locationShape.isRequired,
         route: React.PropTypes.object.isRequired,
         forms: React.PropTypes.object.isRequired,
         breadcrumbs: breadcrumbsShape.isRequired,
@@ -87,13 +89,11 @@ class AddView extends React.Component {
             onSave: data => this.handleSave(data, BACK_TO_LIST_VIEW),
             onSaveAndContinue: data => this.handleSave(data, CONTINUE_EDITING),
             onSaveAndAddAnother: data => this.handleSave(data, ADD_ANOTHER),
-            onCancel: this.handleCancel,
             onSubmitFail: () => dispatch(errorMessage(intl.formatMessage(messages.validationError))),
             labels: {
                 save: intl.formatMessage(messages.save),
                 saveAndContinue: intl.formatMessage(messages.saveAndContinue),
                 saveAndAddAnother: intl.formatMessage(messages.saveAndAddAnother),
-                cancel: intl.formatMessage(messages.cancel),
             },
             onAdd: this.openAddRelation,
             onEdit: this.openEditRelation,
@@ -176,8 +176,9 @@ class AddView extends React.Component {
 
     @blocksUI
     handleSave(data, nextStep = BACK_TO_LIST_VIEW) {
-        const { dispatch, desc, intl, router } = this.props
-        const listViewPath = getSiblingDesc(desc.id, 'listView').path
+        const { dispatch, desc, intl, router, location } = this.props
+        const returnPath = get(location.state, 'returnPath')
+        const listViewPath = resolvePath(getSiblingDesc(desc.id, 'listView').path)
         const changeViewPath = getSiblingDesc(desc.id, 'changeView').path
         if (hasPermission(desc.id, 'add')) {
             // Try to prepare the data.
@@ -196,10 +197,13 @@ class AddView extends React.Component {
 
                 switch (nextStep) {
                     case BACK_TO_LIST_VIEW:
-                        router.push(resolvePath(listViewPath))
+                        router.push(returnPath || listViewPath)
                         break
                     case CONTINUE_EDITING:
-                        router.push(resolvePath(changeViewPath, result))
+                        router.push({
+                            pathname: resolvePath(changeViewPath, result),
+                            state: location.state, // Preserve the state i.e. the returnPath
+                        })
                         break
                     case ADD_ANOTHER:
                         dispatch(reset(desc.id))
@@ -211,11 +215,6 @@ class AddView extends React.Component {
         }
         dispatch(errorMessage(intl.formatMessage(permMessages.addNotPermitted)))
         return null
-    }
-
-    handleCancel() {
-        const { router, desc } = this.props
-        router.push(resolvePath(getSiblingDesc(desc.id, 'listView').path))
     }
 
     doLeave(nextState) {

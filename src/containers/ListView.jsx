@@ -201,11 +201,23 @@ export class ListView extends React.Component {
     }
 
     handleEnterAddView() {
-        this.props.router.push(resolvePath(getSiblingDesc(this.props.desc.id, 'addView').path))
+        const { desc, router, location } = this.props
+        router.push({
+            pathname: resolvePath(getSiblingDesc(desc.id, 'addView').path),
+            state: {
+                returnPath: location.pathname + location.search,
+            },
+        })
     }
 
     handleEnterChangeView(item) {
-        this.props.router.push(resolvePath(getSiblingDesc(this.props.desc.id, 'changeView').path, item))
+        const { desc, router, location } = this.props
+        router.push({
+            pathname: resolvePath(getSiblingDesc(desc.id, 'changeView').path, item),
+            state: {
+                returnPath: location.pathname + location.search,
+            },
+        })
     }
 
     handleFilters(data) {
