@@ -51,7 +51,7 @@ class AutocompleteField extends React.Component {
             return this.state.selection[0].label
         }
         return this.props.actions.select(req({ selection: [{ value }] }))
-        .then(res => res.data[0].label)
+        .then(res => res[0].label)
     }
 
     componentWillMount() {
@@ -107,8 +107,8 @@ class AutocompleteField extends React.Component {
         } else {
             this.props.actions.select(req({ selection }))
             .then((res) => {
-                this.setState({ selection: res.data })
-                let values = res.data.map(item => item.value)
+                this.setState({ selection: res })
+                let values = res.map(item => item.value)
                 values = values.length > 0 ? values[0] : ''
                 input.onChange(values)
             })
@@ -121,14 +121,14 @@ class AutocompleteField extends React.Component {
         if (query.length > 0) {
             this.searchTimeout = window.setTimeout(() => {
                 this.props.actions.search(req({ query }))
-                .then(res => this.setState({ options: res.data }))
+                .then(res => this.setState({ options: res }))
             }, this.props.searchDelay)
         } else {
             // Search immediately if showAll
             // Clear search otherwise
             if (this.props.showAll) {
                 this.props.actions.search(req({ query }))
-                .then(res => this.setState({ options: res.data }))
+                .then(res => this.setState({ options: res }))
             } else {
                 this.clearSearch()
             }

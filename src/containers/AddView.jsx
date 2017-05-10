@@ -33,6 +33,7 @@ import getFieldNames from '../utils/getFieldNames'
 import getValidator from '../utils/getValidator'
 import getInitialValues from '../utils/getInitialValues'
 import hasUnsavedChanges from '../utils/hasUnsavedChanges'
+import handleErrors from '../utils/handleErrors'
 
 // Misc
 import { resolvePath, req, hasPermission, getSiblingDesc, setViewIndexEntry } from '../Crudl'
@@ -189,9 +190,8 @@ class AddView extends React.Component {
                 throw Promise.reject(new SubmissionError(error))
             }
 
-            return Promise.resolve(this.props.desc.actions.add(req(preparedData)))
-            .then((response) => {
-                const result = response.data
+            return handleErrors(desc.actions.add(req(preparedData)))
+            .then((result) => {
                 dispatch(cache.clearListView())
                 dispatch(successMessage(intl.formatMessage(messages.addSuccess, { title: desc.title })))
 
@@ -200,6 +200,7 @@ class AddView extends React.Component {
                         router.push(returnPath || listViewPath)
                         break
                     case CONTINUE_EDITING:
+                        console.log('>>>', changeViewPath, result);
                         router.push({
                             pathname: resolvePath(changeViewPath, result),
                             state: location.state, // Preserve the state i.e. the returnPath

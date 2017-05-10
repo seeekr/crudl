@@ -14,6 +14,7 @@ import messages from '../messages/addView'
 import permMessages from '../messages/permissions'
 import blocksUI from '../decorators/blocksUI'
 import denormalize from '../utils/denormalize'
+import handleErrors from '../utils/handleErrors'
 
 @autobind
 class AddRelation extends React.Component {
@@ -61,7 +62,7 @@ class AddRelation extends React.Component {
                 throw Promise.reject(new SubmissionError(error))
             }
 
-            return Promise.resolve(this.props.desc.actions.add(req(preparedData)))
+            return handleErrors(this.props.desc.actions.add(req(preparedData)))
             .then((result) => {
                 dispatch(successMessage(intl.formatMessage(messages.addSuccess, { title: desc.title })))
                 onSave(result)

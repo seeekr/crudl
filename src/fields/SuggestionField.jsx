@@ -103,7 +103,7 @@ class SuggestionField extends WatchComponent {
         if (query.length > 0) {
             this.searchTimeout = window.setTimeout(() => {
                 this.props.actions.search(req({ query }))
-                .then(res => this.setState({ options: res.data }))
+                .then(res => this.setState({ options: res }))
             }, this.props.searchDelay)
         }
         console.log("SEARCH", query, this.state.selection)

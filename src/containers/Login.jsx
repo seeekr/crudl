@@ -57,7 +57,7 @@ class Login extends React.Component {
         const { dispatch, intl, desc } = this.props
         return desc.actions.login(req(data))
         .then((res) => {
-            dispatch(auth.login(res.data))
+            dispatch(auth.login(res))
             dispatch(successMessage(intl.formatMessage(messages.loginSuccess)))
             const next = this.props.location.query.next || options.basePath
             this.props.router.push(next)

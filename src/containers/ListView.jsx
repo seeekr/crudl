@@ -32,6 +32,7 @@ import withPropsWatch from '../utils/withPropsWatch'
 import permMessages from '../messages/permissions'
 import BulkActions from '../components/BulkActions'
 import BottomBar from '../components/BottomBar'
+import handleErrors from '../utils/handleErrors'
 
 function getPath(props) {
     return props.location.pathname + props.location.search
@@ -334,7 +335,7 @@ export class ListView extends React.Component {
         // The selected items as an array
         const selectedItems = Object.keys(this.state.selection).map(key => this.state.selection[key])
 
-        return Promise.resolve(bulkAction.before(selectedItems))
+        return handleErrors(bulkAction.before(selectedItems))
         .then((result) => {
             if (typeof result !== 'undefined') {
                 return this.showOverlay(result, bulkAction.description)
@@ -345,12 +346,12 @@ export class ListView extends React.Component {
 
     bulkActionExecute(actionName, selectedItems) {
         const bulkAction = this.props.desc.bulkActions[actionName]
-        return Promise.resolve(bulkAction.action(selectedItems))
+        return handleErrors(bulkAction.action(selectedItems))
     }
 
     bulkActionAfter(actionName, actionResult) {
         const bulkAction = this.props.desc.bulkActions[actionName]
-        return Promise.resolve(bulkAction.after(actionResult))
+        return handleErrors(bulkAction.after(actionResult))
         .then((result) => {
             if (typeof result !== 'undefined') {
                 return this.showOverlay(result, bulkAction.description)
@@ -395,9 +396,9 @@ export class ListView extends React.Component {
 
                 // Do the action
                 Promise.resolve(this.props.desc.actions.list(request))
-                .then((res) => {
-                    const normalized = props.desc.normalize(res.data)
-                    const pagination = res.pagination
+                .then((data) => {
+                    const normalized = props.desc.normalize(data)
+                    const pagination = data.pagination
                     const results = combineResults(this.state.results, normalized)
                     const state = {
                         loading: false,

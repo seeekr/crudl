@@ -33,6 +33,7 @@ import normalize from '../utils/normalize'
 import denormalize from '../utils/denormalize'
 import getValidator from '../utils/getValidator'
 import hasUnsavedChanges from '../utils/hasUnsavedChanges'
+import handleErrors from '../utils/handleErrors'
 
 import blocksUI from '../decorators/blocksUI'
 
@@ -157,9 +158,10 @@ export class ChangeView extends React.Component {
         const { desc, intl, dispatch } = props
         if (hasPermission(desc.id, 'get')) {
             this.setState({ ready: false })
-            return Promise.resolve(desc.actions.get(req()))
+
+            return handleErrors(desc.actions.get(req))
             .then((response) => {
-                const values = normalize(desc, response.data)
+                const values = normalize(desc, response)
                 this.setState({ values, ready: true })
             })
         }
@@ -180,9 +182,9 @@ export class ChangeView extends React.Component {
             } catch (error) {
                 return Promise.reject(new SubmissionError(error))
             }
-            return Promise.resolve(desc.actions.save(req(preparedData)))
+            return handleErrors(desc.actions.save(req(preparedData)))
             .then((res) => {
-                const values = normalize(desc, res.data)
+                const values = normalize(desc, res)
                 dispatch(cache.clearListView())
                 dispatch(successMessage(intl.formatMessage(messages.saveSuccess, { item: desc.title })))
                 if (!stay) {
@@ -218,7 +220,7 @@ export class ChangeView extends React.Component {
         const { dispatch, intl, desc, router, location } = this.props
 
         if (hasPermission(desc.id, 'delete')) {
-            return Promise.resolve(desc.actions.delete(req(data))).then(() => {
+            return handleErrors(desc.actions.delete(req(data))).then(() => {
                 dispatch(cache.clearListView())
                 dispatch(successMessage(intl.formatMessage(messages.deleteSuccess, { item: desc.title })))
                 this.forceLeave = true

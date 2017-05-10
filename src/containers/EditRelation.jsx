@@ -15,6 +15,7 @@ import permMessages from '../messages/permissions'
 import blocksUI from '../decorators/blocksUI'
 import denormalize from '../utils/denormalize'
 import normalize from '../utils/normalize'
+import handleErrors from '../utils/handleErrors'
 
 @autobind
 class EditRelation extends React.Component {
@@ -65,7 +66,7 @@ class EditRelation extends React.Component {
         const { desc, intl, dispatch } = props
         if (hasPermission(desc.id, 'get')) {
             this.setState({ ready: false })
-            return Promise.resolve(desc.actions.get(req()))
+            return handleErrors(desc.actions.get(req()))
             .then((response) => {
                 const values = normalize(desc, response.data)
                 this.setState({ values, ready: true })
@@ -88,7 +89,7 @@ class EditRelation extends React.Component {
                 throw Promise.reject(new SubmissionError(error))
             }
 
-            return Promise.resolve(this.props.desc.actions.save(req(preparedData)))
+            return handleErrors(this.props.desc.actions.save(req(preparedData)))
             .then((result) => {
                 dispatch(successMessage(intl.formatMessage(messages.saveSuccess, { item: desc.title })))
                 onSave(result)

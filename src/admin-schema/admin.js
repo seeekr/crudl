@@ -2,14 +2,12 @@ import { version } from '../../package.json'
 
 import { Joi, stringOrReactProperty } from './base'
 import views from './views'
-import connectors from './connectors'
 import login from './login'
 import logout from './logout'
 import pageNotFound from './pageNotFound'
 
 const admin = Joi.object().keys({
     title: stringOrReactProperty('crudl.io Demo CMS'),
-    connectors: connectors.required(),
     views: views.required(),
     auth: Joi.object().keys({
         login: login.required(),

@@ -34,16 +34,6 @@ import Dashboard from './containers/Dashboard'
 import PageNotFound from './containers/PageNotFound'
 import SimpleView from './containers/SimpleView'
 
-// Connectors
-import RESTConnector from './connectors/RESTConnector'
-import GraphQLConnector from './connectors/GraphQLConnector'
-import TransformConnector from './connectors/TransformConnector'
-import PaginationConnector from './connectors/PaginationConnector'
-import DepaginationConnector from './connectors/DepaginationConnector'
-import ErrorsConnector from './connectors/ErrorsConnector'
-import PermissionConnector from './connectors/PermissionConnector'
-import frontendConnector from './connectors/frontendConnector'
-
 // Misc Actions
 import { activeView as activeViewActions } from './actions/core'
 import { pageNotFoundMessage, hideBottomBar } from './actions/frontend'
@@ -55,16 +45,10 @@ import coreReducer, { initialState as coreInitialState } from './reducers/core'
 import messagesReducer from './reducers/messages'
 import filtersReducer from './reducers/filters'
 
-// Errors
-import AuthorizationError from './errors/AuthorizationError'
-import NotFoundError from './errors/NotFoundError'
-import ValidationError from './errors/ValidationError'
-import PermissionError from './errors/PermissionError'
-
 // Misc crudl stuff
 import wrapComponent from './utils/wrapComponent'
 import validateAdmin from './utils/validateAdmin'
-import Request from './connectors/Request'
+import Request from './Request'
 import baseField from './fields/base/baseField'
 import simpleViewSchema from './admin-schema/simpleView'
 
@@ -86,7 +70,6 @@ let admin = {}
 let store = null
 let viewDescIndex
 const contextData = {}
-export const connectors = {}
 export const options = {}
 export const auth = {}
 export const context = createContext(contextData)
@@ -94,7 +77,6 @@ export const path = {}
 
 
 export { baseField }
-export { ValidationError, AuthorizationError, NotFoundError, PermissionError }
 
 export function setStore(newStore) {
     store = newStore
@@ -131,8 +113,8 @@ export function resolvePath(pathname = '', item) {
 }
 
 /**
- * Creates a request object that already has its authentication headers set
- */
+* Creates a request object that already has its authentication headers set
+*/
 export function req(data) {
     return new Request({
         data,
@@ -151,16 +133,16 @@ export function createForm(desc) {
 
 // Redux Middleware function
 function exposeStateInfo({ getState }) {
-  return next => (action) => {
-    const returnValue = next(action)
-    const state = getState()
+    return next => (action) => {
+        const returnValue = next(action)
+        const state = getState()
 
-    // Expose
-    Object.assign(auth, state.core.auth.info)
-    Object.assign(contextData, getFormValues(state.core.activeView)(state))
+        // Expose
+        Object.assign(auth, state.core.auth.info)
+        Object.assign(contextData, getFormValues(state.core.activeView)(state))
 
-    return returnValue
-  }
+        return returnValue
+    }
 }
 
 function exposePathParams(nextState) {
@@ -307,51 +289,6 @@ export function hasPermission(viewId, actionName) {
     return typeof permissions[actionName] === 'undefined' || permissions[actionName]
 }
 
-/**
-* Creates a connector according to its specification.
-*/
-function createConnector(spec, admin) { // eslint-disable-line no-shadow
-    // Endpoint id
-    if (typeof spec === 'string') {
-        // NOTE: consider a reuse of connectors
-        return createConnector(admin.connectors.find(c => c.id === spec), admin)
-    }
-
-    // Connector admin
-    if (typeof spec === 'object') {
-        let cx = null
-
-        // Endpoint connector?
-        if (spec.url) cx = new RESTConnector(spec)
-        if (spec.query) cx = new GraphQLConnector(spec)
-        // Simple connector?
-        if (spec.use) cx = createConnector(spec.use, admin)
-        // Bare Connector?
-        if (!cx) {
-            cx = spec
-        }
-
-        // Pagination?
-        if (spec.pagination) cx = new PaginationConnector(cx, spec.pagination)
-        // Any data transformation?
-        if (spec.transform) cx = new TransformConnector(cx, spec.transform)
-        // Depagination?
-        if (spec.enableDepagination) cx = new DepaginationConnector(cx)
-
-        cx = new ErrorsConnector(
-            cx,
-            (...args) => getStore().dispatch(...args),
-            (typeof admin.auth !== 'undefined') ? resolvePath(admin.auth.logout.path) : undefined,
-            resolvePath(admin.custom.pageNotFound.path),
-        )
-
-        cx = new PermissionConnector(cx, admin, (...args) => getStore().dispatch(...args))
-
-        return frontendConnector(cx)
-    }
-    throw new Error('An invalid connector specification')
-}
-
 export function setAdmin(adminToBeValidated) {
     admin = validateAdmin(adminToBeValidated)
     // Check admin versions
@@ -360,10 +297,17 @@ export function setAdmin(adminToBeValidated) {
     }
 
     Object.assign(options, admin.options)
-    // Create connector instances
-    Object.keys(admin.connectors).forEach((name) => {
-        connectors[name] = createConnector(admin.connectors[name], admin)
-    })
+}
+
+/**
+* Returns the current admin. If varPath is given, selects the admin variable
+* under that path. If that path does not exist, returns defaultValue.
+*/
+export function getAdmin(varPath, defaultValue) {
+    if (typeof varPath !== 'undefined') {
+        return get(admin, varPath, defaultValue)
+    }
+    return admin
 }
 
 function authenticate(wrappedFunc) {
@@ -383,8 +327,8 @@ function setActiveView(id, wrappedFunc) {
     return (nextState, replace) => {
         store.dispatch(activeViewActions.set(id));
         if (wrappedFunc) {
-           wrappedFunc.call(this, nextState, replace)
-       }
+            wrappedFunc.call(this, nextState, replace)
+        }
     }
 }
 
@@ -392,8 +336,8 @@ function clearFrontendState(wrappedFunc) {
     return (nextState, replace) => {
         store.dispatch(hideBottomBar());
         if (wrappedFunc) {
-           wrappedFunc.call(this, nextState, replace)
-       }
+            wrappedFunc.call(this, nextState, replace)
+        }
     }
 }
 
@@ -491,8 +435,8 @@ function crudlRouter() {
 }
 
 /**
- * This is the main entry point for Crudl.
- */
+* This is the main entry point for Crudl.
+*/
 export function render(adminToBeValidated) {
     setAdmin(adminToBeValidated)
     setStore(createStore())

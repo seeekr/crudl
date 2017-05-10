@@ -95,7 +95,7 @@ class InlinesView extends React.Component {
             .then((res) => {
                 const items = this.state.items.slice()
                 items[index].new = false
-                items[index].data = res.data
+                items[index].data = res
                 this.setState({ items })
                 dispatch(successMessage(intl.formatMessage(messages.saveSuccess, {
                     item: this.getItemTitle(index, data),
@@ -113,7 +113,7 @@ class InlinesView extends React.Component {
             .then((res) => {
                 const items = this.state.items.slice()
                 items[index].new = false
-                items[index].data = res.data
+                items[index].data = res
                 this.setState({ items })
                 dispatch(successMessage(intl.formatMessage(messages.addSuccess, {
                     item: this.getItemTitle(index, data),

@@ -87,8 +87,8 @@ class AutocompleteMultipleField extends React.Component {
         } else {
             this.props.actions.select(req({ selection }))
             .then((res) => {
-                this.setState({ selection: res.data })
-                const values = res.data.map(item => item.value)
+                this.setState({ selection: res })
+                const values = res.map(item => item.value)
                 input.onChange(values)
             })
         }
@@ -99,7 +99,7 @@ class AutocompleteMultipleField extends React.Component {
         this.props.actions.search(req({ query }))
         .then((res) => {
             showExpanded(this.props.id)
-            this.setState({ options: res.data })
+            this.setState({ options: res })
         })
     }
 
