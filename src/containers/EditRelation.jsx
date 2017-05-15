@@ -67,8 +67,8 @@ class EditRelation extends React.Component {
         if (hasPermission(desc.id, 'get')) {
             this.setState({ ready: false })
             return handleErrors(desc.actions.get(req()))
-            .then((response) => {
-                const values = normalize(desc, response.data)
+            .then((data) => {
+                const values = normalize(desc, data)
                 this.setState({ values, ready: true })
             })
         }
