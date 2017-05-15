@@ -19,6 +19,7 @@ import permMessages from '../messages/permissions'
 import { tabShape } from '../PropTypes'
 import normalize from '../utils/normalize'
 import denormalize from '../utils/denormalize'
+import handleErrors from '../utils/handleErrors'
 
 function createForm(desc, index, mapStateToProps) {
     const formSpec = {
@@ -69,9 +70,9 @@ class InlinesView extends React.Component {
         if (hasPermission(desc.id, 'list')) {
             this.setState({ items: [] })
             desc.actions.list(req())
-            .then((response) => {
+            .then((list) => {
                 const items = []
-                response.data.forEach((data, index) => {
+                list.forEach((data, index) => {
                     items[index] = {
                         form: createForm(desc, index),
                         new: false,
@@ -91,7 +92,7 @@ class InlinesView extends React.Component {
     handleSave(index, data) {
         const { desc, dispatch, intl } = this.props
         if (hasPermission(desc.id, 'save')) {
-            return desc.actions.save(req(data))
+            return handleErrors(desc.actions.save(req(data)))
             .then((res) => {
                 const items = this.state.items.slice()
                 items[index].new = false
@@ -109,7 +110,7 @@ class InlinesView extends React.Component {
     handleAdd(index, data) {
         const { desc, dispatch, intl } = this.props
         if (hasPermission(desc.id, 'add')) {
-            return desc.actions.add(req(data))
+            return handleErrors(desc.actions.add(req(data)))
             .then((res) => {
                 const items = this.state.items.slice()
                 items[index].new = false

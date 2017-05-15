@@ -12,6 +12,7 @@ import { auth } from '../actions/core'
 import { req, options } from '../Crudl'
 import { loginShape } from '../PropTypes'
 import messages from '../messages/login'
+import handleErrors from '../utils/handleErrors'
 
 /* FIXME (Vaclav): Shouldn't this be a component instead? */
 
@@ -55,7 +56,7 @@ class Login extends React.Component {
 
     handleSubmit(data) {
         const { dispatch, intl, desc } = this.props
-        return desc.actions.login(req(data))
+        return handleErrors(desc.actions.login(req(data)))
         .then((res) => {
             dispatch(auth.login(res))
             dispatch(successMessage(intl.formatMessage(messages.loginSuccess)))
