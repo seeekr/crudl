@@ -200,7 +200,6 @@ class AddView extends React.Component {
                         router.push(returnPath || listViewPath)
                         break
                     case CONTINUE_EDITING:
-                        console.log('>>>', changeViewPath, result);
                         router.push({
                             pathname: resolvePath(changeViewPath, result),
                             state: location.state, // Preserve the state i.e. the returnPath
