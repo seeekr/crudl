@@ -69,7 +69,7 @@ class InlinesView extends React.Component {
         const { desc, intl } = this.props
         if (hasPermission(desc.id, 'list')) {
             this.setState({ items: [] })
-            desc.actions.list(req())
+            handleErrors(desc.actions.list(req()))
             .then((list) => {
                 const items = []
                 list.forEach((data, index) => {
@@ -146,7 +146,7 @@ class InlinesView extends React.Component {
         const { dispatch, intl, desc } = this.props
         if (hasPermission(desc.id, 'delete')) {
             const title = this.getItemTitle(index, data)
-            desc.actions.delete(req(data))
+            handleErrors(desc.actions.delete(req(data)))
             .then(() => {
                 const items = this.state.items.slice()
                 items[index].deleted = true

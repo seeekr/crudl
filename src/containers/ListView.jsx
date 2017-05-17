@@ -395,7 +395,7 @@ export class ListView extends React.Component {
                     .withFilters(filters)
 
                 // Do the action
-                Promise.resolve(this.props.desc.actions.list(request))
+                handleErrors(this.props.desc.actions.list(request))
                 .then((data) => {
                     const normalized = props.desc.normalize(data)
                     const pagination = data.pagination
