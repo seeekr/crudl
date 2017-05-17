@@ -159,7 +159,7 @@ export class ChangeView extends React.Component {
         if (hasPermission(desc.id, 'get')) {
             this.setState({ ready: false })
 
-            return handleErrors(desc.actions.get(req))
+            return handleErrors(desc.actions.get(req()))
             .then((response) => {
                 const values = normalize(desc, response)
                 this.setState({ values, ready: true })
