@@ -15,7 +15,7 @@ crudl.hasPermission = () => true
 
 const s = {
     form: {},
-    frontend: {},
+    frontend: { reload: { name: false } },
     core: {
         auth: {
             loggedIn: false,

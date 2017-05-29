@@ -1,10 +1,11 @@
 /* globals jest, require, test, expect, describe, it, beforeEach */
-
 import React from 'react'
-// import { Provider } from 'react-redux'
+import { IntlProvider } from 'react-intl'
 import { shallow } from 'enzyme'
 import configureStore from 'redux-mock-store'
+
 import { ListView } from '../../containers/ListView'
+import listViewSchema from '../../admin-schema/listView'
 
 jest.mock('../../Crudl')
 const crudl = require('../../Crudl')
@@ -37,46 +38,52 @@ const s = {
 const mockStore = configureStore()
 const store = mockStore(s)
 crudl.resolvePath = jest.fn(() => '/xxx/')
+crudl.getSiblingDesc = jest.fn((id, type) => {
+    switch (type) {
+        case 'changeView': return {
+            id: 'changeView',
+        }
+        case 'addView': return {
+            id: 'addView',
+        }
+        default: return {}
+    }
+})
+
+const intlProvider = new IntlProvider({ locale: 'en' }, {})
+const { intl } = intlProvider.getChildContext() // Used in props
 
 const props = {
-    addViewPath: '001/new/',
-    changeViewPath: '001/details/:id',
     desc: {
+        id: 'listView',
+        path: 'listView',
         title: 'test title',
         fields: [],
+        actions: { list: jest.fn },
+        search: { name: 'xxx' },
     },
     location: {
         pathname: 'xxx',
         query: {},
+        search: '',
     },
-    /* from state */
+    router: {},
     filtersVisible: false,
     cache: {},
     watch: jest.fn,
-    canAdd: () => true,
-    canView: () => true,
+    breadcrumbs: [],
+    intl,
+    dispatch: jest.fn,
 }
 
 describe('ListView', () => {
     it('renders correctly', () => {
-        const listview = shallow(
-            <ListView {...props} />,
-            { context: { store, router: {} } }
-        )
+        props.desc = listViewSchema.validate(props.desc).value
+        const listview = shallow(<ListView {...props} />)
         /* Header, H2, add, search, filters */
         expect(listview.find('Header').length).toEqual(1)
         expect(listview.find('h2').text()).toEqual('test title')
         /* aside */
-        expect(listview.find('aside').length).toEqual(0)
-        listview.setProps({
-            desc: {
-                title: 'test title',
-                search: {
-                    name: 'xxx',
-                },
-                fields: [],
-            },
-        })
         expect(listview.find('aside').length).toEqual(1)
         /* context-tools */
         expect(listview.find('.context-tools').length).toEqual(2)

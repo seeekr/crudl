@@ -21,15 +21,6 @@ export const initialState = {
     activeView: undefined,
     permissions: {},
     admin: { id: undefined },
-    viewCalls: {
-        state: {
-            hasReturned: false,
-            returnValue: undefined,
-            storedData: undefined,
-            callstack: [],
-            callInProgress: false,
-        },
-    },
 }
 
 /**
