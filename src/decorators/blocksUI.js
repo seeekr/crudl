@@ -12,7 +12,7 @@ export default function blocksUI(target, key, descriptor) {
                 dispatch(showBlockOverlay())
                 const returnValue = descriptor.value.apply(this, args)
 
-                if (isPromise) {
+                if (isPromise(returnValue)) {
                     return returnValue.finally(() => {
                         dispatch(hideBlockOverlay())
                     })

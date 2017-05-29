@@ -24,7 +24,7 @@ const router = {
 
 const s = {
     form: {},
-    frontend: {},
+    frontend: { reload: { name: false } },
     core: {
         auth: {
             loggedIn: false,
@@ -103,16 +103,9 @@ const props = {
     intl,
     watch: jest.fn,
     breadcrumbs: [],
-    viewCalls: {
-        hasReturned: false,
-        enterView: jest.fn,
-        enterRelation: jest.fn,
-        leaveView: jest.fn,
-        switchToView: jest.fn,
-        returnValue: undefined,
-        storedData: undefined,
+    router: {
+        push: jest.fn,
     },
-    router: {},
     route: {},
     dispatch: jest.fn,
 }
@@ -126,8 +119,6 @@ describe('ChangeView', () => {
         /* Loader */
         expect(changeview.find('ViewportLoading').length).toEqual(1)
         changeview.setState({ ready: true })
-        /* debug */
-        // console.log(changeview.debug())
         /* structure */
         expect(changeview.find('Header').length).toEqual(1)
         expect(changeview.find('h2').text()).toEqual('test detail')
@@ -146,13 +137,11 @@ describe('ChangeView', () => {
         ]
         const changeview = shallow(
             <ChangeView {...props} />,
-            { context: { store, router: {} } }
+            { context: { store, router: {} } },
         )
         /* Loader */
         expect(changeview.find('ViewportLoading').length).toEqual(1)
         changeview.setState({ ready: true })
-        /* debug */
-        // console.log(changeview.debug())
         /* structure */
         expect(changeview.find('Header').length).toEqual(1)
         expect(changeview.find('h2').text()).toEqual('test detail')

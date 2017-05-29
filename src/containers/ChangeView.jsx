@@ -73,14 +73,12 @@ export class ChangeView extends React.Component {
 
     componentWillMount() {
         this.props.watch('location.search', this.switchTab)
-        this.props.watch('desc', (props) => {
-            this.createForm(props)
-            this.createTabs(props)
-            this.doGet(props)
-        })
+        this.createForm(this.props)
+        this.createTabs(this.props)
     }
 
     componentDidMount() {
+        this.doGet()
         this.props.router.setRouteLeaveHook(this.props.route, this.routerWillLeave)
     }
 
@@ -154,8 +152,8 @@ export class ChangeView extends React.Component {
     }
 
     @blocksUI
-    doGet(props) {
-        const { desc, intl, dispatch } = props
+    doGet() {
+        const { desc, intl, dispatch } = this.props
         if (hasPermission(desc.id, 'get')) {
             this.setState({ ready: false })
 
