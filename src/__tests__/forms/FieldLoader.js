@@ -31,7 +31,7 @@ const p = {
     router: {},
 }
 
-const s = { form: {} }
+const s = { form: {}, frontend: { reload: { name: false } } }
 const mockStore = configureStore()
 const store = mockStore(s)
 
