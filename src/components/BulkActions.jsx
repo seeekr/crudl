@@ -29,10 +29,12 @@ class BulkActions extends React.Component {
     }
 
     handleApplyAction(event) {
-        this.props.onApply(this.state.selected)
-        closeExpanded(this.props.id)
-        event.stopPropagation()
-        event.nativeEvent.stopImmediatePropagation()
+        if (this.props.nSelected > 0) {
+            this.props.onApply(this.state.selected)
+            closeExpanded(this.props.id)
+            event.stopPropagation()
+            event.nativeEvent.stopImmediatePropagation()
+        }
     }
 
     select(action) {
@@ -81,8 +83,8 @@ class BulkActions extends React.Component {
                                 className="action-apply"
                                 onClick={this.handleApplyAction}
                                 tabIndex="0"
-                                aria-disabled={!selected}
-                                disabled={!selected}
+                                aria-disabled={!(nSelected > 0 && selected)}
+                                disabled={!(nSelected > 0 && selected)}
                                 >Apply ({nSelected})</button>
                         </li>
                     </ul>
