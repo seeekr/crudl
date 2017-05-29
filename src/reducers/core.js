@@ -1,6 +1,5 @@
 import set from 'lodash/set'
 import cloneDeep from 'lodash/cloneDeep'
-import { LOCATION_CHANGE } from 'react-router-redux'
 import { types } from '../actions/core'
 
 /**
@@ -56,8 +55,6 @@ function coreReducer(state = initialState, action) {
             return t('activeView', undefined)
         case types.SET_PERMISSIONS:
             return t('permissions', action.permissions)
-        case types.VIEW_CALLS_SET_STATE:
-            return t('viewCalls.state', action.state)
         default:
             return state
     }
