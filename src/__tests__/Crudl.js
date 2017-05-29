@@ -13,7 +13,6 @@ Object.defineProperty(window, 'localStorage', {
 });
 
 const admin = {
-    connectors: {},
     views: {
         users: {
             listView: {
@@ -57,7 +56,6 @@ describe('crudl without a store', () => {
     it('export is minimal and sufficient', () => {
         const mustExport = [
             'options',
-            'connectors',
             'auth',
             'path',
             'context',
@@ -72,10 +70,15 @@ describe('crudl without a store', () => {
             'setAdmin',
             'getViewDesc',
             'render',
-            'ValidationError',
-            'AuthorizationError',
-            'NotFoundError',
-            'PermissionError',
+            'createForm',
+            'successMessage',
+            'errorMessage',
+            'infoMessage',
+            'getAdmin',
+            'getParentDesc',
+            'getSiblingDesc',
+            'getViewComponent',
+            'setViewIndexEntry',
         ]
         expect(Object.keys(crudl).sort()).toEqual(mustExport.sort())
     })
