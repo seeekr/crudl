@@ -5,7 +5,7 @@ import * as actions from '../../actions/frontend.js'
 
 describe('actions frontend', () => {
     it('types', () => {
-      expect(Object.keys(actions.types).length).toEqual(11)
+      expect(Object.keys(actions.types).length).toEqual(16)
     })
     it('showNavigation should create an action to show the navigation', () => {
       const expectedAction = {
