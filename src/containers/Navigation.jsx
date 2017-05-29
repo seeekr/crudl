@@ -1,5 +1,5 @@
 import React from 'react'
-import { Link, IndexLink, withRouter } from 'react-router'
+import { IndexLink, withRouter } from 'react-router'
 import { connect } from 'react-redux'
 import { FormattedMessage } from 'react-intl'
 import { routerShape } from 'react-router/lib/PropTypes'

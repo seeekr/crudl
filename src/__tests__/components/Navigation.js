@@ -51,15 +51,14 @@ describe('Navigation', () => {
         }
         const navigation = shallow(<Navigation {...props} />)
         /* Dashboard, 001, logout */
-        expect(navigation.find('ul').length).toEqual(3)
-        expect(navigation.find('li').length).toEqual(4)
-        expect(navigation.find('Link').length).toEqual(1)
+        expect(navigation.find('ul').length).toEqual(2)
+        expect(navigation.find('MenuContainer').length).toEqual(1)
+        expect(navigation.find('Connect(withRouter(MenuItem))').length).toEqual(1)
+        expect(navigation.find('li').length).toEqual(3)
         expect(navigation.find('IndexLink').length).toEqual(1)
-        expect(navigation.find('Link').at(0).prop('to')).toEqual('/xxx/')
-        expect(navigation.find('Link').at(0).prop('className')).toEqual('')
         /* check active */
         navigation.setProps({ activeView: '001list' });
-        expect(navigation.find('Link').at(0).prop('className')).toEqual('active')
+        expect(navigation.find('Connect(withRouter(MenuItem))').at(0).prop('isActive')).toEqual(true)
     })
     /* FIXME: check rendering with custom menu */
 })

@@ -1,6 +1,6 @@
 /* globals require, test, beforeEach, expect, describe, it, jest */
 import * as crudl from '../Crudl'
-import Request from '../connectors/Request'
+import Request from '../Request'
 import validateAdmin from '../utils/validateAdmin'
 
 // Mock storage
