@@ -9,7 +9,7 @@ CRUDL is a React application for rapidly building an admin interface based on yo
     * [Attributes and properties](#attributes-and-properties)
 * [Connectors](#connectors)
     * [Requests](#requests)
-    * [Responses](#responses)
+    * [Data](#data)
     * [Errors](#errors)
 * [Views](#views)
     * [Actions](#actions)
@@ -39,7 +39,7 @@ The CRUDL architecture (depicted below) consists of three logical layers. The co
 |         Views         |
 +-----------------------+
   ↓         ↑         ↑         CRUDL
-request  response  errors
+request   data     errors
   ↓         ↑         ↑
 +-----------------------+
 |       Connectors      |
@@ -110,95 +110,7 @@ In `admin.options` you may specify some general CURDL settings
 Assuming we deploy CRUDL on www.mydomain.com, we'll have CRUDL running on `www.mydomain.com/crudl/...` and the ajax requests of the connectors will be directed at `www.mydomain.com/api/...`.
 
 ## Connectors
-The purpose of the connectors is to provide CRUDL with a unified view of the backend API. A connector is an object that defines the four CRUD methods `create`, `read`, `update`, and `delete`. These methods accept a [request](#requests) object as their argument and return a *promise* that either resolves to a [response](#responses) object or throws an [error](#errors). Normally, a single connector represents a single API endpoint or a single resource. So you define, for example, a single connector to access the blog entries and another connector to access the users.
-
-CRUDL provides connectors for RESTful and GraphQL APIs. A REST connector must define the `url` attribute and a GraphQL connector must define the `query` attribute.
-
-A connector has the following schema:
-```js
-{
-    url,            // REST: The endpoint URL (will be appended to options.baseURL)
-    urlQuery,       // REST: A function that builds the url query part
-    query,          // GraphQL: The GraphQL queries for create, read, update, and delete operations
-    mapping,        // The mapping between CRUD and HTTP methods
-    transform,      // Definition of Request and Response transformations
-    pagination,     // Function that returns pagination info
-    baseURL,        // Overrides the value of admin.options.baseURL for this particular connector
-}
-```
- * `url`: url can either be a string such as `users/`, that will resolve against the `baseURL` [option](#options). Or it can be a function of the form: `(request) => urlString`
-
- * `urlQuery`: is an optional attribute. When provided, it must be a function `(request) => query`, where `query` is an object of url query keys and values e.g. `{ search: 'John', sortBy: 'last_name' }`. The resulting URL would then be: `baseURL/users?search=John&sortBy=last_name`.
-
- * `query`: An object with attributes `create`, `read`, `update`, and `delete` each defining a GraphQL query. The definition of the GraphQL query can be either a string or a function `(request) => queryString`
-
- * `mapping`: An object that defines the mapping between the CRUD and HTTP methods. The default mapping of a REST connector is:
-   ```js
-   {
-       create: 'post',
-       read: 'get',
-       update: 'patch',
-       delete: 'delete',
-   }
-   ```
-   The default mapping of a GraphQL admin is:
-   ```js
-   {
-       create: 'post',
-       read: 'post',
-       update: 'post',
-       delete: 'post',
-   }
-   ```
-
- * `transform`: An object of request and response transformations:
-   ```js
-   {
-       // Request
-       createRequest: (req) => req,
-       readRequest: (req) => req,
-       updateRequest: (req) => req,
-       deleteRequest: (req) => req,
-       // Request data
-       createRequestData: (data) => data,
-       readRequestData: (data) => data,
-       updateRequestData: (data) => data,
-       deleteRequestData: (data) => data,
-       // Response
-       createResponse: (res) => res,
-       readResponse: (res) => res,
-       updateResponse: (res) => res,
-       deleteResponse: (res) => res,
-       // Response data
-       createResponseData: (data) => data,
-       readResponseData: (data) => data,
-       updateResponseData: (data) => data,
-       deleteResponseData: (data) => data,
-   }
-   ```
-   The transformation of a request is applied prior to the transformation of request data and similarly, the transformation of a response is applied prior to transformation of a response data.
- * `pagination`: a function `(response) => paginationInfo`, where the format of `paginationInfo` depends on the kind of pagination that is being used.
-
-   The **numbered pagination** requires pagination info in the form: `{ allPages, currentPage, resultsTotal, filteredTotal }`, where `allPages` is an array of page cursors. Page cursors can be any data. `allPages[i-1]` must provide a page cursor for the i-th page. The `currentPage` is the page number of the currently displayed page. The corresponding page cursor of the current page is `allPages[currentPage-1]`. The total number of results can be optionally provided as `resultsTotal`. The total number of *filtered* results can be optionally provided as `filteredTotal`.
-
-   The **continuous scroll pagination** requires the pagination info in the form: `{ next, resultsTotal, resultsTotal, filteredTotal }`. Where next is a pageCursor that must be truthy if there exist a next page, otherwise it must be falsy. The `resultsTotal` is optional and it gives the number of the total available results. The total number of *filtered* results can be optionally provided as `filteredTotal`.
-
- * `baseURL`: A string that overrides the `admin.options.baseURL` value for this particular connector. It allows to access different API at different base URLs.
-
-### Bare Connectors
-If neither `url` nor `query` are provided, then the connector is called a __bare connector__ and it must provide the CRUD methods directly, for example like this:
-```js
-{
-    // Provide some testing data
-    read: () => Promise.resolve({
-        data: require('./testdata/tags.json')
-    }),
-    // Pretend to create a resource
-    create: (req) => Promise.resolve({
-        data: req.data
-    }),
-},
-```
+Connectors provide CRUDL with a unified view of the backend API. Connectors are a separate [package](https://github.com/crudlio/crudl-connectors-base) which can be also used independently from CRUDL.
 
 ### Requests
 A request object contains all the information necessary to execute one of the CRUD methods on a connector.
@@ -209,46 +121,57 @@ It is an object with the following attributes:
     params,         // Connectors may require parameters to do their job, these are stored here
     filters,        // The requested filters
     sorting,        // The requested sorting
-    pagination,     // true / false (whether to paginate, default true)
     page,           // The requested page
     headers,        // The http headers (e.g. the auth token)
 }
 ```
 >Calling a connector like this `crudl.connectors.user(31).read(request)` will cause the request object to have the `params = [31]`.
 
-### Responses
-A response object has the following attributes:
+### Data
+List views require data to be in an array form `[ item1, item2, ... ]`. Where `item` is an object. To pagination information may be included as a parameters of the array:
 ```js
-{
-    data,       // The data as returned by the API
-    url,        // The url of the API endpoint (where the request was directed at)
-    status,     // The HTTP status code of the response
+result = [ item1, item2, ... ],
+result.pagination = {
+    type: 'numbered',
+    allPages: [1, 2],
+    currentPage: 1,
 }
 ```
-The response may contain other attributes as well. For example, if a connector has the pagination function defined, the response will contain the attribute `pagination` set to the result of this function e.g.
+
+Change and add views require the data as an object, e.g.
 ```js
 {
-    data: [{id: 1, ...}, {id: 2, ...}, ..., {id: 63, ...} ],
-    url: '/api/users/',
-    status: 200,
-    pagination: {
-        page: 1,
-        allPages: [1, 2, 3],
-        resultsTotal: 63,
-    }
+    id: '3'
+    username: 'Jane',
+    email: 'jane@crudl.io'
 }
 ```
 
 ### Errors
-It is the responsibility of the connectors to throw the right errors. CRUDL distinguishes four kinds of errors:
+It is the responsibility of the connectors to throw the right errors. CRUDL distinguishes three kinds of errors:
 
-* ValidationError: An object of the form: `{ fieldNameA: errorA, fieldNameB: errorB, ...  }`. Non field errors have the special attribute key `_error` (we use the same format error as [redux-form](https://github.com/erikras/redux-form)). Corresponds to HTTP status code 400.
+* Validation error: The submitted form is not correct.
+```js
+{
+    validationError: true,
+    errors: {
+        title: 'Title is required',
+        _errors: 'Either category or tag is required',
+    }
+}
+```
+Non field errors have the special attribute key `_error` (we use the same format error as [redux-form](https://github.com/erikras/redux-form)).
 
-* AuthorizationError: The request is not authorized. When this error is thrown, CRUDL redirects the user to the login view. Corresponds to HTTP status code 401.
+* Authorization error: The user is not authorized. When this error is thrown, CRUDL redirects the user to the login view.
+```js
+{
+    authorizationError: true,
+}
+```
 
-* PermissionError: Thrown when the user is authorized to access the API but not permitted to execute the requested action e.g. delete a user, change passwords, etc. Corresponds to HTTP status code 403.
+* Default error: When something else goes wrong.
 
-* NotFoundError: When this error is thrown, CRUDL redirect the user to the `pageNotFound` view. Corresponds to HTTP status code 404.
+If any of the thrown errors contains an attribute `message`, this message will be displayed as a notification to the user.
 
 ## Views
 The attribute `admin.views` is a dictionary of the form:
@@ -305,6 +228,7 @@ A list view is defined like this:
     actions: {
         list,         // The list action (see below)
     },
+    bulkActions: {...} // See bellow
     permissions: {    
         list: <boolean>, // Does the user have a list permission?
     }        
@@ -317,7 +241,7 @@ A list view is defined like this:
 }
 ```
 
-* `list` resolves to a response, where `response.data == [{ ...item1 }, { ...item2 }, ..., { ...itemN }]`. The response object may optionally have `response.pagination` defined.
+* `list` resolves to an array `[{ ...item1 }, { ...item2 }, ..., { ...itemN }]`. The array may optionally contain a pagination attribute.
 
 * `filters.fields`: See [fields](#fields) for details.
 

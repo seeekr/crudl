@@ -8,7 +8,6 @@ class Request {
         this.data = cloned.data || {}
         this.page = cloned.page
         this.filters = cloned.filters || {}
-        this.pagination = cloned.pagination || true
         this.headers = cloned.headers || {}
         this.sorting = cloned.sorting || []
         this.params = cloned.params || []
