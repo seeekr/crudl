@@ -26,7 +26,6 @@ CRUDL is a React application for rapidly building an admin interface based on yo
     * [lazy](#lazy)
     * [Custom attributes](#custom-attributes)
 * [Permissions](#permissions)
-    * [Example of a connector providing permissions](#example-of-a-connector-providing-permissions)
 * [Messages](#messages)
 * [Credits & Links](#credits--links)
 
@@ -504,68 +503,6 @@ The permission key of a view is a _property_. That means you can define a getter
 ```js
 changeView.permissions = {
     delete: () => crudl.auth.user == crudl.context('owner'), // Only the owner of the resource can delete it
-}
-```
-
-Beside defining the permissions in the view descriptors, you can provide them also in the API responses. In order to do so, your connector must return a response with an attribtue `permissions` of the form:
-```js
-response.permissions = {
-    viewPath1: { actionName1: <boolean>, actionName2: <boolean>, ... },
-    viewPath2: { actionName1: <boolean>, actionName2: <boolean>, ... },
-    ...
-}
-```
-where a `viewPath` is the path of a particular view in the admin object without the prefix `views`. Formally: if `viewPath` is `X.Y`, then it holds that `admin.views.X.Y === _.get(admin, 'views.' + 'viewPath')`.
-
-### Example of a connector providing permissions
-Suppose that a successful login API call returns the following data:
-```json
-{
-    "username":"demo",
-    "token":"cb1de9d5cd25d0abce47c36be67b1aa26a210eda",
-    "user":1,
-    "permission_list": [
-        {
-            "blogentry": {
-                "create": false,
-                "read": true,
-                "update": true,
-                "delete": true,
-                "list": true
-            }
-        }
-    ]
-}
-```
-A login connector that includes these permission and _additionally_ prohibits deletion and creating of users may look like this:
-```js
-admin.connectors = {
-    login: {
-        url: '/rest-api/login/',
-        mapping: { read: 'post', },
-        transform: {
-            readResponse(res => res
-                .set('permissions', {
-                    'users.changeView': { delete: false },
-                    'users.addView': { add: false },
-                    ...translatePermissions(data.permission_list),
-                })
-                .set('data', {
-                    requestHeaders: { "Authorization": `Token ${data.token}` },
-                    info: { user: data.user, username: data.username },
-                })
-            ),
-        },
-    },
-    // ...other connectors
-}
-```
-The `translatePermissions` function is backend specific and so the user must take care of the translation herself. In this particular example, the `translatePermissions` will return:
-```js
-{
-    blogentries.addView: { add: false },
-    blogentries.changeView: { get: true, save: true, delete: true }
-    blogentries.listView: { list: true},
 }
 ```
 
