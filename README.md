@@ -57,7 +57,6 @@ The admin is an object with the following attributes and properties:
 ```js
 const admin = {
     title,              // Title of the CRUDL instance (a string or a react element property)
-    connectors,         // a dictionary of connectors
     views,              // a dictionary of views
     auth: {
         login,          // Login view descriptor
@@ -74,6 +73,7 @@ const admin = {
         baseURL,        // The baseURL of the API backend (default  '/api/')
         rootElementId,  // Where to place the root react element (default 'crudl-root')
     }
+    messages,           // An object of custom messages
     crudlVersion,       // The required crudl version in the semver format (e.g., "^0.3.0")
     id,                 // The id of the admin. This id is stored (together with other info) locally in the
                         // localStorage of the browser. If the admin id and the locally stored id do not match,
@@ -98,7 +98,7 @@ title: () => <span>Welcome to <strong>CRUDL</strong>. Today is {getDayName()}</s
 ```
 
 ## Options
-In `admin.options` you may specify some general CURDL settings
+In `admin.options` you may specify some general CRUDL settings
 ```js
 {
     debug: false,                   // Include DevTools?
@@ -125,10 +125,9 @@ It is an object with the following attributes:
     headers,        // The http headers (e.g. the auth token)
 }
 ```
->Calling a connector like this `crudl.connectors.user(31).read(request)` will cause the request object to have the `params = [31]`.
 
 ### Data
-List views require data to be in an array form `[ item1, item2, ... ]`. Where `item` is an object. To pagination information may be included as a parameters of the array:
+List views require data to be in an array form `[ item1, item2, ... ]`. Where `item` is an object. Pagination information may be included as a parameters of the array:
 ```js
 result = [ item1, item2, ... ],
 result.pagination = {
@@ -151,23 +150,23 @@ Change and add views require the data as an object, e.g.
 It is the responsibility of the connectors to throw the right errors. CRUDL distinguishes three kinds of errors:
 
 * Validation error: The submitted form is not correct.
-```js
-{
-    validationError: true,
-    errors: {
-        title: 'Title is required',
-        _errors: 'Either category or tag is required',
+    ```js
+    {
+        validationError: true,
+        errors: {
+            title: 'Title is required',
+            _errors: 'Either category or tag is required',
+        }
     }
-}
-```
-Non field errors have the special attribute key `_error` (we use the same format error as [redux-form](https://github.com/erikras/redux-form)).
+    ```
+    Non field errors have the special attribute key `_error` (we use the same format error as [redux-form](https://github.com/erikras/redux-form)).
 
 * Authorization error: The user is not authorized. When this error is thrown, CRUDL redirects the user to the login view.
-```js
-{
-    authorizationError: true,
-}
-```
+    ```js
+    {
+        authorizationError: true,
+    }
+    ```
 
 * Default error: When something else goes wrong.
 
@@ -194,28 +193,33 @@ The attribute `admin.views` is a dictionary of the form:
 
 Before we go into details about the views, let's define some common elements of the view:
 
-### Actions
-Each view must define its `actions`, which is an object [property](#attributes-and-properties). The attributes of the actions property are the particular actions.
-
-An action is a function that takes a request as its argument and returns a *promise*. A CRUDL promise either resolves to a [reponse](#responses) or throws an [error](#errors). Typically, actions make use of the connectors to do their job. For example, a typical list view defines an action like this:
-```js
-list: (req) => crudl.connectors.users.read(req)
-```
-
-### Promise functions
-Some attributes may be asynchronous functions that may return promises (alternatively they may return plain values). The resolved values of these promises depend on the requirements of the particular function. You can use connectors to implement their functionality, but don't forget that the connectors promises resolve to *response* objects. It may therefore be necessarey to use them like this:
-```js
-return crudl.connectors.users.read().then(response => response.data)
-```
-
-### Normalize and denormalize functions
-The functions `normalize` and `denormalize` are used to prepare, manipulate, annotate etc. the data for the frontend and for the backend. The normalization function prepares the data for the frontend (before they are displayed) and the denormalization function prepares to data for the backend (before they are passed to the connectors). The general form is `(data) => data` for views and `(value, allValues) => value` for [fields](#fields).
-
 ### Paths
 > Note on paths and urls. In order to distinguish between backend URLs and the frontend URLs, we call the later *paths*. That means, connectors (ajax call) access URLs and views are displayed at paths.
 
 A path can be defined as a simple (`'users'`) or parametrized (`'users/:id'`) string.
-The parametrized version of the path definition is used only in change views and is not applicable to the list or add views. In order to resolve the parametrized change view path, the corresponding list item is used as the reference.
+The parametrized version of the path definition is used only in change views and is not applicable to the list or add views. In order to resolve the parametrized change view path, the corresponding list item is used as the reference. The parameters of the current path are exported in the variable `crudl.path`.
+
+### Actions
+Each view must define its `actions`, which is an object [property](#attributes-and-properties). The attributes of the actions property are the particular actions.
+
+An action is a function that takes a request as its argument and returns a *promise*. This promise either resolves to [data](#Data) or throws an [error](#errors). Typically, action use some [connectors](https://github.com/crudlio/crudl-connectors-base) to do their job. For example, a typical list view defines an action like this:
+```js
+const users = createDRFConnector('api/users/')
+listView.actions = {
+    list: (req) => users.read(req), // or just `list: users.read`
+}
+```
+A typical `save` action of a change view looks for example like this:
+```js
+const users = createDRFConnector('api/users/:id/')
+changeView.path = 'users/:id',
+changeView.actions = {
+    save: (req) => user(crudl.path.id).save(req),
+}
+```
+
+### Normalize and denormalize functions
+The functions `normalize` and `denormalize` are used to prepare, manipulate, annotate etc. the data for the frontend and for the backend. The normalization function prepares the data for the frontend (before they are displayed) and the denormalization function prepares to data for the backend (before they are passed to the connectors). The general form is `(data) => data` for views and `(value, allValues) => value` for [fields](#fields).
 
 ## List View
 A list view is defined like this:
@@ -246,6 +250,67 @@ A list view is defined like this:
 * `filters.fields`: See [fields](#fields) for details.
 
 * `normalize`: a function of the form `listItems => listItems`
+
+###
+Crudl supports bulk actions over selected list view items. Bulk actions are defined like this:
+```js
+listView.bulkActions=  {
+    actionName: {
+        description: 'What the action does',
+        modalConfirm: {...} // Require modal dialog for confirmation (Optional)
+        before: (selection) => {...} // Do something with the selection before the action
+        action: (selection) => {...} // Do the bulk action
+        after: (selection) => {...}, // Do something with the results afterwards
+    },
+    // more bulk actions...
+}
+```
+An example of a delete bulk action using a modal confirmation:
+```js
+delete: {
+    description: 'Delete tags',
+    modalConfirm: {
+        message: "All the selected items will be deleted. This action cannot be reversed!",
+        modalType: 'modal-delete',
+        labelConfirm: "Delete All",
+    },
+    action: (selection) => Promise.all(selection.map(item => tag(item.id).delete(crudl.req())))
+        .then(() => crudl.successMessage(`All items (${selection.length}) were deleted`))
+    },
+},
+```
+
+The *before* and *after* actions can return a React component that will be displayed in an overlay window. This component will receive two handlers as props: `onProceed` and `onCancel`.
+
+An example of a *Change Section* action:
+```js
+changeSection: {
+    description: 'Change Section',
+    // Create a submission form to select a section
+    // onProceed and onCancel are handlers provided by the list view
+    before: selection => ({ onProceed, onCancel }) => (
+        <div>
+        {crudl.createForm({
+            id: 'select-section',
+            title: 'Select Section',
+            fields: [{
+                name: 'section',
+                label: 'Section',
+                field: 'Select',
+                lazy: () => options('sections', 'id', 'name').read(crudl.req()), // options(...) is a connector
+            }],
+            // Using the onProceed handler, we pass an amended selection to the action function
+            onSubmit: values => onProceed(selection.map(s => Object.assign({}, s, { section: values.section }))),
+            onCancel,
+        })}
+        </div>
+    ),
+    // The action itself
+    action: selection => Promise.all(selection.map(
+        item => category(item.id).update(crudl.req(item))
+    )).then(() => crudl.successMessage('Successfully changed the sections')),
+},
+```
 
 ## Change View
 ```js
