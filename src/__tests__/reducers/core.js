@@ -1,7 +1,7 @@
 /* globals require, test, beforeEach, expect, describe, it */
 
-import core from '../../reducers/core.js'
-import { types } from '../../actions/core.js'
+import core from '../../reducers/core'
+import { types } from '../../actions/core'
 
 let initial = {}
 let result = {}
@@ -42,9 +42,7 @@ describe('reducers core', () => {
         }
     })
     it('should return the initial state', () => {
-        expect(
-            core(undefined, {})
-        ).toEqual(initial)
+        expect(core(undefined, {})).toEqual(initial)
     })
     /* login/logout */
     it('should handle LOGIN', () => {
@@ -58,7 +56,7 @@ describe('reducers core', () => {
                     requestHeaders: { token: 'yyy' },
                     info: { username: 'xxx' },
                 },
-            })
+            }),
         ).toEqual(result)
     })
     it('should handle LOGOUT', () => {
@@ -68,7 +66,7 @@ describe('reducers core', () => {
         expect(
             core(initial, {
                 type: types.LOGOUT,
-            })
+            }),
         ).toEqual(result)
     })
     /* cache listview */
@@ -88,7 +86,7 @@ describe('reducers core', () => {
                         results: [1, 2, 3],
                     },
                 },
-            })
+            }),
         ).toEqual(result)
     })
     it('should handle CACHE_CLEAR_LISTVIEW', () => {
@@ -101,7 +99,7 @@ describe('reducers core', () => {
         expect(
             core(initial, {
                 type: types.CACHE_CLEAR_LISTVIEW,
-            })
+            }),
         ).toEqual(result)
     })
     /* active viewset */
@@ -111,7 +109,7 @@ describe('reducers core', () => {
             core(initial, {
                 type: types.ACTIVE_VIEW_SET,
                 ref: 'test_listView',
-            })
+            }),
         ).toEqual(result)
     })
     it('should handle ACTIVE_VIEW_CLEAR', () => {
@@ -119,7 +117,7 @@ describe('reducers core', () => {
         expect(
             core(initial, {
                 type: types.ACTIVE_VIEW_CLEAR,
-            })
+            }),
         ).toEqual(result)
     })
 })

@@ -1,6 +1,6 @@
 /* globals require, test, expect, describe, it */
 
-import * as actions from '../../actions/frontend.js'
+import * as actions from '../../actions/frontend'
 
 
 describe('actions frontend', () => {

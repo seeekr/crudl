@@ -44,7 +44,7 @@ describe('FieldLoader', () => {
         const field = mount(
             <Provider store={store}>
                 <FieldLoader {...props} />
-            </Provider>
+            </Provider>,
         )
 
         expect(field.find('.field-container.type-string').length).toEqual(1)
@@ -59,7 +59,7 @@ describe('FieldLoader', () => {
             mount(
                 <Provider store={store}>
                     <FieldLoader {...props} />
-                </Provider>
+                </Provider>,
             )
         }).toThrowError()
     })
