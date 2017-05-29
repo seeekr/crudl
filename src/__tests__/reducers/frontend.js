@@ -14,6 +14,8 @@ describe('reducers frontend', () => {
             modalConfirm: { visible: false },
             pageNotFound: { message: 'The requested page could not be found.' },
             blockUI: false,
+            bottomBar: { visible: false },
+            reload: {},
         }
         result = {
             navigation: { visible: false },
@@ -21,6 +23,8 @@ describe('reducers frontend', () => {
             modalConfirm: { visible: false },
             pageNotFound: { message: 'The requested page could not be found.' },
             blockUI: false,
+            bottomBar: { visible: false },
+            reload: {},
         }
     })
     it('should return the initial state', () => {
