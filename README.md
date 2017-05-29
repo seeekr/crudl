@@ -204,12 +204,12 @@ Each view must define its `actions`, which is an object [property](#attributes-a
 
 An action is a function that takes a request as its argument and returns a *promise*. This promise either resolves to [data](#data) or throws an [error](#errors). Typically, action use some [connectors](https://github.com/crudlio/crudl-connectors-base) to do their job. For example, a typical list view defines an action like this:
 ```js
-const users = createDRFConnector('api/users/')
+const users = createDRFConnector('api/users/') // using Django Rest Framework connectors
 listView.actions = {
-    list: (req) => users.read(req), // or just `list: users.read`
+    list: (req) => users.read(req), // or just 'list: users.read'
 }
 ```
-A typical `save` action of a change view looks for example like this:
+A typical *save* action of a change view looks for example like this:
 ```js
 const users = createDRFConnector('api/users/:id/')
 changeView.path = 'users/:id',
@@ -232,20 +232,21 @@ A list view is defined like this:
     actions: {
         list,         // The list action (see below)
     },
+
     // Optional:
     filters: {       
         fields,       // An array of fields (see below)
         denormalize,  // The denormalize function for the filters form
     }
-    bulkActions: {...} // See bellow
+    bulkActions,      // See bellow
     permissions: {    
-        list: <boolean>, // Does the user have a list permission?
+        list,         // either true or false. Default value is true
     }        
     normalize,        // The normalize function of the form (listItems) => listItems (see below)
 }
 ```
 
-* `list` resolves to an array `[{ ...item1 }, { ...item2 }, ..., { ...itemN }]`. The array may optionally contain a pagination attribute.
+* `list` resolves to an array `[ item1, item2, ..., itemN ]`. The array may optionally have a pagination attribute.
 
 * `filters.fields`: See [fields](#fields) for details.
 
@@ -282,7 +283,7 @@ delete: {
 },
 ```
 
-The *before* and *after* actions can return a React component that will be displayed in an overlay window. This component will receive two handlers as props: `onProceed` and `onCancel`.
+The *before* and *after* actions take the current selection as argument and return a React component which will be displayed in an overlay window. This component will receive two handlers as props: `onProceed` and `onCancel`.
 
 An example of a *Change Section* action:
 ```js
@@ -290,28 +291,34 @@ changeSection: {
     description: 'Change Section',
     // Create a submission form to select a section
     // onProceed and onCancel are handlers provided by the list view
-    before: selection => ({ onProceed, onCancel }) => (
-        <div>
-        {crudl.createForm({
-            id: 'select-section',
-            title: 'Select Section',
-            fields: [{
-                name: 'section',
-                label: 'Section',
-                field: 'Select',
-                lazy: () => options('sections', 'id', 'name').read(crudl.req()), // options(...) is a connector
-            }],
-            // Using the onProceed handler, we pass an amended selection to the action function
-            onSubmit: values => onProceed(selection.map(s => Object.assign({}, s, { section: values.section }))),
-            onCancel,
-        })}
-        </div>
-    ),
+    before: createSelectSectionForm,
     // The action itself
     action: selection => Promise.all(selection.map(
         item => category(item.id).update(crudl.req(item)) // category is a connector
     )).then(() => crudl.successMessage('Successfully changed the sections')),
 },
+```
+
+Using the crudl utility function `createForm()`, the function `createSelectSectionForm` may for example look like this:
+```js
+const createSelectSectionForm = selection => ({ onProceed, onCancel }) => (
+    <div>
+    {crudl.createForm({
+        id: 'select-section',
+        title: 'Select Section',
+        fields: [{
+            name: 'section',
+            label: 'Section',
+            field: 'Select',
+            lazy: () => options('sections', 'id', 'name').read(crudl.req()),
+        }],
+        onSubmit: values => onProceed(
+            selection.map(s => Object.assign({}, s, { section: values.section }))
+        ),
+        onCancel,
+    })}
+    </div>
+)
 ```
 
 ## Change View
@@ -580,168 +587,7 @@ admin.messages = {
     // ...more messages
 }
 ```
-
-This ist the complete list of all message IDs:
-```json
-[
-  {
-    "id": "addView.button.save",
-    "defaultMessage": "Save"
-  },
-  {
-    "id": "addView.button.saveAndContinue",
-    "defaultMessage": "Save and continue editing"
-  },
-  {
-    "id": "addView.button.saveAndAddAnother",
-    "defaultMessage": "Save and add another"
-  },
-  {
-    "id": "addView.add.success",
-    "defaultMessage": "Succesfully created {title}."
-  },
-  {
-    "id": "addView.add.failed",
-    "defaultMessage": "The form is not valid. Correct the errors and try again."
-  },
-  {
-    "id": "addView.modal.unsavedChanges.message",
-    "defaultMessage": "You have unsaved changes. Are you sure you want to leave?"
-  },
-  {
-    "id": "addView.modal.unsavedChanges.labelConfirm",
-    "defaultMessage": "Yes, leave"
-  }
-  {
-    "id": "changeView.button.delete",
-    "defaultMessage": "Delete"
-  },
-  {
-    "id": "changeView.button.save",
-    "defaultMessage": "Save"
-  },
-  {
-    "id": "changeView.button.saveAndContinue",
-    "defaultMessage": "Save and continue editing"
-  },
-  {
-    "id": "changeView.modal.unsavedChanges.message",
-    "defaultMessage": "You have unsaved changes. Are you sure you want to leave?"
-  },
-  {
-    "id": "changeView.modal.unsavedChanges.labelConfirm",
-    "defaultMessage": "Yes, leave"
-  },
-  {
-    "id": "changeView.modal.deleteConfirm.message",
-    "defaultMessage": "Are you sure you want to delete this {item}?"
-  },
-  {
-    "id": "changeView.modal.deleteConfirm.labelConfirm",
-    "defaultMessage": "Yes, delete"
-  },
-  {
-    "id": "changeView.deleteSuccess",
-    "defaultMessage": "{item} was succesfully deleted."
-  },
-  {
-    "id": "changeView.saveSuccess",
-    "defaultMessage": "{item} was succesfully saved."
-  },
-  {
-    "id": "changeView.validationError",
-    "defaultMessage": "The form is not valid. Correct the errors and try again."
-  }
-  {
-    "id": "inlinesView.button.delete",
-    "defaultMessage": "Delete"
-  },
-  {
-    "id": "inlinesView.button.save",
-    "defaultMessage": "Save"
-  },
-  {
-    "id": "inlinesView.modal.deleteConfirm.message",
-    "defaultMessage": "Are you sure you want to delete {item}?"
-  },
-  {
-    "id": "inlinesView.modal.deleteConfirm.labelConfirm",
-    "defaultMessage": "Yes, delete"
-  },
-  {
-    "id": "inlinesView.deleteSuccess",
-    "defaultMessage": "{item} was succesfully deleted."
-  },
-  {
-    "id": "inlinesView.deleteFailure",
-    "defaultMessage": "Failed to delete {item}."
-  },
-  {
-    "id": "inlinesView.addSuccess",
-    "defaultMessage": "{item} was succesfully created."
-  },
-  {
-    "id": "inlinesView.saveSuccess",
-    "defaultMessage": "{item} was succesfully saved."
-  },
-  {
-    "id": "inlinesView.validationError",
-    "defaultMessage": "The form is not valid. Correct the errors and try again."
-  }
-  {
-    "id": "login.button",
-    "defaultMessage": "Login"
-  },
-  {
-    "id": "login.success",
-    "defaultMessage": "You're logged in!"
-  },
-  {
-    "id": "login.failed",
-    "defaultMessage": "Login failed"
-  }
-  {
-    "id": "logout.button",
-    "defaultMessage": "Logout"
-  },
-  {
-    "id": "logout.affirmation",
-    "defaultMessage": "You have been logged out."
-  },
-  {
-    "id": "logout.loginLink",
-    "defaultMessage": "Log in again?"
-  }
-  {
-    "id": "modal.labelConfirm.default",
-    "defaultMessage": "Yes"
-  },
-  {
-    "id": "modal.labelCancel.default",
-    "defaultMessage": "Cancel"
-  }
-  {
-    "id": "pageNotFound",
-    "defaultMessage": "Page not found"
-  }
-  {
-    "id": "permissions.viewNotPermitted",
-    "defaultMessage": "You don't have a view permission"
-  },
-  {
-    "id": "permissions.deleteNotPermitted",
-    "defaultMessage": "You don't have a delete permission"
-  },
-  {
-    "id": "permissions.addNotPermitted",
-    "defaultMessage": "You don't have an add permission"
-  },
-  {
-    "id": "permissions.saveNotPermitted",
-    "defaultMessage": "You don't have a save permission"
-  }
-]
-```
+You will find all configurable messages in `src/messages/*.js`.
 
 ## Credits & Links
 CRUDL is written and maintained by vonautomatisch (Patrick Kranzlmüller, Axel Swoboda).
