@@ -35,6 +35,10 @@ class BulkActions extends React.Component {
         event.nativeEvent.stopImmediatePropagation()
     }
 
+    select(action) {
+        this.setState({ selected: action })
+    }
+
     render() {
         const { actions, id, nSelected } = this.props
         const selected = this.state.selected

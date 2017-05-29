@@ -314,7 +314,10 @@ export class ListView extends React.Component {
             .then(result => this.bulkActionExecute(action, result)) // Action itself
             .then(result => this.bulkActionAfter(action, result))   // After hook
             .catch(e => e && dispatch(errorMessage(`${e}`)))
-            .finally(this.reload)
+            .finally(() => {
+                this.bulkActions.select(null)
+                this.reload()
+            })
 
         // Show modal dialog if required
         if (desc.bulkActions[action].modalConfirm) {
@@ -584,6 +587,7 @@ export class ListView extends React.Component {
                 {desc.bulkActions &&
                     <BulkActions
                         id={`bulkActions-${desc.id}`}
+                        ref={(c) => { this.bulkActions = c }}
                         actions={desc.bulkActions}
                         nSelected={nSelected}
                         onApply={this.handleApplyBulkAction}
