@@ -202,7 +202,7 @@ The parametrized version of the path definition is used only in change views and
 ### Actions
 Each view must define its `actions`, which is an object [property](#attributes-and-properties). The attributes of the actions property are the particular actions.
 
-An action is a function that takes a request as its argument and returns a *promise*. This promise either resolves to [data](#Data) or throws an [error](#errors). Typically, action use some [connectors](https://github.com/crudlio/crudl-connectors-base) to do their job. For example, a typical list view defines an action like this:
+An action is a function that takes a request as its argument and returns a *promise*. This promise either resolves to [data](#data) or throws an [error](#errors). Typically, action use some [connectors](https://github.com/crudlio/crudl-connectors-base) to do their job. For example, a typical list view defines an action like this:
 ```js
 const users = createDRFConnector('api/users/')
 listView.actions = {
@@ -232,15 +232,15 @@ A list view is defined like this:
     actions: {
         list,         // The list action (see below)
     },
-    bulkActions: {...} // See bellow
-    permissions: {    
-        list: <boolean>, // Does the user have a list permission?
-    }        
     // Optional:
     filters: {       
         fields,       // An array of fields (see below)
         denormalize,  // The denormalize function for the filters form
     }
+    bulkActions: {...} // See bellow
+    permissions: {    
+        list: <boolean>, // Does the user have a list permission?
+    }        
     normalize,        // The normalize function of the form (listItems) => listItems (see below)
 }
 ```
@@ -251,8 +251,10 @@ A list view is defined like this:
 
 * `normalize`: a function of the form `listItems => listItems`
 
-###
-Crudl supports bulk actions over selected list view items. Bulk actions are defined like this:
+### Bulk Actions
+
+Crudl supports bulk actions that are executed on one or more selected list view items. Bulk actions are defined like this:
+
 ```js
 listView.bulkActions=  {
     actionName: {
@@ -307,7 +309,7 @@ changeSection: {
     ),
     // The action itself
     action: selection => Promise.all(selection.map(
-        item => category(item.id).update(crudl.req(item))
+        item => category(item.id).update(crudl.req(item)) // category is a connector
     )).then(() => crudl.successMessage('Successfully changed the sections')),
 },
 ```
