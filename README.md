@@ -17,6 +17,8 @@ CRUDL is a React application for rapidly building an admin interface based on yo
     * [Normalize and denormalize functions](#normalize-and-denormalize-functions)
     * [Paths](#paths)
 * [List View](#list-view)
+    * [Bulk Actions](#bulk-actions)
+    * [Pagination](#pagination)
 * [Change View](#change-view)
 * [Add View](#add-view)
 * [Fieldsets](#fieldsets)
@@ -251,6 +253,7 @@ A list view is defined like this:
         list,         // either true or false. Default value is true
     }        
     normalize,        // The normalize function of the form (listItems) => listItems (see below)
+    paginationComponent, // A function of the form (pagination) => ReactComponent
 }
 ```
 
@@ -331,7 +334,7 @@ const createSelectSectionForm = selection => ({ onProceed, onCancel }) => (
 
 ### Pagination
 
-A list view can display paginated data. In order to do so, the `list` action must return an array with an extra attribute `pagination` which defines the pagination type. Two pagination types are currently supported:
+A list view can display paginated data. In order to do so, the `list` action must return an array with an extra attribute `pagination` which provides the necessary pagination information. Two pagination types are currently supported:
     - **Numbered** pagination: Each page has a cursor (typically a number, and can be accessed directly. Pages are numbered from 1 to N. The `pagination` attribute is of the form
     ```js
     {
@@ -356,6 +359,8 @@ A list view can display paginated data. In order to do so, the `list` action mus
 
 When a user request a new page (or more results) the list view generate a new request to the connector layer. This request has an attribute `page` and its value is one of `allPages` (numbered pagination) or the value of `next` (continuous pagination).
 
+> If the `listView.paginationComponent` function is defined, then the value of the `pagination` attribute is passed to > this function, which in turn must return a react component. See [Pagination.jsx](src/components/Pagination.jsx) for the details.
+
 ## Change View
 ```js
 {
@@ -367,19 +372,20 @@ When a user request a new page (or more results) the list view generate a new re
         save,           // E.g. (req) => user(crudl.path.id).save(req)
         delete,         // E.g. (req) => user(crudl.path.id).delete(req)
     },
-    permissions: {    
-        get: <boolean>,     // Does the user have a view permission?
-        save: <boolean>,    // Does the user have a change permission?
-        delete: <boolean>,  // Does the user have a delete permission?
-    },
     fields,             // A list of fields
     fieldsets,          // A list of fieldsets
 
     // Optional
     tabs,               // A list of tabs
+    tabtitle,           // The title of the first tab
     normalize,          // The normalization function (dataToShow) => dataToShow
     denormalize,        // The denormalization function (dataToSend) => dataToSend
     validate,           // Frontend validation function
+    permissions: {    
+        get: <boolean>,     // Does the user have a view permission?
+        save: <boolean>,    // Does the user have a change permission?
+        delete: <boolean>,  // Does the user have a delete permission?
+    },
 }
 ```
 Either `fields` or `fieldsets`, but not both, must be specified. The attribute `validate` is a [redux-form](https://github.com/erikras/redux-form) validation function.
