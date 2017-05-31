@@ -454,7 +454,7 @@ With the fields, you describe the behavior of a single element with the changeVi
     onChange,               // onChange specification (see bellow)
     add,                    // add relation specification (see bellow)
     edit,                   // edit relation specification (see bellow)
-    lazy,                   // A function returning promise (see bellow)
+    lazy,                   // A function returning a promise (see bellow)
 
     // further custom attributes and props
 }
