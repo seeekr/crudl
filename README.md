@@ -129,7 +129,7 @@ It is an object with the following attributes:
 
 ### Data
 
-When a connector successfully executed a request, it will resolve to the response data:
+When a connector successfully executes a request it resolves to response data:
 ```js
 usersConnector.read(req.filter('name', 'joe'))
 .then(allJoes => {
@@ -335,7 +335,7 @@ const createSelectSectionForm = selection => ({ onProceed, onCancel }) => (
 ### Pagination
 
 A list view can display paginated data. In order to do so, the `list` action must return an array with an extra attribute `pagination` which provides the necessary pagination information. Two pagination types are currently supported:
-    - **Numbered** pagination: Each page has a cursor (typically a number, and can be accessed directly. Pages are numbered from 1 to N. The `pagination` attribute is of the form
+- **Numbered** pagination: Each page has a cursor (typically a number, and can be accessed directly. Pages are numbered from 1 to N. The `pagination` attribute is of the form
     ```js
     {
         type: 'numbered',   // Required
@@ -345,9 +345,9 @@ A list view can display paginated data. In order to do so, the `list` action mus
         filteredTotal,      // Optional
     }
     ```
-    where `allPages` is an array of page cursors. Page cursors can be any data. allPages[i-1] must provide a page cursor for the ith page. The currentPage is the page number of the currently displayed page. The corresponding page cursor of the current page is `allPages[currentPage-1]`. The total number of results can be optionally provided as `resultsTotal`. The total number of *filtered* results can be optionally provided as `filteredTotal`.
+where `allPages` is an array of page cursors. A page cursor can be anything. `allPages[i-1]` must provide a page cursor for the ith page. The currentPage is the page cursor of the currently displayed page. The corresponding page cursor of the current page is `allPages[currentPage-1]`. The total number of results can be optionally provided as `resultsTotal`. The total number of *filtered* results can be optionally provided as `filteredTotal`.
 
-    - **continuous** pagination: Results are displayed on one page and more are loaded if required. The `pagination` attribute has the form:
+- **continuous** pagination: Results are displayed on one page and more are loaded if required. The `pagination` attribute has the form:
     ```js
     {
         next,           // Required
@@ -355,7 +355,7 @@ A list view can display paginated data. In order to do so, the `list` action mus
         filteredTotal,  // Optional    
     }
     ```
-    where `next` is a page cursor that must be truthy if there exist a next page, otherwise it MUST be falsy. The resultsTotal is optional and it gives the number of the total available results. The total number of *filtered* results can be optionally provided as `filteredTotal`.
+where `next` is a page cursor that must be truthy if there exist a next page, otherwise it MUST be falsy. The resultsTotal is optional and it gives the number of the total available results. The total number of *filtered* results can be optionally provided as `filteredTotal`.
 
 When a user request a new page (or more results) the list view generate a new request to the connector layer. This request has an attribute `page` and its value is one of `allPages` (numbered pagination) or the value of `next` (continuous pagination).
 
