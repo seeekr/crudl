@@ -115,12 +115,18 @@ export function resolvePath(pathname = '', item) {
 /**
 * Creates a request object that already has its authentication headers set
 */
-export function req(data) {
+export function createRequest(data) {
     return new Request({
         data,
         headers: store.getState().core.auth.requestHeaders,
     })
 }
+
+/** Alias for createRequest */
+export function req(data) {
+    return createRequest(data)
+}
+
 
 export function createForm(desc) {
     const validationResult = simpleViewSchema.validate(desc)

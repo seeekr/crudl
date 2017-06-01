@@ -62,6 +62,7 @@ describe('crudl without a store', () => {
             'baseField',
             'log',
             'resolvePath',
+            'createRequest',
             'req',
             'hasPermission',
             'createStore',
