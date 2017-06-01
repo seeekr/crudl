@@ -524,7 +524,7 @@ Note that all the descriptor attributes will be passed as props to the field com
 
 ### Add and Edit relations
 
-A field containing an foreign key may define add and edit relations. The add descriptor looks like this:
+A field containing a foreign key may define add and edit relations. The add descriptor looks like this:
 ```js
 {
     name: 'section',
