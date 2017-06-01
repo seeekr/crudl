@@ -257,7 +257,7 @@ A list view is defined like this:
 }
 ```
 
-* `list` resolves to an array `[ item1, item2, ..., itemN ]`. The array may optionally have a pagination attribute.
+* `list` action of the form `(request) => <Promise>` must either resolve to an array `[ item1, item2, ..., itemN ]` or throw an error. The items must be objects and the values of their attributes will be displayed in the list view fields. The array may optionally have a `pagination` attribute (see [Pagination](#pagination)). The `request` parameter is provided by the list view and it has the pertinent attributes `filters`, `page`, `sorting` and `headers` accordingly set.
 
 * `filters.fields`: See [fields](#fields) for details.
 
@@ -281,7 +281,7 @@ listView.bulkActions=  {
 ```
 An example of a delete bulk action using a modal confirmation:
 ```js
-delete: {
+listView.bulkActions.delete = {
     description: 'Delete tags',
     modalConfirm: {
         message: "All the selected items will be deleted. This action cannot be reversed!",
@@ -298,7 +298,7 @@ The *before* and *after* actions take the current selection as argument and retu
 
 An example of a *Change Section* action:
 ```js
-changeSection: {
+listView.bulkActions.changeSection = {
     description: 'Change Section',
     // Create a submission form to select a section
     // onProceed and onCancel are handlers provided by the list view
@@ -331,10 +331,11 @@ const createSelectSectionForm = selection => ({ onProceed, onCancel }) => (
     </div>
 )
 ```
+Notice that the react component will obtain two props `onProceed()` and `onCancel()` which you can use to control the progression of the action.
 
 ### Pagination
 
-A list view can display paginated data. In order to do so, the `list` action must return an array with an extra attribute `pagination` which provides the necessary pagination information. Two pagination types are currently supported:
+A list view can display paginated data. In order to do so, the `list(req)` action must resolve to an array with an extra attribute `pagination` which provides the necessary pagination information. Two pagination types are currently supported:
 - **Numbered** pagination: Each page has a cursor (typically a number, and can be accessed directly. Pages are numbered from 1 to N. The `pagination` attribute is of the form
     ```js
     {
@@ -345,7 +346,7 @@ A list view can display paginated data. In order to do so, the `list` action mus
         filteredTotal,      // Optional
     }
     ```
-where `allPages` is an array of page cursors. A page cursor can be anything. `allPages[i-1]` must provide a page cursor for the ith page. The currentPage is the page cursor of the currently displayed page. The corresponding page cursor of the current page is `allPages[currentPage-1]`. The total number of results can be optionally provided as `resultsTotal`. The total number of *filtered* results can be optionally provided as `filteredTotal`.
+    where `allPages` is an array of page cursors. A page cursor can be anything. `allPages[i-1]` must provide a page cursor for the ith page. The currentPage is the page cursor of the currently displayed page. The corresponding page cursor of the current page is `allPages[currentPage-1]`. The total number of results can be optionally provided as `resultsTotal`. The total number of *filtered* results can be optionally provided as `filteredTotal`.
 
 - **continuous** pagination: Results are displayed on one page and more are loaded if required. The `pagination` attribute has the form:
     ```js
@@ -355,11 +356,11 @@ where `allPages` is an array of page cursors. A page cursor can be anything. `al
         filteredTotal,  // Optional    
     }
     ```
-where `next` is a page cursor that must be truthy if there exist a next page, otherwise it MUST be falsy. The resultsTotal is optional and it gives the number of the total available results. The total number of *filtered* results can be optionally provided as `filteredTotal`.
+    where `next` is a page cursor that must be truthy if there exist a next page, otherwise it MUST be falsy. The resultsTotal is optional and it gives the number of the total available results. The total number of *filtered* results can be optionally provided as `filteredTotal`.
 
 When a user request a new page (or more results) the list view generate a new request to the connector layer. This request has an attribute `page` and its value is one of `allPages` (numbered pagination) or the value of `next` (continuous pagination).
 
-> If the `listView.paginationComponent` function is defined, then the value of the `pagination` attribute is passed to > this function, which in turn must return a react component. See [Pagination.jsx](src/components/Pagination.jsx) for the details.
+> If the `listView.paginationComponent` function is defined, then the value of the `pagination` attribute is passed to this function, which in turn must return a react component. See [Pagination.jsx](src/components/Pagination.jsx) for the details.
 
 ## Change View
 ```js
@@ -520,6 +521,72 @@ Or you can provide these options _asynchronously_ using the lazy function:
 },
 ```
 Note that all the descriptor attributes will be passed as props to the field component. This is also true for asynchronously provided attributes.
+
+### Add and Edit relations
+
+A field containing an foreign key may define add and edit relations. The add descriptor looks like this:
+```js
+{
+    name: 'section',
+    label: 'Section',
+    field: 'Select',
+    lazy: () => options('sections', 'id', 'name').read(crudl.req()),
+    add: {
+        title: 'New section',
+        actions: {
+            add: req => sections.create(req).then(data => data.id),
+        },
+        fields: [
+            {
+                name: 'name',
+                label: 'Name',
+                field: 'String',
+                required: true
+            },
+            {
+                name: 'slug',
+                label: 'Slug',
+                field: 'String',
+                required: true,
+            },
+        ],
+    },
+}
+```
+The `add` action of the add relation MUST return the new value for the field in the original form (the *section* field in this example).
+
+The edit descriptor is quite similar:
+```js
+{
+    name: 'section',
+    label: 'Section',
+    field: 'Select',
+    lazy: () => options('sections', 'id', 'name').read(crudl.req()),
+    edit: {
+            title: 'Edit Section',
+            actions: {
+                get: (req) => section(crudl.context('section')).read(req),
+                save: (req) => section(crudl.context('section')).update(req),
+            },
+            fields: [
+                {
+                    name: 'name',
+                    label: 'Name',
+                    field: 'String',
+                    required: true
+                },
+                {
+                    name: 'slug',
+                    label: 'Slug',
+                    field: 'String',
+                    required: true,
+                },
+            ],
+        },
+}
+```
+In contrast to the `add` actions of the add relation, the `save` action IS NOT required to resolve the the value of the originating field. Note that you can access the current form data via `crudl.context()` function.
+
 
 ### Custom attributes
 
