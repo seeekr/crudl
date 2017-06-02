@@ -193,10 +193,6 @@ export class ChangeView extends React.Component {
                     this.setState({ values })
                 }
             })
-            .catch((error) => {
-                desc.normalize(data, error) // Normalize may also throw
-                throw error
-            })
         }
         // Not permitted
         dispatch(errorMessage(intl.formatMessage(permMessages.saveNotPermitted)))
