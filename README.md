@@ -17,6 +17,7 @@ CRUDL is a React application for rapidly building an admin interface based on yo
     * [Normalize and denormalize functions](#normalize-and-denormalize-functions)
     * [Paths](#paths)
 * [List View](#list-view)
+    * [The `list` action](#the-list-action)
     * [Bulk Actions](#bulk-actions)
     * [Pagination](#pagination)
 * [Change View](#change-view)
@@ -261,11 +262,26 @@ A list view is defined like this:
 }
 ```
 
-* `list` action of the form `(request) => <Promise>` must either resolve to an array `[ item1, item2, ..., itemN ]` or throw an error. The items must be objects and the values of their attributes will be displayed in the list view fields. The array may optionally have a `pagination` attribute (see [Pagination](#pagination)). The `request` parameter is provided by the list view and it has the pertinent attributes `filters`, `page`, `sorting` and `headers` accordingly set.
-
 * `filters.fields`: See [fields](#fields) for details.
 
 * `normalize`: a function of the form `listItems => listItems`
+
+### The `list` Action
+The `list` action must either resolve to an array `[ item1, item2, ..., itemN ]` or throw an error. The items must be objects and the values of their attributes will be displayed in the list view fields. The array may optionally have a `pagination` attribute (see [Pagination](#pagination)). The `request` parameter is provided by the list view and it has the pertinent attributes `filters`, `page`, `sorting` and `headers` accordingly set. Fro example:
+
+```js
+listView.actions.list = (req) => users.read(req)
+
+// In the list view at the path 'users/':
+changeView.actions.get(crudl.createRequest().filter('is_staff', true))
+.then(results => {
+    // [ { id: 1, username: 'admin' }, { id: 3, username: 'joe' }, ... ]
+})
+.catch(error => {
+    // { message: "Unknown filter field 'is_staff'" }
+})
+```
+
 
 ### Bulk Actions
 
@@ -463,7 +479,7 @@ The add view defines almost the same set of attributes and properties as the cha
 }
 ```
 
-### Add action
+### The `add` action
 The add action should create a new resource and resolve to the new values. For example:
 
 ```js
