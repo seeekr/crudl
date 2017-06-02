@@ -20,7 +20,11 @@ CRUDL is a React application for rapidly building an admin interface based on yo
     * [Bulk Actions](#bulk-actions)
     * [Pagination](#pagination)
 * [Change View](#change-view)
+    * [The `get` action](#the-get-action)
+    * [The `save` action](#the-save-action)
+    * [The `delete` action](#the-delete-action)
 * [Add View](#add-view)
+    * [The `add` action](#the-add-action)
 * [Fieldsets](#fieldsets)
 * [Fields](#fields)
     * [onChange](#onchange)
@@ -391,8 +395,8 @@ When a user request a new page (or more results) the list view generate a new re
 ```
 Either `fields` or `fieldsets`, but not both, must be specified. The attribute `validate` is a [redux-form](https://github.com/erikras/redux-form) validation function.
 
-### Get Action
-The get action of the form `(req) => <Promise:Object>` must resolve to an object or reject with an error. For example:
+### The `get` Action
+The get action resolves to an object or rejects with an error. For example:
 ```js
 changeView.actions.get = (req) => user(crudl.path.id).read(req)
 
@@ -406,7 +410,7 @@ changeView.actions.get(crudl.createRequest())
 })
 ```
 
-### Save Action
+### The `save` Action
 The save action should update the resource and resolve to the new values. For example:
 ```js
 changeView.actions.save = (req) => user(crudl.path.id).update(req)
@@ -421,7 +425,7 @@ changeView.actions.save(crudl.createRequest({ email: 'joe.doe@crudl.io' }))
 })
 ```
 
-### Delete action
+### The `delete` action
 The delete action deletes the resource and returns a promise. The value of the resolved promise is irrelevant.
 For example:
 ```js
@@ -460,7 +464,7 @@ The add view defines almost the same set of attributes and properties as the cha
 ```
 
 ### Add action
-The add action must create a new resource and resolve to the new values. For example:
+The add action should create a new resource and resolve to the new values. For example:
 
 ```js
 addView.actions.add = (req) => users.create(req)
