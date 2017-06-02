@@ -395,6 +395,8 @@ Either `fields` or `fieldsets`, but not both, must be specified. The attribute `
 The get action of the form `(req) => <Promise:Object>` must resolve to an object or reject with an error. For example:
 ```js
 changeView.actions.get = (req) => user(crudl.path.id).read(req)
+
+// In the change view for the path 'users/3/':
 changeView.actions.get(crudl.createRequest())
 .then(result => {
     // { id: 3, username: 'joe', email: 'joe@crudl.io' }
@@ -408,6 +410,8 @@ changeView.actions.get(crudl.createRequest())
 The save action should update the resource and resolve to the new values. For example:
 ```js
 changeView.actions.save = (req) => user(crudl.path.id).update(req)
+
+// In the change view for the path 'users/3/':
 changeView.actions.save(crudl.createRequest({ email: 'joe.doe@crudl.io' }))
 .then(result => {
     // { id: 3, username: 'joe', email: 'joe.doe@crudl.io' }
@@ -422,9 +426,11 @@ The delete action deletes the resource and returns a promise. The value of the r
 For example:
 ```js
 changeView.actions.delete = (req) => user(crudl.path.id).delete(req)
+
+// In the change view for the path 'users/3/':
 changeView.actions.delete(crudl.createRequest())
 .then(result => {
-    // 'Ok'
+    // 'User joe was deleted.'
 })
 .catch(error => {
     // { message: "You're not permitted to delete a user" }
@@ -458,6 +464,8 @@ The add action must create a new resource and resolve to the new values. For exa
 
 ```js
 addView.actions.add = (req) => users.create(req)
+
+// In the add view at the path 'users/new':
 addView.actions.add(crudl.createRequest({ username: 'jane' }))
 .then(result => {
     // { id: 4, username: 'jane', email: '' }
