@@ -2,7 +2,6 @@
 CRUDL is a React application for rapidly building an admin interface based on your API. You just need to define the endpoints and a visual representation in order to get a full-blown UI for managing your data.
 
 ## TOC
-* [About](#about)
 * [Architecture](#architecture)
 * [Options](#options)
 * [Admin](#admin)
@@ -273,7 +272,7 @@ The `list` action must either resolve to an array `[ item1, item2, ..., itemN ]`
 listView.actions.list = (req) => users.read(req)
 
 // In the list view at the path 'users/':
-changeView.actions.get(crudl.createRequest().filter('is_staff', true))
+listView.actions.get(crudl.createRequest().filter('is_staff', true))
 .then(results => {
     // [ { id: 1, username: 'admin' }, { id: 3, username: 'joe' }, ... ]
 })
