@@ -391,6 +391,46 @@ When a user request a new page (or more results) the list view generate a new re
 ```
 Either `fields` or `fieldsets`, but not both, must be specified. The attribute `validate` is a [redux-form](https://github.com/erikras/redux-form) validation function.
 
+### Get Action
+The get action of the form `(req) => <Promise:Object>` must resolve to an object or reject with an error. For example:
+```js
+changeView.actions.get = (req) => user(crudl.path.id).read(req)
+changeView.actions.get(crudl.createRequest())
+.then(result => {
+    // { id: 3, username: 'joe', email: 'joe@crudl.io' }
+})
+.catch(error => {
+    // { authorizationError: true, message: "You have been logged out!" }
+})
+```
+
+### Save Action
+The save action should update the resource and resolve to the new values. For example:
+```js
+changeView.actions.save = (req) => user(crudl.path.id).update(req)
+changeView.actions.save(crudl.createRequest({ email: 'joe.doe@crudl.io' }))
+.then(result => {
+    // { id: 3, username: 'joe', email: 'joe.doe@crudl.io' }
+})
+.catch(error => {
+    // { validationError: true, errors: { email: 'The email address is already registered' } }
+})
+```
+
+### Delete action
+The delete action deletes the resource and returns a promise. The value of the resolved promise is irrelevant.
+For example:
+```js
+changeView.actions.delete = (req) => user(crudl.path.id).delete(req)
+changeView.actions.delete(crudl.createRequest())
+.then(result => {
+    // 'Ok'
+})
+.catch(error => {
+    // { message: "You're not permitted to delete a user" }
+})
+```
+
 ## Add View
 The add view defines almost the same set of attributes and properties as the change view. It is often possible to reuse parts of the change view.
 ```js
@@ -412,6 +452,21 @@ The add view defines almost the same set of attributes and properties as the cha
     denormalize,        // Note: add views don't have a normalize function
 }
 ```
+
+### Add action
+The add action must create a new resource and resolve to the new values. For example:
+
+```js
+addView.actions.add = (req) => users.create(req)
+addView.actions.add(crudl.createRequest({ username: 'jane' }))
+.then(result => {
+    // { id: 4, username: 'jane', email: '' }
+})
+.catch(error => {
+    // { validationError: true, errors: { email: 'Email adress is required' } }
+})
+```
+
 
 ## Fieldsets
 With fieldsets, you are able to group fields with the change/addView.
