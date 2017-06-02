@@ -1,7 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { reduxForm } from 'redux-form'
-import format from 'string-template'
 import { injectIntl, intlShape } from 'react-intl'
 import { autobind } from 'core-decorators'
 
@@ -52,10 +51,6 @@ class InlinesView extends React.Component {
         this.doList()
     }
 
-    getItemTitle(index, data) {
-        return format(this.props.desc.itemTitle, { ord: index + 1, ...(data || this.state.items[index].data) })
-    }
-
     getValues(result) {
         const { desc } = this.props
         const values = {}
@@ -99,7 +94,7 @@ class InlinesView extends React.Component {
                 items[index].data = normalize(desc, savedData)
                 this.setState({ items })
                 dispatch(successMessage(intl.formatMessage(messages.saveSuccess, {
-                    item: this.getItemTitle(index, data),
+                    item: desc.getItemTitle(data),
                 })))
             })
         }
@@ -117,7 +112,7 @@ class InlinesView extends React.Component {
                 items[index].data = res
                 this.setState({ items })
                 dispatch(successMessage(intl.formatMessage(messages.addSuccess, {
-                    item: this.getItemTitle(index, data),
+                    item: desc.getItemTitle(data),
                 })))
             })
         }
@@ -126,16 +121,15 @@ class InlinesView extends React.Component {
     }
 
     handleDelete(index, data) {
-        const { dispatch, intl } = this.props
+        const { dispatch, intl, desc } = this.props
         if (this.state.items[index].new) {
             const items = this.state.items.slice()
             items[index].deleted = true
             this.setState({ items })
         } else {
-            const title = this.getItemTitle(index, data)
             dispatch(showModalConfirm({
                 modalType: 'modal-delete',
-                message: intl.formatMessage(messages.modalDeleteMessage, { item: title }),
+                message: intl.formatMessage(messages.modalDeleteMessage, { item: desc.getItemTitle(data) }),
                 labelConfirm: intl.formatMessage(messages.modalDeleteLabelConfirm),
                 onConfirm: () => this.doDelete(index, data),
             }))
@@ -145,13 +139,13 @@ class InlinesView extends React.Component {
     doDelete(index, data) {
         const { dispatch, intl, desc } = this.props
         if (hasPermission(desc.id, 'delete')) {
-            const title = this.getItemTitle(index, data)
+            const title = desc.getItemTitle(data)
             handleErrors(desc.actions.delete(req(data)))
             .then(() => {
                 const items = this.state.items.slice()
                 items[index].deleted = true
                 this.setState({ items })
-                dispatch(successMessage(intl.formatMessage(messages.deleteSuccess, { item: title })))
+                dispatch(successMessage(intl.formatMessage(messages.deleteSuccess, { item: desc.getItemTitle(data) })))
             })
             .catch(() => {
                 this.props.dispatch(errorMessage(intl.formatMessage(messages.deleteFailure, { item: title })))

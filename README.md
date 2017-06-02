@@ -23,6 +23,7 @@ CRUDL is a React application for rapidly building an admin interface based on yo
     * [The `get` action](#the-get-action)
     * [The `save` action](#the-save-action)
     * [The `delete` action](#the-delete-action)
+    * [Tabs](#tabs)
 * [Add View](#add-view)
     * [The `add` action](#the-add-action)
 * [Fieldsets](#fieldsets)
@@ -455,6 +456,63 @@ changeView.actions.delete(crudl.createRequest())
     // { message: "You're not permitted to delete a user" }
 })
 ```
+
+### Tabs
+
+Tabs allow you to display and manipulate resource relations. For example, the following tab descriptor displays a list of links associated with the current blog entry.
+```js
+changeView.tabs = [
+    {
+        title: 'Links',
+        actions: {
+            list: req => links.read(req.filter('entry', crudl.path.id)), // Filter results by the current blog entry
+            add: req => links.create(req),
+            save: req => link(req.data.id).update(req),
+            delete: req => link(req.data.id).delete(req),
+        },
+        getItemTitle: (data) => `${data.url} (${data.title})`, // Define the item title (Optional)
+        fields: [
+            {
+                name: 'url',
+                label: 'URL',
+                field: 'URL',
+                link: true,
+            },
+            {
+                name: 'title',
+                label: 'Title',
+                field: 'String',
+            },
+            {
+                name: 'id',         // Needed in order to make update and delete requests
+                hidden: true,       // Don't show this one
+            },
+            {
+                name: 'entry',      // The foreign key field
+                hidden: true,       // Don't show this one
+                initialValue: () => crudl.context('id'), // initialValue is used when adding a new link
+            },
+        ],
+        validate(data) {
+            // Check the data
+            return data
+        },
+        normalize(data) {
+            // Prepare data for the frontend
+            return data
+        },
+        denormalize(data) {
+            // Prepare data for the backend
+            return data
+        }
+    },
+]
+```
+
+- Required attributes are: `title` and `actions`. The rest is optional.
+- The actions `list`, `add`, `save` and `delete` follow the same logic as the corresponding actions of list, change and add views.
+- `getItemTitle: (data) => <string>` defines the displayed title of the item form. If it is not provided, then the value of the first field is used (in this case it would be the URL value).
+- It's typical for the tab views to make use of hidden fields to include the related object's id in the form data.
 
 ## Add View
 The add view defines almost the same set of attributes and properties as the change view. It is often possible to reuse parts of the change view.

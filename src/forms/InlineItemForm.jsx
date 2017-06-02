@@ -1,7 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { propTypes as RFPropTypes, getFormValues } from 'redux-form'
-import format from 'string-template'
 
 import FieldSet from './FieldSet'
 import { showExpanded, toggleExpanded, createFieldSetId, createInlinesItemId } from '../utils/frontend'
@@ -73,7 +72,7 @@ class InlineItemForm extends React.Component {
                     aria-expanded="false"
                     onClick={() => toggleExpanded(inlinesItemId)}
                     >
-                    <h2>{format(desc.itemTitle, { ord: index + 1, ...values })}&nbsp;</h2>
+                    <h2>{desc.getItemTitle(values)}&nbsp;</h2>
                     <ul role="group" className="buttons horizontal">
                         <li aria-hidden={saveDisabled(this.props)}><button
                             aria-disabled={saveDisabled(this.props)}
