@@ -76,7 +76,7 @@ class InlinesView extends React.Component {
                     items[index] = {
                         form: createForm(desc, index),
                         new: false,
-                        data,
+                        data: normalize(desc, data),
                         deleted: false,
                     }
                 })
@@ -84,7 +84,7 @@ class InlinesView extends React.Component {
             })
         } else {
             this.setState({
-                message: intl.formatMessage(permMessages.viewNotPermitted)
+                message: intl.formatMessage(permMessages.viewNotPermitted),
             })
         }
     }
@@ -92,11 +92,11 @@ class InlinesView extends React.Component {
     handleSave(index, data) {
         const { desc, dispatch, intl } = this.props
         if (hasPermission(desc.id, 'save')) {
-            return handleErrors(desc.actions.save(req(data)))
-            .then((res) => {
+            return handleErrors(desc.actions.save(req(denormalize(desc, data))))
+            .then((savedData) => {
                 const items = this.state.items.slice()
                 items[index].new = false
-                items[index].data = res
+                items[index].data = normalize(desc, savedData)
                 this.setState({ items })
                 dispatch(successMessage(intl.formatMessage(messages.saveSuccess, {
                     item: this.getItemTitle(index, data),
@@ -110,7 +110,7 @@ class InlinesView extends React.Component {
     handleAdd(index, data) {
         const { desc, dispatch, intl } = this.props
         if (hasPermission(desc.id, 'add')) {
-            return handleErrors(desc.actions.add(req(data)))
+            return handleErrors(desc.actions.add(req(normalize(desc, data))))
             .then((res) => {
                 const items = this.state.items.slice()
                 items[index].new = false

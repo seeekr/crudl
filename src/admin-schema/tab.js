@@ -16,6 +16,8 @@ const tab = Joi.formView().provideId().keys({
     itemTitle: Joi.string().default('{ord}'),
     validate: Joi.func().default(() => undefined),
     id: Joi.string(),
+    normalize: Joi.func().default(data => data),
+    denormalize: Joi.func().default(data => data),
 
     // before/after optional
     before: stringOrReactProperty(''),
