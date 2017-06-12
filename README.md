@@ -47,8 +47,8 @@ The CRUDL architecture (depicted below) consists of three logical layers. The co
   ↓         ↑         ↑         CRUDL
 request   data     errors
   ↓         ↑         ↑
-+-----------------------+
-|       Connectors      |
++-----------------------+       ------------
+|       Connectors      |       CONNECTORS (standalone NPM packages)
 +-----------------------+       ------------
             ↕                  
          ~~~~~~~           
