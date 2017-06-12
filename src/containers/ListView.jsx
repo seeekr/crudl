@@ -25,7 +25,7 @@ import {
     hideBottomBar,
 } from '../actions/frontend'
 import { cache } from '../actions/core'
-import { setFilters } from '../actions/filters'
+import { setFilters, setActiveFilters } from '../actions/filters'
 import { errorMessage } from '../actions/messages'
 import { getInitialSorting, queryStringToSorting, sortingToQueryString, updateSorting } from '../utils/listViewSorting'
 import withPropsWatch from '../utils/withPropsWatch'
@@ -114,6 +114,7 @@ export class ListView extends React.Component {
 
     componentWillUnmount() {
         this.props.dispatch(setFilters({}))
+        this.props.dispatch(setActiveFilters([]))
         this.props.dispatch(hideFilters())
     }
 

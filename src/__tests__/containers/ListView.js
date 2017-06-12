@@ -6,6 +6,7 @@ import configureStore from 'redux-mock-store'
 
 import { ListView } from '../../containers/ListView'
 import listViewSchema from '../../admin-schema/listView'
+import { setActiveFilters, setFilters } from '../../actions/filters'
 
 jest.mock('../../Crudl')
 const crudl = require('../../Crudl')
@@ -32,7 +33,20 @@ const s = {
     },
     routing: {},
     messages: {},
-    filters: {},
+    filters: {
+        activeFilters: [
+            {
+                name: 'section',
+                label: 'Section',
+                value: 'Updates',
+            },
+            {
+                name: 'category',
+                label: 'Category',
+                value: 'UI',
+            },
+        ],
+    },
     watch: jest.fn,
 }
 const mockStore = configureStore()
@@ -73,7 +87,7 @@ const props = {
     watch: jest.fn,
     breadcrumbs: [],
     intl,
-    dispatch: jest.fn,
+    dispatch: jest.fn(store.dispatch),
 }
 
 describe('ListView', () => {
@@ -96,5 +110,20 @@ describe('ListView', () => {
         /* content (no content yet) */
         expect(listview.find('#viewport-content').length).toEqual(1)
         expect(listview.find('.list-view-table').length).toEqual(0)
+    })
+})
+
+describe('Unmount', () => {
+    it('unsets filters on unmount', () => {
+        props.desc = listViewSchema.validate(props.desc).value
+        const listview = shallow(<ListView {...props} />)
+        listview.unmount()
+        expect(store.getActions()).toContainEqual(setFilters({}))
+    })
+    it('unsets active filters on unmount', () => {
+        props.desc = listViewSchema.validate(props.desc).value
+        const listview = shallow(<ListView {...props} />)
+        listview.unmount()
+        expect(store.getActions()).toContainEqual(setActiveFilters([]))
     })
 })
