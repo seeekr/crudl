@@ -140,7 +140,7 @@ class InlinesView extends React.Component {
         const { dispatch, intl, desc } = this.props
         if (hasPermission(desc.id, 'delete')) {
             const title = desc.getItemTitle(data)
-            handleErrors(desc.actions.delete(req(data)))
+            return handleErrors(desc.actions.delete(req(data)))
             .then(() => {
                 const items = this.state.items.slice()
                 items[index].deleted = true
