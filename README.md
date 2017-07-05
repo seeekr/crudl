@@ -28,7 +28,7 @@ CRUDL is a React application for rapidly building an admin interface based on yo
 * [Credits & Links](#credits--links)
 
 ## Architecture
-The CRUDL architecture (depicted below) consists of three logical layers. The connectors, views, and the react-redux frontend. We use React and Redux for the frontend, which consists of different views such as *list*, *add*, and *change* view.  The purpose of the connectors layer is to provide the views with a unified access to different APIs like REST or GraphQL. You configure the connectors, the fileds, and the views by providing a [admin](#admin).
+The CRUDL architecture (depicted below) consists of three logical layers. The connectors, views, and the react-redux frontend. We use React and Redux for the frontend, which consists of different views such as *list*, *add*, and *change* view.  The purpose of the connectors layer is to provide the views with a unified access to different APIs like REST or GraphQL. You configure the connectors, the fields, and the views by providing an [admin](#admin).
 ```
 +-----------------------+
 |     React / Redux     |     
@@ -90,7 +90,7 @@ title: () => <span>Welcome to <strong>CRUDL</strong>. Today is {getDayName()}</s
 ```
 
 ## Options
-In `admin.options` you may specify some general CURDL settings
+In `admin.options` you may specify some general CRUDL settings
 ```js
 {
     debug: false,                   // Include DevTools?
@@ -438,7 +438,7 @@ changeView.permissions = {
 }
 ```
 
-Beside defining the permissions in the view descriptors, you can provide them also in the API responses. In order to do so, your connector must return a response with an attribtue `permissions` of the form:
+Beside defining the permissions in the view descriptors, you can provide them also in the API responses. In order to do so, your connector must return a response with an attribute `permissions` of the form:
 ```js
 response.permissions = {
     viewPath1: { actionName1: <boolean>, actionName2: <boolean>, ... },
@@ -446,7 +446,7 @@ response.permissions = {
     ...
 }
 ```
-where a `viewPath` is the path of a particular view in the admin object without the prefix `views`. Formally: if `viewPath` is `X.Y`, then it holds that `admin.views.X.Y === _.get(admin, 'views.' + 'viewPath')`.
+where a `viewPath` is the path of a particular view in the admin object without the prefix `views`. Formally: if `viewPath` is `X.Y`, then it holds that `admin.views.X.Y === _.get(admin, 'views.' + viewPath)`.
 
 ### Example of a connector providing permissions
 Suppose that a successful login API call returns the following data:
@@ -468,7 +468,7 @@ Suppose that a successful login API call returns the following data:
     ]
 }
 ```
-A login connector that includes these permission and _additionally_ prohibits deletion and creating of users may look like this:
+A login connector that includes these permission and _additionally_ prohibits deleting and creating users may look like this:
 ```js
 admin.connectors = {
     login: {
